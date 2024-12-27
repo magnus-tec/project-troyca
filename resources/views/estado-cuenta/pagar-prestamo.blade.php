@@ -7,14 +7,17 @@
     <div class="container mt-6 mx-auto">
         <h2 class="text-2xl font-semibold mb-4">Estado de Cuenta - Pagar Préstamo</h2>
 
-        <div class="overflow-x-auto bg-white shadow-md rounded-lg">
-            <table class="min-w-full table-auto">
+        <div class="overflow-x-auto   rounded-lg">
+            <table class="min-w-fit bg-white table-auto shadow-md">
                 <thead class="bg-gray-100 border-b">
                     <tr>
                         <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Nombre</th>
                         <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Fecha Vencimiento</th>
                         <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Monto Pago</th>
-                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Estado</th>
+                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Fecha Pago</th>
+                        @can('pagar-prestamo')
+                            <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Estado</th>
+                        @endcan
                     </tr>
                 </thead>
                 <tbody>
@@ -34,15 +37,20 @@
                             <td class="px-6 py-4 text-sm text-gray-800">Cuota {{ $contador++ }}</td>
                             <td class="px-6 py-4 text-sm text-gray-800">{{ $cuota->fecha_pago }}</td>
                             <td class="px-6 py-4 text-sm text-gray-800">${{ number_format($cuota->cuota, 2) }}</td>
-                            <td class="px-6 py-4">
-                                <button
-                                    class="px-4 py-2 text-xs font-semibold rounded-full 
+                            <td class="px-6 py-4 text-sm text-gray-800">
+                                {{ $cuota->updated_at && $cuota->estado == 1 ? $cuota->updated_at : 'SIN PAGAR' }}
+                            </td>
+                            @can('pagar-prestamo')
+                                <td class="px-6 py-4">
+                                    <button
+                                        class="px-4 py-2 text-xs font-semibold rounded-full 
                                 {{ $cuota->estado == 1 ? 'bg-green-500 text-white' : 'bg-yellow-500 text-white' }} 
                                 hover:bg-opacity-80 focus:outline-none"
-                                    onclick="cambiarEstado({{ $cuota->id }})">
-                                    {{ $cuota->estado == 1 ? 'Pagado' : 'Pendiente' }}
-                                </button>
-                            </td>
+                                        onclick="cambiarEstado({{ $cuota->id }})">
+                                        {{ $cuota->estado == 1 ? 'Pagado' : 'Pendiente' }}
+                                    </button>
+                                </td>
+                            @endcan
                         </tr>
                     @endforeach
                 </tbody>

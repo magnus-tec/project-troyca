@@ -199,7 +199,7 @@
             </td>
             <td><strong>APELLIDO MATERNO:</strong>
                 <span class="mayusculas">
-                    {{ $registro->datosPersonales->apellido_materno ? 'No especificado' : $registro->datosPersonales->apellido_materno }}
+                    {{ !isset($registro->datosPersonales->apellido_materno) ? 'No especificado' : $registro->datosPersonales->apellido_materno }}
                 </span>
             </td>
         </tr>
@@ -218,7 +218,7 @@
             </td>
             <td><strong>FECHA DE NACIMIENTO:</strong>
                 <span class="mayusculas">
-                    {{ $registro->datosPersonales->fecha_nacimiento->format('d/m/Y') ? 'No especificado' : $registro->datosPersonales->fecha_nacimiento->format('d/m/Y') }}
+                    {{ isset($registro->datosPersonales->fecha_nacimiento) ? $registro->datosPersonales->fecha_nacimiento->format('d/m/Y') : 'No especificado' }}
                 </span>
             </td>
         </tr>

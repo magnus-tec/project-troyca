@@ -37,18 +37,20 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'registro-socios']);
         Permission::create(['name' => 'productos']);
         Permission::create(['name' => 'contacto']);
+        Permission::create(['name' => 'pagar-prestamo']);
+
 
         // Create Roles
         $adminRole = Role::create(['name' => 'admin']);
         $userRole = Role::create(['name' => 'user']);
 
-        // Lets give all permission to super-admin role.
+        // todos los permisos para el admin
         $allPermissionNames = Permission::pluck('name')->toArray();
 
         $adminRole->givePermissionTo($allPermissionNames);
 
 
-        // Let's give few permissions to admin role.
+        // Permisos de usuario
         $userRole->givePermissionTo(['estado-cuenta']);
         $userRole->givePermissionTo(['aporte-ahorros']);
 
