@@ -47,33 +47,33 @@
             <div id="tab-content" class="p-6">
                 <div id="datos-personales" class="tab-panel">
                     @include('socios.datos-personales')
-                    <button type="button" class="next-btn mt-4 px-4 py-2 bg-green-500 text-white rounded"
+                    <button type="button" class="next-btn mt-4 px-4 py-2 bg-green-600 text-white rounded"
                         data-next="direccionDomiciliaria">Siguiente</button>
                 </div>
                 <div id="direccionDomiciliaria" class="tab-panel hidden">
                     @include('socios.direccion')
-                    <button type="button" class="back-btn mt-4 px-4 py-2 bg-slate-600 text-white rounded"
+                    <button type="button" class="back-btn mt-4 px-4 py-2 bg-blue-600 text-white rounded"
                         data-prev="datos-personales">Atras</button>
-                    <button type="button" class="next-btn mt-4 px-4 py-2 bg-green-500 text-white rounded"
+                    <button type="button" class="next-btn mt-4 px-4 py-2 bg-green-600 text-white rounded"
                         data-next="laboral">Siguiente</button>
                 </div>
                 <div id="laboral" class="tab-panel hidden">
                     @include('socios.laboral')
-                    <button type="button" class="back-btn mt-4 px-4 py-2 bg-slate-600 text-white rounded"
+                    <button type="button" class="back-btn mt-4 px-4 py-2 bg-blue-600 text-white rounded"
                         data-prev="direccionDomiciliaria">Atras</button>
-                    <button type="button" class="next-btn mt-4 px-4 py-2 bg-green-500 text-white rounded"
+                    <button type="button" class="next-btn mt-4 px-4 py-2 bg-green-600 text-white rounded"
                         data-next="conyuge">Siguiente</button>
                 </div>
                 <div id="conyuge" class="tab-panel hidden">
                     @include('socios.conyuge')
-                    <button type="button" class="back-btn mt-4 px-4 py-2 bg-slate-600 text-white rounded"
+                    <button type="button" class="back-btn mt-4 px-4 py-2 bg-blue-600 text-white rounded"
                         data-prev="laboral">Atras</button>
-                    <button type="button" class="next-btn mt-4 px-4 py-2 bg-green-500 text-white rounded"
+                    <button type="button" class="next-btn mt-4 px-4 py-2 bg-green-600 text-white rounded"
                         data-next="beneficiarios">Siguiente</button>
                 </div>
                 <div id="beneficiarios" class="tab-panel hidden">
                     @include('socios.beneficiarios')
-                    <button type="button" class="back-btn mt-4 px-4 py-2 bg-slate-600 text-white rounded"
+                    <button type="button" class="back-btn mt-4 px-4 py-2 bg-blue-600 text-white rounded"
                         data-next="conyuge" data-prev="conyuge">Atras</button>
                 </div>
 
