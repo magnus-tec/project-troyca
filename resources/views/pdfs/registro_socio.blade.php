@@ -290,7 +290,7 @@
 
             <td><strong>TELÉFONO:</strong>
                 <span class="mayusculas">
-                    {{ !isset($registro->direccion->telefono) ? 'No especificado' : $socio->direccion->telefono }}
+                    {{ !isset($registro->direccion->telefono) ? 'No especificado' : $registro->direccion->telefono }}
                 </span>
             </td>
         </tr>
