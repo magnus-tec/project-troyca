@@ -34,10 +34,16 @@ class RolesAndPermissionsSeeder extends Seeder
 
         Permission::create(['name' => 'estado-cuenta']);
         Permission::create(['name' => 'aporte-ahorros']);
-        Permission::create(['name' => 'registro-socios']);
         Permission::create(['name' => 'productos']);
         Permission::create(['name' => 'contacto']);
+
+        // Prestamos
         Permission::create(['name' => 'pagar-prestamo']);
+        Permission::create(['name' => 'eliminar-prestamo']);
+        //Socios
+        Permission::create(['name' => 'registro-socios']);
+        Permission::create(['name' => 'actualizar-socio']);
+        Permission::create(['name' => 'eliminar-socio']);
 
 
         // Create Roles

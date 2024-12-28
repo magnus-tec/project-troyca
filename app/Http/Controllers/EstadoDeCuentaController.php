@@ -7,6 +7,7 @@ use App\Models\Prestamo;
 use App\Models\PrestamoCuota;
 use App\Models\RegistroSocio;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -26,7 +27,7 @@ class EstadoDeCuentaController extends Controller
      */
     public function create()
     {
-        $socios = RegistroSocio::where('registro_socios.estado', 'activo')
+        $socios = RegistroSocio::where('registro_socios.estado', 0)
             ->join('datos_personales', 'registro_socios.id', '=', 'datos_personales.registro_socio_id')
             ->select(
                 'registro_socios.id',
@@ -83,7 +84,7 @@ class EstadoDeCuentaController extends Controller
 
 
         // Retornar una respuesta de éxito
-        return redirect()->route('estado-de-cuenta')->with('success', 'Préstamo guardado con éxito');
+        return redirect()->route('prestamos.index')->with('success', 'Préstamo guardado con éxito');
     }
     public function generarPDF($id)
     {
@@ -104,19 +105,25 @@ class EstadoDeCuentaController extends Controller
     }
     public function pagarCuota($id)
     {
-        $cuota = PrestamoCuota::find($id);
 
-        if ($cuota) {
-            $cuota->estado = ($cuota->estado == 1) ? 0 : 1;
-            $cuota->save();
+        $cuota = PrestamoCuota::find($id);
+        $fechaActual = Carbon::now()->format('Y-m-d');
+        $cuota->estado = ($cuota->estado == 1) ? 0 : 1;
+        if ($cuota->estado == 1) {
+            $cuota->fecha_pago_realizado = $fechaActual;
+        } else {
+            $cuota->fecha_pago_realizado = null;
         }
+        $cuota->save();
+
         $totalPagado = PrestamoCuota::where('estado', 1)->sum('cuota');
 
 
         return response()->json([
             'estado' => $cuota->estado,
             'mensaje' => $cuota->estado == 1 ? 'Pagado' : 'Pendiente',
-            'totalPagado' => number_format($totalPagado, 2)
+            'totalPagado' => number_format($totalPagado, 2),
+            'fechaPago' => $cuota->fecha_pago_realizado
 
         ]);
     }

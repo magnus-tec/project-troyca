@@ -6,6 +6,7 @@
                 Apellido Paterno
             </label>
             <input type="text" name="apellido_paterno" id="apellido_paterno_personal"
+                value="{{ old('apellido_paterno', $socio->datosPersonales->apellido_paterno ?? '') }}"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
         </div>
         <div>
@@ -13,6 +14,7 @@
                 Apellido Materno
             </label>
             <input type="text" name="apellido_materno" id="apellido_materno_personal"
+                value="{{ old('apellido_materno', $socio->datosPersonales->apellido_materno ?? '') }}"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
         </div>
 
@@ -22,6 +24,7 @@
                 Nombres
             </label>
             <input type="text" name="nombres" id="nombres_personal"
+                value="{{ old('nombres', $socio->datosPersonales->nombres ?? '') }}"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
         </div>
 
@@ -31,6 +34,7 @@
                 DNI N°
             </label>
             <input type="text" name="dni" maxlength="8" id="dni_personal"
+                value="{{ old('dni', $socio->datosPersonales->dni ?? '') }}"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
         </div>
 
@@ -40,6 +44,7 @@
                 Fecha de Nacimiento
             </label>
             <input type="date" name="fecha_nacimiento" id="fecha_nacimiento_personal"
+                value="{{ old('fecha_nacimiento', $socio->datosPersonales->fecha_nacimiento ?? '') }}"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
         </div>
 
@@ -65,7 +70,7 @@
                 Profesión u Ocupación
             </label>
             <input type="text" name="profesion_ocupacion" id="profesion_ocupacion_personal"
-                value="{{ old('profesion_ocupacion') }}"
+                value="{{ old('ocupacion', $socio->datosPersonales->profesion_ocupacion ?? '') }}"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
         </div>
 
@@ -75,6 +80,7 @@
                 Nacionalidad
             </label>
             <input type="text" name="nacionalidad" id="nacionalidad_personal"
+                value="{{ old('nacionalidad', $socio->datosPersonales->nacionalidad ?? '') }}"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
         </div>
 

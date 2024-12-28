@@ -38,7 +38,7 @@
                             <td class="px-6 py-4 text-sm text-gray-800">{{ $cuota->fecha_pago }}</td>
                             <td class="px-6 py-4 text-sm text-gray-800">${{ number_format($cuota->cuota, 2) }}</td>
                             <td class="px-6 py-4 text-sm text-gray-800">
-                                {{ $cuota->updated_at && $cuota->estado == 1 ? $cuota->updated_at : 'SIN PAGAR' }}
+                                {{ $cuota->fecha_pago_realizado && $cuota->estado == 1 ? $cuota->fecha_pago_realizado : 'SIN PAGAR' }}
                             </td>
                             @can('pagar-prestamo')
                                 <td class="px-6 py-4">
@@ -76,6 +76,14 @@
                     button.removeClass('bg-green-500 bg-yellow-500');
                     button.addClass(response.estado == 1 ? 'bg-green-500' : 'bg-yellow-500');
                     $('#total-pagado').text(response.totalPagado);
+                    let row = button.closest('tr');
+                    let fechaTd = row.find('td').eq(3);
+
+                    if (response.estado == 1) {
+                        fechaTd.text(response.fechaPago);
+                    } else {
+                        fechaTd.text('SIN PAGAR');
+                    }
                 },
                 error: function() {
                     alert('Ocurrió un error al cambiar el estado');

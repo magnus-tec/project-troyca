@@ -21,6 +21,7 @@ return new class extends Migration
             $table->decimal('subtotal', 10, 2);
             $table->decimal('ted', 10, 2);
             $table->decimal('monto_pago', 10, 2);
+            $table->date('fecha_pago_realizado')->nullable();
             $table->string('estado');
             $table->timestamps();
         });

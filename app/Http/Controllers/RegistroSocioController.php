@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DatosPersonale;
 use App\Models\RegistroSocio;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -166,9 +168,11 @@ class RegistroSocioController extends Controller
         }
     }
 
-    public function edit(RegistroSocio $registro)
+    public function edit($id)
     {
-        return view('editar-registro', compact('registro'));
+        $socio = RegistroSocio::with('datosPersonales', 'direccion', 'informacionLaboral', 'conyuge', 'beneficiarios')->findOrFail($id);
+
+        return view('socios.editar-socio', compact('socio'));
     }
 
     /**
@@ -229,27 +233,23 @@ class RegistroSocioController extends Controller
             'conyuges.direccion' => 'nullable|string',
         ]);
 
-        //Validar los datos de Beneficiarios
-        // $validatedDataBeneficiarios = $request->validate([
-        //     'beneficiarios.apellidos_nombres' => 'nullable|string|max:255',
-        //     'beneficiarios.dni' => 'nullable|string|digits:8',
-        //     'beneficiarios.fecha_nacimiento' => 'nullable|date',
-        //     'beneficiarios.parentesco' => 'nullable|string|max:255',
-        //     'beneficiarios.sexo' => 'nullable|string|in:masculino,femenino',
-        // ]);
-
-        // echo json_encode($validatedDataDireccion);
-        // exit;
+        $validatedDataBeneficiarios = $request->validate([
+            'beneficiarios' => 'array',  // Verifica que es un array
+            'beneficiarios.*.apellidos_nombres' => 'nullable|string|max:255',
+            'beneficiarios.*.dni' => 'nullable|string|digits:8',
+            'beneficiarios.*.fecha_nacimiento' => 'nullable|date',
+            'beneficiarios.*.parentesco' => 'nullable|string|max:255',
+            'beneficiarios.*.sexo' => 'nullable|string|in:masculino,femenino',
+        ]);
 
         try {
             DB::enableQueryLog();
 
-            DB::transaction(function () use ($validatedDataPersonal, $validatedDataInformacionLaboral, $validatedDataDireccion, $validatedDataConyuge) {
+            DB::transaction(function () use ($validatedDataPersonal, $validatedDataInformacionLaboral, $validatedDataDireccion, $validatedDataConyuge, $validatedDataBeneficiarios) {
                 $registro = RegistroSocio::create([
                     'numero_socio' => $this->generarNumeroSocio(),
-                    'estado' => 'activo',
+                    'estado' => 0,
                 ]);
-                // Verifica si los datos de cónyuge no están vacíos antes de guardar
                 if (!empty(array_filter($validatedDataConyuge['conyuges']))) {
                     $registro->conyuge()->create($validatedDataConyuge['conyuges']);
                 }
@@ -262,13 +262,20 @@ class RegistroSocioController extends Controller
                 if (!empty(array_filter($validatedDataPersonal['datosPersonales']))) {
                     $registro->datosPersonales()->create($validatedDataPersonal['datosPersonales']);
                 }
+                if (!empty($validatedDataBeneficiarios['beneficiarios']) && is_array($validatedDataBeneficiarios['beneficiarios'])) {
+                    $beneficiarios = $validatedDataBeneficiarios['beneficiarios'];
+                    if (array_keys($beneficiarios) !== range(0, count($beneficiarios) - 1)) {
+                        $beneficiarios = [$beneficiarios];
+                    }
+                    if (!empty($beneficiarios)) {
+                        $registro->beneficiarios()->createMany($beneficiarios);
+                    }
+                }
             });
         } catch (\Exception $e) {
             dd($e->getMessage());
         }
-
-
-        return redirect()->route('registrar-socios')->with('success', 'Socio registrado con éxito.');
+        return redirect()->route('socios.index')->with('success', 'Socio registrado con éxito.');
     }
 
 
@@ -378,14 +385,26 @@ class RegistroSocioController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(RegistroSocio $registro)
+    public function destroy($id)
     {
-        $registro->delete();
-        return redirect()->route('registrar-socios')->with('success', 'Registro de socio eliminado con éxito.');
+        try {
+            $registro = RegistroSocio::findOrFail($id);
+            $registro->estado = $registro->estado == 0 ? 1 : 0;
+            $registro->save();
+            return response()->json([
+                'success' => true,
+                'newState' => $registro->estado
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false]);
+        }
     }
     public function generarPDF(RegistroSocio $registro)
     {
-        $pdf = Pdf::loadView('pdfs.registro_socio', compact('registro'));
+        $path = public_path('images/backgrounds_registro_socio/menbrete final.png');
+        $imageData = base64_encode(file_get_contents($path));
+        $src = 'data:image/jpeg;base64,' . $imageData;
+        $pdf = Pdf::loadView('pdfs.registro_socio', compact('registro', 'src'));
         return $pdf->download('registro_socio_' . $registro->numero_socio . '.pdf');
     }
 

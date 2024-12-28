@@ -19,19 +19,19 @@
                         {{ __('Inicio') }}
                     </x-nav-link>
                     @can('registro-socios')
-                        <a href="{{ route('registrar-socios') }}"
+                        <a href="{{ route('socios.index') }}"
                             class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                             Registrar Socios
                         </a>
                     @endcan
                     @can('estado-cuenta')
-                        <a href="{{ route('estado-de-cuenta') }}"
+                        <a href="{{ route('prestamos.index') }}"
                             class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                             Estado de Cuenta
                         </a>
                     @endcan
                     @can('aporte-ahorros')
-                        <a href="{{ route('aporte-ahorros') }}"
+                        <a href="{{ route('aportes.index') }}"
                             class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                             Aporte y Ahorros
                         </a>

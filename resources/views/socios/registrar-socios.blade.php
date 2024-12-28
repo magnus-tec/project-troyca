@@ -8,7 +8,7 @@
     <div class="container mx-auto px-4 py-12">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-semibold text-gray-800">Registro de Socios</h2>
-            <a href="{{ route('nuevo-registro') }}"
+            <a href="{{ route('socios.create') }}"
                 class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg flex items-center transition-all duration-300">
                 {{-- <i data-lucide="plus-circle" class="w-5 h-5 mr-2"></i> --}}
                 Agregar
@@ -56,31 +56,34 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                 {{ $registro->nombre_completo }}
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                <button type="button" id ="btn-{{ $registro->id }}"
+                                    class=" px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full shadow-md {{ $registro->estado == 0 ? 'bg-green-200 text-green-700' : 'text-red-700  bg-red-200' }}"
+                                    onclick="confirmDelete({{ $registro->id }}, '{{ $registro->estado == 0 ? '¿Está seguro de desactivar este registro?' : '¿Está seguro de activar este registro?' }}')">
+                                    @if ($registro->estado == 0)
+                                        Activado
+                                    @else
+                                        Deshabilitado
+                                    @endif
+                                </button>
+                            </td>
+                            {{-- <td class="px-6 py-4 whitespace-nowrap">
                                 <span
                                     class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                    {{ $registro->estado == 'activo' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                    {{ ucfirst($registro->estado) }}
+                                    {{ $registro->estado == 0 ? 'bg-green-200 text-green-700' : 'bg-red-200 text-red-700' }}">
+                                    {{ ucfirst($registro->estado == 0 ? 'activo' : 'desactivado') }}
                                 </span>
-                            </td>
+                            </td> --}}
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                {{-- <a href="{{ route('register.edit', $registro->id) }}"
+                                <a href="{{ route('socios.edit', $registro->id) }}"
                                     class="text-indigo-600 hover:text-indigo-900 mr-3">
                                     Editar
-                                </a> --}}
+                                </a>
                                 <a href="{{ route('registro.generar-pdf', $registro->id) }}"
                                     class="text-green-600 hover:text-green-900 mr-3">
                                     PDF
                                 </a>
-                                {{-- <form action="{{ route('register.destroy', $registro->id) }}" method="POST"
-                                    class="inline-block">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:text-red-900"
-                                        onclick="return confirm('¿Está seguro de eliminar este registro?')">
-                                        Eliminar
-                                    </button>
-                                </form> --}}
+
                             </td>
                         </tr>
                     @empty
@@ -94,4 +97,51 @@
             </table>
         </div>
     </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function confirmDelete(id, message) {
+            if (confirm(message)) {
+                fetch('{{ route('socios.destroy', ':id') }}'.replace(':id', id), {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        },
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            console.log(data.success);
+                            let button = document.getElementById('btn-' + id);
+                            if (data.newState == 0) {
+                                button.innerHTML = 'Activado';
+                                button.classList.remove('text-red-700', 'bg-red-200');
+                                button.classList.add('text-green-700', 'bg-green-200');
+                            } else {
+                                button.innerHTML = 'Deshabilitado';
+                                button.classList.remove('text-green-700', 'bg-green-200');
+                                button.classList.add('text-red-700', 'bg-red-200');
+                            }
+                        } else {
+                            alert('Hubo un error.');
+                        }
+                    })
+                    .catch(error => alert('Error: ' + error));
+            }
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            const mensajes = document.querySelectorAll('.bg-green-100, .bg-red-100');
+            mensajes.forEach(mensaje => {
+                setTimeout(() => {
+                    mensaje.style.transition = "opacity 0.3s ease";
+                    mensaje.style.opacity = 0;
+                    setTimeout(() => mensaje.remove(),
+                        300);
+                }, 3000);
+            });
+
+
+        });
+    </script>
+
 </x-app-layout>

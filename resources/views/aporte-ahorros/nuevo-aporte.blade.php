@@ -13,7 +13,7 @@
         <div class="bg-white rounded-lg shadow-md">
             <div class="border-b border-gray-200">
                 <nav class="flex space-x-8 px-6">
-                    <a href="{{ route('registrar-prestamo') }}"
+                    <a href="{{ route('prestamos.create') }}"
                         class="group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm border-green-500 text-green-600' hover:text-gray-700 hover:border-gray-300' }}">
                         <i data-lucide="user" class="w-5 h-5 mr-2 text-green-500'  group-hover:text-gray-500' }}"></i>
                         Datos de Solicitud

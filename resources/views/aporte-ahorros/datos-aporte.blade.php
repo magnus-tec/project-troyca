@@ -1,4 +1,4 @@
-<form action="{{ route('guardar-aporte') }}" method="POST" class="space-y-6" id="formAporte">
+<form action="" method="POST" class="space-y-6" id="formAporte">
     @csrf
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
         <!-- datos de solicitud -->
@@ -44,7 +44,7 @@
     function obtenerTotalAporte(clienteId) {
         $.ajax({
             url: "{{ route('obtener-total-aporte', ['id' => 'clienteId']) }}".replace('clienteId',
-            clienteId), // Reemplaza 'clienteId' con el valor real
+                clienteId), // Reemplaza 'clienteId' con el valor real
             method: 'GET',
             success: function(response) {
                 $('#formAporte [name="total_ahorros"]').val(response.total);
@@ -61,7 +61,7 @@
             return;
         }
         $.ajax({
-            url: "{{ route('guardar-aporte') }}",
+            url: "{{ route('aportes.store') }}",
             method: 'POST',
             data: {
                 _token: '{{ csrf_token() }}',

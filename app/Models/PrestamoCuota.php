@@ -18,6 +18,7 @@ class PrestamoCuota extends Model
         'subtotal',
         'ted',
         'monto_pago',
+        'fecha_pago_realizado',
         'estado',
     ];
     public function prestamo()

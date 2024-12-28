@@ -5,7 +5,8 @@
             <label for="departamento" class="block text-sm font-medium text-gray-700 mb-2">
                 Departamento
             </label>
-            <input type="text" id="departamento" name="departamento" value="{{ old('departamento') }}" required
+            <input type="text" id="departamento" name="departamento"
+                value="{{ old('departamento', $socio->direccion->departamento ?? '') }}"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
         </div>
 
@@ -13,7 +14,8 @@
             <label for="provincia" class="block text-sm font-medium text-gray-700 mb-2">
                 Provincia
             </label>
-            <input type="text" id="provincia" name="provincia" value="{{ old('provincia') }}" required
+            <input type="text" id="provincia" name="provincia"
+                value="{{ old('provincia', $socio->direccion->provincia ?? '') }}"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
         </div>
 
@@ -21,7 +23,8 @@
             <label for="distrito" class="block text-sm font-medium text-gray-700 mb-2">
                 Distrito
             </label>
-            <input type="text" id="distrito" name="distrito" value="{{ old('distrito') }}" required
+            <input type="text" id="distrito" name="distrito"
+                value="{{ old('distrito', $socio->direccion->distrito ?? '') }}"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
         </div>
 
@@ -29,7 +32,7 @@
             <label for="tipo_vivienda" class="block text-sm font-medium text-gray-700 mb-2">
                 Tipo de Vivienda
             </label>
-            <select id="tipo_vivienda" name="tipo_vivienda" required
+            <select id="tipo_vivienda" name="tipo_vivienda"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
                 <option value="">Seleccione...</option>
                 <option value="propia" {{ old('tipo_vivienda') == 'propia' ? 'selected' : '' }}>Propia</option>
@@ -43,7 +46,8 @@
             <label for="direccion" class="block text-sm font-medium text-gray-700 mb-2">
                 Dirección
             </label>
-            <input type="text" id="direccion" name="direccion" value="{{ old('direccion') }}" required
+            <input type="text" id="direccion" name="direccion"
+                value="{{ old('distrito', $socio->direccion->distrito ?? '') }}"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
         </div>
 
@@ -51,7 +55,8 @@
             <label for="referencia" class="block text-sm font-medium text-gray-700 mb-2">
                 Referencia
             </label>
-            <input type="text" id="referencia" name="referencia" value="{{ old('referencia') }}"
+            <input type="text" id="referencia" name="referencia"
+                value="{{ old('referencia', $socio->direccion->referencia ?? '') }}"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
         </div>
 
@@ -59,7 +64,8 @@
             <label for="telefono" class="block text-sm font-medium text-gray-700 mb-2">
                 Teléfono
             </label>
-            <input type="tel" id="telefono" name="telefono" value="{{ old('telefono') }}"
+            <input type="tel" id="telefono" name="telefono"
+                value="{{ old('telefono', $socio->direccion->telefono ?? '') }}"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
         </div>
 
@@ -67,7 +73,8 @@
             <label for="correo" class="block text-sm font-medium text-gray-700 mb-2">
                 Correo Electrónico
             </label>
-            <input type="email" id="correo" name="correo" value="{{ old('correo') }}"
+            <input type="email" id="correo" name="correo"
+                value="{{ old('correo', $socio->direccion->correo ?? '') }}"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
         </div>
     </div>

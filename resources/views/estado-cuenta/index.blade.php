@@ -9,7 +9,7 @@
         <!-- Título y Botón de Agregar -->
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-semibold text-gray-800">Lista de Préstamos</h2>
-            <a href="{{ route('registrar-prestamo') }}"
+            <a href="{{ route('prestamos.create') }}"
                 class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:shadow-lg transition-all flex justify-center items-center">
                 Agregar
             </a>
@@ -78,18 +78,25 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <a href="{{ route('prestamo-pagar', $prestamo->id) }}"
-                                    class="text-indigo-600 hover:text-indigo-900 mr-3 transition-all">Pagar</a>
+                                @can('pagar-prestamo', $prestamo)
+                                    <a href="{{ route('prestamo-pagar', $prestamo->id) }}"
+                                        class="text-indigo-600 hover:text-indigo-900 mr-3 transition-all">Pagar</a>
+                                @else
+                                    <a href="{{ route('prestamo-pagar', $prestamo->id) }}"
+                                        class="text-indigo-600 hover:text-indigo-900 mr-3 transition-all">Ver mas</a>
+                                @endcan
                                 <a href="{{ route('prestamo-pdf', $prestamo->id) }}"
                                     class="text-green-600 hover:text-green-900 mr-3 transition-all">PDF</a>
-                                <form class="inline-block">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:text-red-900 transition-all"
-                                        onclick="return confirm('¿Está seguro de eliminar este registro?')">
-                                        Eliminar
-                                    </button>
-                                </form>
+                                @can('eliminar-prestamo')
+                                    <form class="inline-block">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-600 hover:text-red-900 transition-all"
+                                            onclick="return confirm('¿Está seguro de eliminar este registro?')">
+                                            Eliminar
+                                        </button>
+                                    </form>
+                                @endcan
                             </td>
                         </tr>
                     @empty

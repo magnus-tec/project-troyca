@@ -44,27 +44,19 @@ Route::group(['middleware' => ['role:admin|user']], function () {
     Route::get('users/{userId}/delete', [App\Http\Controllers\UserController::class, 'destroy']);
 
     // ESTADO DE CUENTA
-    Route::get('/estado-de-cuenta', [EstadoDeCuentaController::class, 'index'])->name('estado-de-cuenta');
-    Route::get('/nuevo-prestamo', [EstadoDeCuentaController::class, 'create'])->name('registrar-prestamo');
-    Route::post('/guardar-prestamo', [EstadoDeCuentaController::class, 'store'])->name('guardar-prestamo');
+    Route::resource('prestamos', EstadoDeCuentaController::class);
     Route::get('/prestamo/{id}/pdf', [EstadoDeCuentaController::class, 'generarPDF'])->name('prestamo-pdf');
     Route::get('/prestamo/{id}/pagar', [EstadoDeCuentaController::class, 'generarPago'])->name('prestamo-pagar');
     Route::get('/prestamo/pagar-cuota/{id}', [EstadoDeCuentaController::class, 'pagarCuota'])->name('prestamo-pagarCuota');
 
     // APORTE Y AHORROS
-
-    Route::get('/aporte-ahorros', [AporteAhorrosController::class, 'index'])->name('aporte-ahorros');
-    Route::get('/nuevo-aporte-ahorro', [AporteAhorrosController::class, 'create'])->name('registrar-aporte');
-    Route::post('/guardar-aporte-ahorro', [AporteAhorrosController::class, 'store'])->name('guardar-aporte');
-    Route::get('/aporte/totalAportes/{id}', [AporteAhorrosController::class, 'totalAportes'])->name('obtener-total-aporte');
-    Route::post('/guardar-aporte', [AporteAhorrosController::class, 'store'])->name('guardar-aporte');
+    Route::resource('aportes', AporteAhorrosController::class);
     Route::get('/aporte/{id}/pdf', [AporteAhorrosController::class, 'generarPDF'])->name('aporte-pdf');
+    Route::get('/aporte/totalAportes/{id}', [AporteAhorrosController::class, 'totalAportes'])->name('obtener-total-aporte');
 
     // SOCIOS 
-    Route::get('/registrar-socios', [RegistroSocioController::class, 'index'])->name('registrar-socios');
-    Route::get('/nuevo-registro', [RegistroSocioController::class, 'create'])->name('nuevo-registro');
-    Route::post('/guardar-socio', [RegistroSocioController::class, 'store'])->name('guardar-socio');
-
+    Route::resource('socios', RegistroSocioController::class);
+    Route::get('/registro/{registro}/pdf', [RegistroSocioController::class, 'generarPDF'])->name('registro.generar-pdf');
 
 
     // Route::post('/registro/datos-personales', [RegistroSocioController::class, 'storeDatosPersonales'])->name('registro.datos-personales.store');
@@ -77,10 +69,7 @@ Route::group(['middleware' => ['role:admin|user']], function () {
     // Route::post('/registro/conyuge', [RegistroSocioController::class, 'storeConyuge'])->name('registro.conyuge.store');
     // Route::get('/registro/beneficiarios', [RegistroSocioController::class, 'create'])->name('registro.beneficiarios');
     // Route::post('/registro/beneficiarios', [RegistroSocioController::class, 'storeBeneficiarios'])->name('registro.beneficiarios.store');
-    Route::get('/registro/{registro}/edit', [RegistroSocioController::class, 'edit'])->name('registro.edit');
-    Route::put('/registro/{registro}', [RegistroSocioController::class, 'update'])->name('registro.update');
-    Route::delete('/registro/{registro}', [RegistroSocioController::class, 'destroy'])->name('registro.destroy');
-    Route::get('/registro/{registro}/pdf', [RegistroSocioController::class, 'generarPDF'])->name('registro.generar-pdf');
+
 });
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
