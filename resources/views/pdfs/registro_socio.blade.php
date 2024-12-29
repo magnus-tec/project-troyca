@@ -30,7 +30,7 @@
         }
 
         .header h1 {
-            color: #FF6B00;
+            color: #0a134e;
             font-size: 14px;
 
         }
@@ -60,8 +60,8 @@
         .section-title {
             clear: both;
             /* Para que la sección siguiente comience debajo de la foto e información */
-            background-color: #FF8533;
-            color: black;
+            background-color: #0a134e;
+            color: rgb(255, 255, 255);
             padding: 5px;
             font-weight: bold;
             margin-top: 10px;
