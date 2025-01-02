@@ -57,17 +57,24 @@
             </label>
             <select name="estado_civil" id="estado_civil_personal"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
-                <option value="">Seleccione...</option>
-                <option value="soltero" {{ $socio->datosPersonales->estado_civil == 'soltero' ? 'selected' : '' }}>
+                <option value=""
+                    {{ !isset($socio->datosPersonales->estado_civil) || $socio->datosPersonales->estado_civil == '' ? 'selected' : '' }}>
+                    Seleccione...</option>
+                <option value="soltero"
+                    {{ isset($socio->datosPersonales->estado_civil) && $socio->datosPersonales->estado_civil == 'soltero' ? 'selected' : '' }}>
                     Soltero(a)</option>
-                <option value="casado" {{ $socio->datosPersonales->estado_civil == 'casado' ? 'selected' : '' }}>
+                <option value="casado"
+                    {{ isset($socio->datosPersonales->estado_civil) && $socio->datosPersonales->estado_civil == 'casado' ? 'selected' : '' }}>
                     Casado(a)</option>
                 <option value="divorciado"
-                    {{ $socio->datosPersonales->estado_civil == 'divorciado' ? 'selected' : '' }}>Divorciado(a)</option>
-                <option value="viudo" {{ $socio->datosPersonales->estado_civil == 'viudo' ? 'selected' : '' }}>Viudo(a)
-                </option>
+                    {{ isset($socio->datosPersonales->estado_civil) && $socio->datosPersonales->estado_civil == 'divorciado' ? 'selected' : '' }}>
+                    Divorciado(a)</option>
+                <option value="viudo"
+                    {{ isset($socio->datosPersonales->estado_civil) && $socio->datosPersonales->estado_civil == 'viudo' ? 'selected' : '' }}>
+                    Viudo(a)</option>
                 <option value="conviviente"
-                    {{ $socio->datosPersonales->estado_civil == 'conviviente' ? 'selected' : '' }}>Conviviente</option>
+                    {{ isset($socio->datosPersonales->estado_civil) && $socio->datosPersonales->estado_civil == 'conviviente' ? 'selected' : '' }}>
+                    Conviviente</option>
             </select>
         </div>
 
