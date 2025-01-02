@@ -24,7 +24,7 @@
                 Fecha de Nacimiento
             </label>
             <input type="date" id="fecha_nacimiento_conyuge" name="fecha_nacimiento"
-                value="{{ old('fecha_nacimiento') }}"
+                value="{{ old('fecha_nacimiento', isset($socio->conyuge->fecha_nacimiento) ? \Carbon\Carbon::parse($socio->conyuge->fecha_nacimiento)->format('Y-m-d') : '') }}"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
         </div>
 

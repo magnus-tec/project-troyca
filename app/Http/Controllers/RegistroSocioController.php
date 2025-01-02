@@ -20,153 +20,160 @@ class RegistroSocioController extends Controller
         return view('socios.registrar-socios', compact('registros'));
     }
 
+    public function findAll()
+    {
+        if (!auth()->user()->hasRole('admin')) {
+            return response()->json([
+                'error' => 'No tienes permiso para acceder a esta información.'
+            ], 403);
+        }
+
+        $registros = RegistroSocio::with('datosPersonales')->get();
+        return response()->json($registros);
+    }
+
     public function getDatosPersonales()
     {
         $activeTab = 'datos-personales';
 
         return view('socios.datos-personales', compact('activeTab'));
     }
-    public function getDireccion()
-    {
-        $activeTab = 'direccion';
 
-        return view('socios.direccion', compact('activeTab'));
-    }
-    public function storeDatosPersonales(Request $request)
-    {
-        $request->validate([
-            'apellido_paterno' => 'required',
-            'apellido_materno' => 'required',
-            'nombres' => 'required',
-            'dni' => 'required|unique:datos_personales,dni',
-            'fecha_nacimiento' => 'required|date',
-            'estado_civil' => 'required',
-            'profesion_ocupacion' => 'nullable|string',
-            'nacionalidad' => 'required',
-            'sexo' => 'required',
-        ]);
+    // public function storeDatosPersonales(Request $request)
+    // {
+    //     $request->validate([
+    //         'apellido_paterno' => 'required',
+    //         'apellido_materno' => 'required',
+    //         'nombres' => 'required',
+    //         'dni' => 'required|unique:datos_personales,dni',
+    //         'fecha_nacimiento' => 'required|date',
+    //         'estado_civil' => 'required',
+    //         'profesion_ocupacion' => 'nullable|string',
+    //         'nacionalidad' => 'required',
+    //         'sexo' => 'required',
+    //     ]);
 
-        DB::transaction(function () use ($request) {
-            $registro = RegistroSocio::create([
-                'numero_socio' => $this->generarNumeroSocio(),
-                'estado' => 'activo',
-            ]);
+    //     DB::transaction(function () use ($request) {
+    //         $registro = RegistroSocio::create([
+    //             'numero_socio' => $this->generarNumeroSocio(),
+    //             'estado' => 'activo',
+    //         ]);
 
-            $registro->datosPersonales()->create($request->all());
-        });
+    //         $registro->datosPersonales()->create($request->all());
+    //     });
 
-        return redirect()->route('registro.direccion');
-    }
+    //     return redirect()->route('registro.direccion');
+    // }
 
-    public function storeDireccion(Request $request)
-    {
-        $request->validate([
-            'departamento' => 'required',
-            'provincia' => 'required',
-            'distrito' => 'required',
-            'tipo_vivienda' => 'required|in:propia,alquilada,familiar,otro',
-            'direccion' => 'required',
-            'referencia' => 'nullable',
-            'telefono' => 'nullable',
-            'correo' => 'nullable|email',
-        ]);
+    // public function storeDireccion(Request $request)
+    // {
+    //     $request->validate([
+    //         'departamento' => 'required',
+    //         'provincia' => 'required',
+    //         'distrito' => 'required',
+    //         'tipo_vivienda' => 'required|in:propia,alquilada,familiar,otro',
+    //         'direccion' => 'required',
+    //         'referencia' => 'nullable',
+    //         'telefono' => 'nullable',
+    //         'correo' => 'nullable|email',
+    //     ]);
 
-        $registro = RegistroSocio::latest()->first();
+    //     $registro = RegistroSocio::latest()->first();
 
-        if (!$registro) {
-            // If no RegistroSocio is found, redirect back with an error message
-            return redirect()->route('registro.datos-personales')->with('error', 'Por favor, complete los datos personales primero.');
-        }
+    //     if (!$registro) {
+    //         // If no RegistroSocio is found, redirect back with an error message
+    //         return redirect()->route('registro.datos-personales')->with('error', 'Por favor, complete los datos personales primero.');
+    //     }
 
-        try {
-            DB::transaction(function () use ($request, $registro) {
-                $registro->direccion()->create($request->all());
-            });
+    //     try {
+    //         DB::transaction(function () use ($request, $registro) {
+    //             $registro->direccion()->create($request->all());
+    //         });
 
-            return redirect()->route('registro.laboral');
-        } catch (\Exception $e) {
-            // Log the error
-            \Log::error('Error al guardar la dirección: ' . $e->getMessage());
+    //         return redirect()->route('registro.laboral');
+    //     } catch (\Exception $e) {
+    //         // Log the error
+    //         \Log::error('Error al guardar la dirección: ' . $e->getMessage());
 
-            // Redirect back with an error message
-            return redirect()->back()->with('error', 'Hubo un problema al guardar la dirección. Por favor, inténtelo de nuevo.');
-        }
-    }
+    //         // Redirect back with an error message
+    //         return redirect()->back()->with('error', 'Hubo un problema al guardar la dirección. Por favor, inténtelo de nuevo.');
+    //     }
+    // }
 
-    public function storeLaboral(Request $request)
-    {
-        $request->validate([
-            'situacion_laboral' => 'required',
-            'empresa' => 'required',
-            'direccion_laboral' => 'required',
-            'telefono_laboral' => 'required',
-            'cargo' => 'required',
-        ]);
+    // public function storeLaboral(Request $request)
+    // {
+    //     $request->validate([
+    //         'situacion_laboral' => 'required',
+    //         'empresa' => 'required',
+    //         'direccion_laboral' => 'required',
+    //         'telefono_laboral' => 'required',
+    //         'cargo' => 'required',
+    //     ]);
 
-        $registro = RegistroSocio::latest()->first();
-        $registro->informacionLaboral()->create($request->all());
+    //     $registro = RegistroSocio::latest()->first();
+    //     $registro->informacionLaboral()->create($request->all());
 
-        return redirect()->route('registro.conyuge');
-    }
+    //     return redirect()->route('registro.conyuge');
+    // }
 
-    public function storeConyuge(Request $request)
-    {
-        $request->validate([
-            'apellidos_nombres' => 'required',
-            'dni' => 'required|unique:conyuges,dni',
-            'fecha_nacimiento' => 'required|date',
-            'celular' => 'nullable',
-            'ocupacion' => 'required',
-            'direccion' => 'required',
-        ]);
+    // public function storeConyuge(Request $request)
+    // {
+    //     $request->validate([
+    //         'apellidos_nombres' => 'required',
+    //         'dni' => 'required|unique:conyuges,dni',
+    //         'fecha_nacimiento' => 'required|date',
+    //         'celular' => 'nullable',
+    //         'ocupacion' => 'required',
+    //         'direccion' => 'required',
+    //     ]);
 
-        $registro = RegistroSocio::latest()->first();
+    //     $registro = RegistroSocio::latest()->first();
 
-        if (!$registro) {
-            return redirect()->route('registro.datos-personales')->with('error', 'Por favor, complete los datos personales primero.');
-        }
+    //     if (!$registro) {
+    //         return redirect()->route('registro.datos-personales')->with('error', 'Por favor, complete los datos personales primero.');
+    //     }
 
-        try {
-            DB::transaction(function () use ($request, $registro) {
-                $registro->conyuge()->create($request->all());
-            });
+    //     try {
+    //         DB::transaction(function () use ($request, $registro) {
+    //             $registro->conyuge()->create($request->all());
+    //         });
 
-            return redirect()->route('registro.beneficiarios')->with('success', 'Datos del cónyuge guardados exitosamente.');
-        } catch (\Exception $e) {
-            \Log::error('Error al guardar los datos del cónyuge: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Hubo un problema al guardar los datos del cónyuge. Por favor, inténtelo de nuevo.');
-        }
-    }
+    //         return redirect()->route('registro.beneficiarios')->with('success', 'Datos del cónyuge guardados exitosamente.');
+    //     } catch (\Exception $e) {
+    //         \Log::error('Error al guardar los datos del cónyuge: ' . $e->getMessage());
+    //         return redirect()->back()->with('error', 'Hubo un problema al guardar los datos del cónyuge. Por favor, inténtelo de nuevo.');
+    //     }
+    // }
 
-    public function storeBeneficiarios(Request $request)
-    {
-        $request->validate([
-            'beneficiarios.*.apellidos_nombres' => 'required',
-            'beneficiarios.*.dni' => 'required|digits:8',
-            'beneficiarios.*.fecha_nacimiento' => 'required|date',
-            'beneficiarios.*.parentesco' => 'required',
-            'beneficiarios.*.sexo' => 'required|in:masculino,femenino',
-        ]);
+    // public function storeBeneficiarios(Request $request)
+    // {
+    //     $request->validate([
+    //         'beneficiarios.*.apellidos_nombres' => 'required',
+    //         'beneficiarios.*.dni' => 'required|digits:8',
+    //         'beneficiarios.*.fecha_nacimiento' => 'required|date',
+    //         'beneficiarios.*.parentesco' => 'required',
+    //         'beneficiarios.*.sexo' => 'required|in:masculino,femenino',
+    //     ]);
 
-        $registro = RegistroSocio::latest()->first();
+    //     $registro = RegistroSocio::latest()->first();
 
-        if (!$registro) {
-            return redirect()->route('registro.datos-personales')->with('error', 'Por favor, complete los datos personales primero.');
-        }
+    //     if (!$registro) {
+    //         return redirect()->route('registro.datos-personales')->with('error', 'Por favor, complete los datos personales primero.');
+    //     }
 
-        try {
-            DB::transaction(function () use ($request, $registro) {
-                foreach ($request->beneficiarios as $beneficiario) {
-                    $registro->beneficiarios()->create($beneficiario);
-                }
-            });
+    //     try {
+    //         DB::transaction(function () use ($request, $registro) {
+    //             foreach ($request->beneficiarios as $beneficiario) {
+    //                 $registro->beneficiarios()->create($beneficiario);
+    //             }
+    //         });
 
-            return redirect()->route('registrar-socios')->with('success', 'Beneficiarios registrados exitosamente.');
-        } catch (\Exception $e) {
-            \Log::error('Error al guardar los beneficiarios: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Hubo un problema al guardar los beneficiarios. Por favor, inténtelo de nuevo.');
-        }
-    }
+    //         return redirect()->route('registrar-socios')->with('success', 'Beneficiarios registrados exitosamente.');
+    //     } catch (\Exception $e) {
+    //         \Log::error('Error al guardar los beneficiarios: ' . $e->getMessage());
+    //         return redirect()->back()->with('error', 'Hubo un problema al guardar los beneficiarios. Por favor, inténtelo de nuevo.');
+    //     }
+    // }
 
     public function edit($id)
     {
@@ -190,7 +197,7 @@ class RegistroSocioController extends Controller
     public function store(Request $request)
     {
         // dd($request->input('datosPersonales'));
-
+        // dd($request->all());
         // Validar los datos de datosPersonales
         $validatedDataPersonal = $request->validate([
             'datosPersonales.apellido_paterno' => 'nullable|string|max:255',
@@ -262,6 +269,7 @@ class RegistroSocioController extends Controller
                 if (!empty(array_filter($validatedDataPersonal['datosPersonales']))) {
                     $registro->datosPersonales()->create($validatedDataPersonal['datosPersonales']);
                 }
+
                 if (!empty($validatedDataBeneficiarios['beneficiarios']) && is_array($validatedDataBeneficiarios['beneficiarios'])) {
                     $beneficiarios = $validatedDataBeneficiarios['beneficiarios'];
                     if (array_keys($beneficiarios) !== range(0, count($beneficiarios) - 1)) {
@@ -275,7 +283,7 @@ class RegistroSocioController extends Controller
         } catch (\Exception $e) {
             dd($e->getMessage());
         }
-        return redirect()->route('socios.index')->with('success', 'Socio registrado con éxito.');
+        return response()->json(['message' => 'Socio registrado con éxito']);
     }
 
 
@@ -295,91 +303,56 @@ class RegistroSocioController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, RegistroSocio $registro)
+    public function update(Request $request, RegistroSocio $socio)
     {
-        $request->validate([
-            'apellido_paterno' => 'required',
-            'apellido_materno' => 'required',
-            'nombres' => 'required',
-            'dni' => 'required|unique:datos_personales,dni,' . $registro->datosPersonales->id,
-            'fecha_nacimiento' => 'required|date',
-            'estado_civil' => 'required',
-            'profesion' => 'required',
-            'nacionalidad' => 'required',
-            'sexo' => 'required',
-            'departamento' => 'required',
-            'provincia' => 'required',
-            'distrito' => 'required',
-            'tipo_vivienda' => 'required',
-            'direccion' => 'required',
-            'situacion_laboral' => 'required',
-            'empresa' => 'required',
-            'direccion_laboral' => 'required',
-            'telefono_laboral' => 'required',
-            'cargo' => 'required',
-        ]);
+        $socio = RegistroSocio::findOrFail($socio->id);
 
-        DB::transaction(function () use ($request, $registro) {
-            $registro->datosPersonales()->update([
-                'apellido_paterno' => $request->apellido_paterno,
-                'apellido_materno' => $request->apellido_materno,
-                'nombres' => $request->nombres,
-                'dni' => $request->dni,
-                'fecha_nacimiento' => $request->fecha_nacimiento,
-                'estado_civil' => $request->estado_civil,
-                'profesion_ocupacion' => $request->profesion,
-                'nacionalidad' => $request->nacionalidad,
-                'sexo' => $request->sexo,
-            ]);
+        if ($request->has('datosPersonales')) {
+            $socio->datosPersonales()->updateOrCreate(
+                ['registro_socio_id' => $socio->id],
+                $request->datosPersonales
+            );
+        }
 
-            $registro->direccion()->update([
-                'departamento' => $request->departamento,
-                'provincia' => $request->provincia,
-                'distrito' => $request->distrito,
-                'tipo_vivienda' => $request->tipo_vivienda,
-                'direccion' => $request->direccion,
-                'referencia' => $request->referencia,
-                'telefono' => $request->telefono,
-                'correo' => $request->correo,
-            ]);
+        if ($request->has('direccionDomiciliaria')) {
+            $socio->direccion()->updateOrCreate(
+                ['registro_socio_id' => $socio->id],
+                $request->direccionDomiciliaria
+            );
+        }
 
-            $registro->informacionLaboral()->update([
-                'situacion' => $request->situacion_laboral,
-                'institucion_empresa' => $request->empresa,
-                'direccion_laboral' => $request->direccion_laboral,
-                'telefono_laboral' => $request->telefono_laboral,
-                'cargo' => $request->cargo,
-            ]);
+        if ($request->has('datosLaborales')) {
+            $socio->informacionLaboral()->updateOrCreate(
+                ['registro_socio_id' => $socio->id],
+                $request->datosLaborales
+            );
+        }
 
-            if ($request->has('nombre_conyuge')) {
-                $registro->conyuge()->updateOrCreate(
-                    ['registro_socio_id' => $registro->id],
-                    [
-                        'apellidos_nombres' => $request->nombre_conyuge,
-                        'dni' => $request->dni_conyuge,
-                        'fecha_nacimiento' => $request->fecha_nacimiento_conyuge,
-                        'celular' => $request->celular_conyuge,
-                        'ocupacion' => $request->ocupacion_conyuge,
-                        'direccion' => $request->direccion_conyuge,
-                    ]
-                );
-            }
-
-            if ($request->has('beneficiarios')) {
-                $registro->beneficiarios()->delete();
-                foreach ($request->beneficiarios as $beneficiario) {
-                    $registro->beneficiarios()->create([
-                        'apellidos_nombres' => $beneficiario['nombre'],
-                        'dni' => $beneficiario['dni'],
-                        'fecha_nacimiento' => $beneficiario['fecha_nacimiento'],
-                        'parentesco' => $beneficiario['parentesco'],
-                        'sexo' => $beneficiario['sexo'],
-                    ]);
+        if ($request->has('conyuge')) {
+            $socio->conyuge()->updateOrCreate(
+                ['registro_socio_id' => $socio->id],
+                $request->conyuge
+            );
+        }
+        if ($request->has('beneficiariosActualizar')) {
+            foreach ($request->beneficiariosActualizar as $beneficiarioData) {
+                $beneficiario = $socio->beneficiarios()->find($beneficiarioData['id']);
+                if ($beneficiario) {
+                    $beneficiario->update($beneficiarioData);
+                } else {
+                    return response()->json(['error' => 'Beneficiario no encontrado para actualizar.'], 404);
                 }
             }
-        });
+        }
 
-        return redirect()->route('registrar-socios')->with('success', 'Registro de socio actualizado con éxito.');
+        if ($request->has('beneficiariosNuevos')) {
+            foreach ($request->beneficiariosNuevos as $beneficiarioData) {
+                $socio->beneficiarios()->create($beneficiarioData);
+            }
+        }
+
+
+        return response()->json(['message' => 'Socio actualizado con éxito.']);
     }
 
     /**

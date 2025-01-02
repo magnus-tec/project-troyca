@@ -46,7 +46,7 @@ return [
     |
     */
 
-    'expiration' => null,
+    'expiration' => null, //120 Tiempo en minutos
 
     /*
     |--------------------------------------------------------------------------

@@ -35,10 +35,20 @@
             <select id="tipo_vivienda" name="tipo_vivienda"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
                 <option value="">Seleccione...</option>
-                <option value="propia" {{ old('tipo_vivienda') == 'propia' ? 'selected' : '' }}>Propia</option>
-                <option value="alquilada" {{ old('tipo_vivienda') == 'alquilada' ? 'selected' : '' }}>Alquilada</option>
-                <option value="familiar" {{ old('tipo_vivienda') == 'familiar' ? 'selected' : '' }}>Familiar</option>
-                <option value="otro" {{ old('tipo_vivienda') == 'otro' ? 'selected' : '' }}>Otro</option>
+                <option value="propia"
+                    {{ isset($socio->direccion) && $socio->direccion->tipo_vivienda == 'propia' ? 'selected' : '' }}>
+                    Propia
+                </option>
+                <option value="alquilada"
+                    {{ isset($socio->direccion) && $socio->direccion->tipo_vivienda == 'alquilada' ? 'selected' : '' }}>
+                    Alquilada</option>
+                <option value="familiar"
+                    {{ isset($socio->direccion) && $socio->direccion->tipo_vivienda == 'familiar' ? 'selected' : '' }}>
+                    Familiar
+                </option>
+                <option value="otro"
+                    {{ isset($socio->direccion) && $socio->direccion->tipo_vivienda == 'otro' ? 'selected' : '' }}>Otro
+                </option>
             </select>
         </div>
 

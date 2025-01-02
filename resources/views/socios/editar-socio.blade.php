@@ -77,6 +77,13 @@
             </div>
 
         </div>
+
+    </div>
+    <div class="mt-6 flex justify-end gap-4">
+        <button type="submit" id="guardar-actualizar"
+            class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600">
+            Actualizar y Finalizar
+        </button>
     </div>
     @if ($errors->any())
         <div class="alert alert-danger">
@@ -87,11 +94,43 @@
             </ul>
         </div>
     @endif
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <script>
+        let beneficiarioCount = 0;
+
+        function eliminarBeneficiario(id) {
+            const beneficiarioDiv = document.getElementById(id);
+            beneficiarioDiv.remove();
+
+            fetch('{{ route('beneficiarios.destroy', ':id') }}'.replace(':id', id), {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Beneficiario eliminado correctamente');
+                    } else {
+                        console.error("Hubo un error al eliminar al beneficiario");
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al eliminar el beneficiario:', error);
+                });
+        }
+
+
         document.addEventListener('DOMContentLoaded', function() {
             const estadoCivil = document.getElementById('estado_civil_personal');
             const nextButtons = document.querySelectorAll('.next-btn');
             const backButtons = document.querySelectorAll('.back-btn');
+            const container = document.getElementById('beneficiarios-container');
+            const addButton = document.getElementById('add-beneficiario');
+
             let skipConyuge = false;
 
             estadoCivil.addEventListener('change', function() {
@@ -139,6 +178,193 @@
                     panel.classList.toggle('hidden', panel.id !== target);
                 });
             }
+
+
+
+            $('#guardar-actualizar').click(function() {
+                const beneficiariosPorActualizar = document.querySelectorAll(
+                    '.beneficiario-form-registrado');
+                const beneficiariosFormNuevos = document.querySelectorAll(
+                    '.beneficiario-form-agregando');
+                const beneficiariosActualizar = [];
+                const beneficiariosAgregar = [];
+
+                // Agrupar los datos en objetos
+                const datosPersonales = {
+                    apellido_paterno: document.getElementById('apellido_paterno_personal').value,
+                    apellido_materno: document.getElementById('apellido_materno_personal').value,
+                    nombres: document.getElementById('nombres_personal').value,
+                    dni: document.getElementById('dni_personal').value,
+                    fecha_nacimiento: document.getElementById('fecha_nacimiento_personal').value,
+                    estado_civil: document.getElementById('estado_civil_personal').value,
+                    profesion_ocupacion: document.getElementById('profesion_ocupacion_personal')
+                        .value,
+                    nacionalidad: document.getElementById('nacionalidad_personal').value,
+                    sexo: document.querySelector('input[name="sexo_personal"]:checked') ? document
+                        .querySelector('input[name="sexo_personal"]:checked').value : null,
+                };
+
+                const direccionDomiciliaria = {
+                    departamento: document.getElementById('departamento').value,
+                    provincia: document.getElementById('provincia').value,
+                    distrito: document.getElementById('distrito').value,
+                    tipo_vivienda: document.getElementById('tipo_vivienda').value,
+                    direccion: document.getElementById('direccion').value,
+                    referencia: document.getElementById('referencia').value,
+                    telefono: document.getElementById('telefono').value,
+                    correo: document.getElementById('correo').value,
+                };
+
+                const datosLaborales = {
+                    situacion: document.querySelector('input[name="situacion_laboral"]:checked') ?
+                        document.querySelector('input[name="situacion_laboral"]:checked').value : null,
+                    institucion_empresa: document.getElementById('empresa_laboral').value,
+                    direccion_laboral: document.getElementById('direccion_laboral').value,
+                    telefono_laboral: document.getElementById('telefono_laboral').value,
+                    cargo: document.getElementById('cargo_laboral').value,
+                };
+
+                const conyuge = {
+                    apellidos_nombres: document.getElementById('apellidos_nombres_conyuge').value,
+                    dni: document.getElementById('dni_conyuge').value,
+                    fecha_nacimiento: document.getElementById('fecha_nacimiento_conyuge').value,
+                    celular: document.getElementById('celular_conyuge').value,
+                    ocupacion: document.getElementById('ocupacion_conyuge').value,
+                    direccion: document.getElementById('direccion_conyuge').value,
+
+                };
+
+                beneficiariosPorActualizar.forEach(function(beneficiarioDiv) {
+                    const id = beneficiarioDiv.id;
+                    const apellidosNombres = beneficiarioDiv.querySelector(
+                        'input[name$="[apellidos_nombres]"]').value;
+                    const dni = beneficiarioDiv.querySelector('input[name$="[dni]"]').value;
+                    const fechaNacimiento = beneficiarioDiv.querySelector(
+                        'input[name$="[fecha_nacimiento]"]').value;
+                    const parentesco = beneficiarioDiv.querySelector('input[name$="[parentesco]"]')
+                        .value;
+                    const sexo = beneficiarioDiv.querySelector('input[type="radio"]:checked') ?
+                        beneficiarioDiv.querySelector('input[type="radio"]:checked').value : null;
+
+                    beneficiariosActualizar.push({
+                        id,
+                        apellidos_nombres: apellidosNombres,
+                        dni,
+                        fecha_nacimiento: fechaNacimiento,
+                        parentesco,
+                        sexo,
+                    });
+                });
+
+                beneficiariosFormNuevos.forEach(function(beneficiarioDiv) {
+                    const apellidosNombres = beneficiarioDiv.querySelector(
+                        'input[name$="[apellidos_nombres]"]').value;
+                    const dni = beneficiarioDiv.querySelector('input[name$="[dni]"]').value;
+                    const fechaNacimiento = beneficiarioDiv.querySelector(
+                        'input[name$="[fecha_nacimiento]"]').value;
+                    const parentesco = beneficiarioDiv.querySelector('input[name$="[parentesco]"]')
+                        .value;
+                    const sexo = beneficiarioDiv.querySelector('input[type="radio"]:checked') ?
+                        beneficiarioDiv.querySelector('input[type="radio"]:checked').value : null;
+                    null;
+
+                    beneficiariosAgregar.push({
+                        apellidos_nombres: apellidosNombres,
+                        dni,
+                        fecha_nacimiento: fechaNacimiento,
+                        parentesco,
+                        sexo,
+                    });
+
+                });
+
+                console.log(beneficiariosActualizar);
+                console.log(beneficiariosAgregar);
+                const datos = {
+                    _token: '{{ csrf_token() }}',
+                    datosPersonales: datosPersonales,
+                    direccionDomiciliaria: direccionDomiciliaria,
+                    datosLaborales: datosLaborales,
+                    conyuge: conyuge,
+                    beneficiariosActualizar: beneficiariosActualizar,
+                    beneficiariosNuevos: beneficiariosAgregar
+                };
+                fetch("{{ route('socios.update', $socio->id) }}", {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(datos),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        alert('¡Socio Actualizado con éxito!');
+                        //window.location.href = "{{ route('socios.index') }}";
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+
+            });
+
+            addButton.addEventListener('click', function() {
+                // Aumentamos el contador de beneficiarios
+                beneficiarioCount++;
+                const newBeneficiario = `
+                <div class="beneficiario-form-agregando mb-4 pb-4 border-b border-gray-200">
+                    <h3 class="text-sm font-semibold text-gray-700 mb-3 beneficiario-contador">Beneficiario</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                        <div class="md:col-span-2">
+                            <label for="apellidos_nombres_beneficiario_${beneficiarioCount}" class="block font-medium text-gray-700 mb-1">
+                                Apellidos y Nombres
+                            </label>
+                            <input type="text" id="apellidos_nombres_beneficiario_${beneficiarioCount}" name="beneficiarios[${beneficiarioCount}][apellidos_nombres]" class="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 text-sm">
+                        </div>
+                        <div>
+                            <label for="dni_${beneficiarioCount}" class="block font-medium text-gray-700 mb-1">
+                                DNI N°
+                            </label>
+                            <input type="text" id="dni_beneficiario_${beneficiarioCount}" name="beneficiarios[${beneficiarioCount}][dni]" maxlength="8" class="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 text-sm">
+                        </div>
+                        <div>
+                            <label for="fecha_nacimiento_${beneficiarioCount}" class="block font-medium text-gray-700 mb-1">
+                                Fecha de Nacimiento
+                            </label>
+                            <input type="date" id="fecha_nacimiento_beneficiario_${beneficiarioCount}" name="beneficiarios[${beneficiarioCount}][fecha_nacimiento]" class="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 text-sm">
+                        </div>
+                        <div>
+                            <label for="parentesco_${beneficiarioCount}" class="block font-medium text-gray-700 mb-1">
+                                Parentesco
+                            </label>
+                            <input type="text" id="parentesco_beneficiario_${beneficiarioCount}" name="beneficiarios[${beneficiarioCount}][parentesco]" class="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 text-sm">
+                        </div>
+                        <div>
+                            <label class="block font-medium text-gray-700 mb-1">Sexo</label>
+                            <div class="flex gap-3">
+                                <label class="inline-flex items-center text-sm">
+                                    <input type="radio" name="sexo_beneficiario_${beneficiarioCount}" value="masculino" class="form-radio text-green-500">
+                                    <span class="ml-2">Masculino</span>
+                                </label>
+                                <label class="inline-flex items-center text-sm">
+                                    <input type="radio" name="sexo_beneficiario_${beneficiarioCount}" value="femenino" class="form-radio text-green-500">
+                                    <span class="ml-2">Femenino</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Botón de eliminar -->
+                    <div class="mt-2">
+                        <button type="button" class="px-3 py-1 bg-red-500 text-white rounded-md text-sm hover:bg-red-600" onclick="removerBeneficiario(this)">
+                            Eliminar Beneficiario
+                        </button>
+                    </div>
+                </div>
+                `;
+                container.insertAdjacentHTML('beforeend', newBeneficiario);
+            });
+
+
         });
     </script>
 </x-app-layout>

@@ -16,12 +16,14 @@
                     <div class="flex gap-4">
                         <label class="inline-flex items-center">
                             <input type="radio" name="situacion_laboral" value="independiente"
-                                class="form-radio text-green-500">
+                                class="form-radio text-green-500"
+                                {{ isset($socio->informacionLaboral) && $socio->informacionLaboral->situacion == 'independiente' ? 'checked' : '' }}>
                             <span class="ml-2">Independiente</span>
                         </label>
                         <label class="inline-flex items-center">
                             <input type="radio" name="situacion_laboral" value="dependiente"
-                                class="form-radio text-green-500">
+                                class="form-radio text-green-500"
+                                {{ isset($socio->informacionLaboral) && $socio->informacionLaboral->situacion == 'dependiente' ? 'checked' : '' }}>
                             <span class="ml-2">Dependiente</span>
                         </label>
                     </div>

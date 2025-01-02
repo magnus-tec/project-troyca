@@ -58,6 +58,9 @@ Route::group(['middleware' => ['role:admin|user']], function () {
     Route::resource('socios', RegistroSocioController::class);
     Route::get('/registro/{registro}/pdf', [RegistroSocioController::class, 'generarPDF'])->name('registro.generar-pdf');
 
+    //BENEFICIARIOS
+    Route::resource('beneficiarios', App\Http\Controllers\BeneficiariosController::class);
+
 
     // Route::post('/registro/datos-personales', [RegistroSocioController::class, 'storeDatosPersonales'])->name('registro.datos-personales.store');
     // Route::get('/registro/datos-personales', [RegistroSocioController::class, 'create'])->name('registro.datos-personales');

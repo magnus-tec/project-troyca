@@ -129,6 +129,7 @@
                     .catch(error => alert('Error: ' + error));
             }
         }
+
         document.addEventListener('DOMContentLoaded', function() {
             const mensajes = document.querySelectorAll('.bg-green-100, .bg-red-100');
             mensajes.forEach(mensaje => {

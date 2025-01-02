@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
@@ -26,5 +27,16 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+    public function render($request, Throwable $exception)
+    {
+        // Capturar excepciones de autenticación
+        if ($exception instanceof AuthenticationException) {
+            return response()->json([
+                'error' => 'No estás autenticado o el token es inválido.'
+            ], 401);
+        };
+
+        return parent::render($request, $exception);
     }
 }

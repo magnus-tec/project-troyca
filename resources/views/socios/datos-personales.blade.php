@@ -2,6 +2,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Apellidos -->
         <div>
+            <input type="text" name="id" value="{{ isset($socio) ? $socio->id : '' }}" class="hidden">
             <label class="block text-sm font-medium text-gray-700 mb-2">
                 Apellido Paterno
             </label>
@@ -44,8 +45,9 @@
                 Fecha de Nacimiento
             </label>
             <input type="date" name="fecha_nacimiento" id="fecha_nacimiento_personal"
-                value="{{ old('fecha_nacimiento', $socio->datosPersonales->fecha_nacimiento ?? '') }}"
+                value="{{ old('fecha_nacimiento', isset($socio->datosPersonales->fecha_nacimiento) ? \Carbon\Carbon::parse($socio->datosPersonales->fecha_nacimiento)->format('Y-m-d') : '') }}"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
+
         </div>
 
         <!-- Estado Civil -->
@@ -56,11 +58,16 @@
             <select name="estado_civil" id="estado_civil_personal"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
                 <option value="">Seleccione...</option>
-                <option value="soltero">Soltero(a)</option>
-                <option value="casado">Casado(a)</option>
-                <option value="divorciado">Divorciado(a)</option>
-                <option value="viudo">Viudo(a)</option>
-                <option value="conviviente">Conviviente</option>
+                <option value="soltero" {{ $socio->datosPersonales->estado_civil == 'soltero' ? 'selected' : '' }}>
+                    Soltero(a)</option>
+                <option value="casado" {{ $socio->datosPersonales->estado_civil == 'casado' ? 'selected' : '' }}>
+                    Casado(a)</option>
+                <option value="divorciado"
+                    {{ $socio->datosPersonales->estado_civil == 'divorciado' ? 'selected' : '' }}>Divorciado(a)</option>
+                <option value="viudo" {{ $socio->datosPersonales->estado_civil == 'viudo' ? 'selected' : '' }}>Viudo(a)
+                </option>
+                <option value="conviviente"
+                    {{ $socio->datosPersonales->estado_civil == 'conviviente' ? 'selected' : '' }}>Conviviente</option>
             </select>
         </div>
 
@@ -91,11 +98,13 @@
             </label>
             <div class="flex gap-4">
                 <label class="inline-flex items-center">
-                    <input type="radio" name="sexo_personal" value="masculino" class="form-radio text-green-500">
+                    <input type="radio" name="sexo_personal" value="masculino" class="form-radio text-green-500"
+                        {{ isset($socio->datosPersonales) && $socio->datosPersonales->sexo == 'masculino' ? 'checked' : '' }}>
                     <span class="ml-2">Masculino</span>
                 </label>
                 <label class="inline-flex items-center">
-                    <input type="radio" name="sexo_personal" value="femenino" class="form-radio text-green-500">
+                    <input type="radio" name="sexo_personal" value="femenino" class="form-radio text-green-500"
+                        {{ isset($socio->datosPersonales) && $socio->datosPersonales->sexo == 'femenino' ? 'checked' : '' }}>
                     <span class="ml-2">Femenino</span>
                 </label>
             </div>
