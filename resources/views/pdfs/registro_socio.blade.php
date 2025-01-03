@@ -425,13 +425,13 @@
                     <tr>
                         <td><strong>PARENTESCO:</strong>
                             <span class="mayusculas">
-                                {{ !isset($beneficiario->sexo) ? 'No especificado' : $beneficiario->sexo }}
+                                {{ !isset($beneficiario->parentesco) ? 'No especificado' : $beneficiario->parentesco }}
                         </td>
                         </span>
                         {{ !isset($beneficiario->parentesco) ? 'No especificado' : $beneficiario->parentesco }}</td>
                         <td><strong>SEXO:</strong>
                             <span class="mayusculas">
-                                {{ !isset($beneficiario->sexo) ? 'No especificado' : $beneficiario->sexo }}
+                                {{ !isset($beneficiario->parentesco) ? 'No especificado' : $beneficiario->parentesco }}
                         </td>
                         </span>
                     </tr>
