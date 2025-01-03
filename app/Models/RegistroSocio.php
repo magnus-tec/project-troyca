@@ -42,4 +42,8 @@ class RegistroSocio extends Model
     {
         return $this->hasMany(Beneficiario::class, 'registro_socio_id');
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

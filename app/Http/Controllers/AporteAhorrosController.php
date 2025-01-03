@@ -17,7 +17,18 @@ class AporteAhorrosController extends Controller
      */
     public function index()
     {
-        $aportes = AporteAhorro::where('estado', 0)->with('registroSocio.datosPersonales')->get();
+        // $aportes = AporteAhorro::where('estado', 0)->with('registroSocio.datosPersonales')->get();
+        // return view('aporte-ahorros.index', compact('aportes'));
+
+        $aporteSocioId = RegistroSocio::where('user_id', auth()->user()->id)->first()->id ?? null;
+        $aportes = AporteAhorro::where('estado', 0)
+            ->when(!auth()->user()->hasRole('admin'), function ($query) use ($aporteSocioId) {
+                if ($aporteSocioId) {
+                    return $query->where('registro_socio_id', $aporteSocioId);
+                }
+            })
+            ->with('registroSocio.datosPersonales')
+            ->get();
         return view('aporte-ahorros.index', compact('aportes'));
     }
 
@@ -26,7 +37,7 @@ class AporteAhorrosController extends Controller
      */
     public function create()
     {
-        $socios = RegistroSocio::where('registro_socios.estado', 'activo')
+        $socios = RegistroSocio::where('registro_socios.estado', 0)
             ->join('datos_personales', 'registro_socios.id', '=', 'datos_personales.registro_socio_id')
             ->select(
                 'registro_socios.id',

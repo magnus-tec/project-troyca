@@ -9,10 +9,12 @@
         <!-- Título y Botón de Agregar -->
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-semibold text-gray-800">Lista de Préstamos</h2>
-            <a href="{{ route('prestamos.create') }}"
-                class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:shadow-lg transition-all flex justify-center items-center">
-                Agregar
-            </a>
+            @can('agregar-prestamo')
+                <a href="{{ route('prestamos.create') }}"
+                    class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:shadow-lg transition-all flex justify-center items-center">
+                    Agregar
+                </a>
+            @endcan
         </div>
 
         @if (session('success'))

@@ -172,15 +172,15 @@
 <body>
     <div class="page" style="margin: 50px; margin-top: 100px;">
         <div class="header">
-            <h1>COORAC.LT</h1>
+            {{-- <h1>COORAC.LT</h1>
             <h1>COOPERATIVA DE AHORRO Y CRÉDITO LA TROYCA Ltda.</h1>
-            <p>Agencia principal Jirón José Olaya 438 - Huamachuco</p>
+            <p>Agencia principal Jirón José Olaya 438 - Huamachuco</p> --}}
             <h2>REGISTRO DE SOCIOS</h2>
         </div>
 
-        <div class="photo-box">
+        {{-- <div class="photo-box">
             FOTO
-        </div>
+        </div> --}}
 
         <div class="socio-info">
             <p><strong>N° DE SOCIO:</strong> {{ $registro->numero_socio }}</p>

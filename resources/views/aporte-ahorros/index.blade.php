@@ -8,11 +8,13 @@
     <div class="container mx-auto px-4 py-12">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-semibold text-gray-800">Registro de Aportes</h2>
-            <a href="{{ route('aportes.create') }}"
-                class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg flex items-center transition-all duration-300">
-                {{-- <i data-lucide="plus-circle" class="w-5 h-5 mr-2"></i> --}}
-                Agregar
-            </a>
+            @can('registro-aporte')
+                <a href="{{ route('aportes.create') }}"
+                    class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg flex items-center transition-all duration-300">
+                    {{-- <i data-lucide="plus-circle" class="w-5 h-5 mr-2"></i> --}}
+                    Agregar
+                </a>
+            @endcan
         </div>
 
         @if (session('success'))

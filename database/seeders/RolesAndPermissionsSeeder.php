@@ -17,38 +17,42 @@ class RolesAndPermissionsSeeder extends Seeder
     public function run(): void
     {
         // Create Permissions
-        Permission::create(['name' => 'view-role']);
-        Permission::create(['name' => 'create-role']);
-        Permission::create(['name' => 'update-role']);
-        Permission::create(['name' => 'delete-role']);
+        Permission::firstOrCreate(['name' => 'view-role']);
+        Permission::firstOrCreate(['name' => 'create-role']);
+        Permission::firstOrCreate(['name' => 'update-role']);
+        Permission::firstOrCreate(['name' => 'delete-role']);
 
-        Permission::create(['name' => 'view-permission']);
-        Permission::create(['name' => 'create-permission']);
-        Permission::create(['name' => 'update-permission']);
-        Permission::create(['name' => 'delete-permission']);
+        Permission::firstOrCreate(['name' => 'view-permission']);
+        Permission::firstOrCreate(['name' => 'create-permission']);
+        Permission::firstOrCreate(['name' => 'update-permission']);
+        Permission::firstOrCreate(['name' => 'delete-permission']);
 
-        Permission::create(['name' => 'view-user']);
-        Permission::create(['name' => 'create-user']);
-        Permission::create(['name' => 'update-user']);
-        Permission::create(['name' => 'delete-user']);
+        Permission::firstOrCreate(['name' => 'view-user']);
+        Permission::firstOrCreate(['name' => 'create-user']);
+        Permission::firstOrCreate(['name' => 'update-user']);
+        Permission::firstOrCreate(['name' => 'delete-user']);
 
-        Permission::create(['name' => 'estado-cuenta']);
-        Permission::create(['name' => 'aporte-ahorros']);
-        Permission::create(['name' => 'productos']);
-        Permission::create(['name' => 'contacto']);
+        Permission::firstOrCreate(['name' => 'estado-cuenta']);
+        Permission::firstOrCreate(['name' => 'aporte-ahorros']);
+        Permission::firstOrCreate(['name' => 'productos']);
+        Permission::firstOrCreate(['name' => 'contacto']);
 
         // Prestamos
-        Permission::create(['name' => 'pagar-prestamo']);
-        Permission::create(['name' => 'eliminar-prestamo']);
+        Permission::firstOrCreate(['name' => 'pagar-prestamo']);
+        Permission::firstOrCreate(['name' => 'eliminar-prestamo']);
+        Permission::firstOrCreate(['name' => 'agregar-prestamo']);
         //Socios
-        Permission::create(['name' => 'registro-socios']);
-        Permission::create(['name' => 'actualizar-socio']);
-        Permission::create(['name' => 'eliminar-socio']);
-
+        Permission::firstOrCreate(['name' => 'registro-socios']);
+        Permission::firstOrCreate(['name' => 'actualizar-socio']);
+        Permission::firstOrCreate(['name' => 'eliminar-socio']);
+        //Aportes
+        Permission::firstOrCreate(['name' => 'registro-aporte']);
+        Permission::firstOrCreate(['name' => 'actualizar-aporte']);
+        Permission::firstOrCreate(['name' => 'eliminar-aporte']);
 
         // Create Roles
-        $adminRole = Role::create(['name' => 'admin']);
-        $userRole = Role::create(['name' => 'user']);
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $userRole = Role::firstOrCreate(['name' => 'user']);
 
         // todos los permisos para el admin
         $allPermissionNames = Permission::pluck('name')->toArray();

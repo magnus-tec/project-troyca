@@ -19,9 +19,24 @@ class EstadoDeCuentaController extends Controller
      */
     public function index()
     {
-        $prestamos = Prestamo::where('estado', 0)->with('registroSocio.datosPersonales')->get();
+        $registroSocioId = RegistroSocio::where('user_id', auth()->user()->id)->first()->id ?? null;
+        $prestamos = Prestamo::where('estado', 0)
+            ->when(!auth()->user()->hasRole('admin'), function ($query) use ($registroSocioId) {
+                if ($registroSocioId) {
+                    return $query->where('registro_socio_id', $registroSocioId);
+                }
+            })
+            ->with('registroSocio.datosPersonales')
+            ->get();
+
+        if ($prestamos->isEmpty()) {
+            $prestamos = collect([]);
+        }
         return view('estado-cuenta.index', compact('prestamos'));
     }
+
+
+
 
     public function findAll()
     {
