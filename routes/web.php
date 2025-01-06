@@ -60,19 +60,6 @@ Route::group(['middleware' => ['role:admin|user']], function () {
 
     //BENEFICIARIOS
     Route::resource('beneficiarios', App\Http\Controllers\BeneficiariosController::class);
-
-
-    // Route::post('/registro/datos-personales', [RegistroSocioController::class, 'storeDatosPersonales'])->name('registro.datos-personales.store');
-    // Route::get('/registro/datos-personales', [RegistroSocioController::class, 'create'])->name('registro.datos-personales');
-    // Route::get('/registro/direccion', [RegistroSocioController::class, 'create'])->name('registro.direccion');
-    // Route::post('/registro/direccion', [RegistroSocioController::class, 'storeDireccion'])->name('registro.direccion.store');
-    // Route::get('/registro/laboral', [RegistroSocioController::class, 'create'])->name('registro.laboral');
-    // Route::post('/registro/laboral', [RegistroSocioController::class, 'storeLaboral'])->name('registro.laboral.store');
-    // Route::get('/registro/conyuge', [RegistroSocioController::class, 'create'])->name('registro.conyuge');
-    // Route::post('/registro/conyuge', [RegistroSocioController::class, 'storeConyuge'])->name('registro.conyuge.store');
-    // Route::get('/registro/beneficiarios', [RegistroSocioController::class, 'create'])->name('registro.beneficiarios');
-    // Route::post('/registro/beneficiarios', [RegistroSocioController::class, 'storeBeneficiarios'])->name('registro.beneficiarios.store');
-
 });
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

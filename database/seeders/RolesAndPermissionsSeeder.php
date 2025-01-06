@@ -69,19 +69,9 @@ class RolesAndPermissionsSeeder extends Seeder
         ], [
             'name' => 'Admin',
             'email' => 'admin@gmail.com',
-            'password' => '12345678',
+            'password' => 'CoopacLt$89',
         ]);
 
         $adminUser->assignRole($adminRole);
-
-        $user = User::firstOrCreate([
-            'email' => 'user@gmail.com'
-        ], [
-            'name' => 'user',
-            'email' => 'user@gmail.com',
-            'password' => '12345678',
-        ]);
-
-        $user->assignRole($userRole);
     }
 }
