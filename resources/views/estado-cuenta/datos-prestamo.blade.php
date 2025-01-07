@@ -149,16 +149,52 @@
 </form>
 <div id="tabla-pagos"></div>
 <script>
-    document.querySelector('#generarCuota').addEventListener('click', function(event) {
-        event.preventDefault();
+    function validaYCalculaCuota() {
         const montoPrestamo = parseFloat(document.querySelector('input[name="monto_prestamo"]').value);
-        const tasaAnual = parseFloat(document.querySelector('input[name="tem"]').value) /
-            100; // Dividir entre 100 para convertir a decimal
+        const tasaAnual = parseFloat(document.querySelector('input[name="tem"]').value) / 100;
         const cantidadCuotas = parseInt(document.querySelector('input[name="cantidad_cuotas"]').value);
         const modalidad = document.querySelector('select[name="modalidad_pago"]').value;
         const fechaPrimeraCuota = document.querySelector('input[name="fecha_p_cuota"]').value;
 
-        // Verificar que los datos ingresados sean válidos
+        if (isNaN(montoPrestamo) || isNaN(tasaAnual) || isNaN(cantidadCuotas) || cantidadCuotas <= 0 || !
+            fechaPrimeraCuota) {
+            return;
+        }
+
+        let tasaInteres, numPagos, cuota, tasaDiaria;
+        let saldoCapital = montoPrestamo;
+
+        if (modalidad === "mensual") {
+            numPagos = cantidadCuotas;
+            tasaInteres = tasaAnual / 12;
+        } else {
+            numPagos = cantidadCuotas;
+            tasaInteres = tasaAnual / 365;
+        }
+
+        cuota = (montoPrestamo * Math.pow(1 + tasaInteres, numPagos) * tasaInteres) / (Math.pow(1 + tasaInteres,
+            numPagos) - 1);
+
+        document.querySelector('input[name="cuota"]').value = cuota.toFixed(2);
+
+        tasaDiaria = Math.pow(1 + tasaAnual, 1 / 365) - 1;
+        document.querySelector('input[name="ted"]').value = (tasaDiaria * 100).toFixed(
+            4);
+    }
+    document.querySelectorAll(
+        'input[name="monto_prestamo"], input[name="tem"], input[name="cantidad_cuotas"], select[name="modalidad_pago"], input[name="fecha_p_cuota"]'
+    ).forEach(input => {
+        input.addEventListener('input', validaYCalculaCuota);
+    });
+
+    document.querySelector('#generarCuota').addEventListener('click', function(event) {
+        event.preventDefault();
+        const montoPrestamo = parseFloat(document.querySelector('input[name="monto_prestamo"]').value);
+        const tasaAnual = parseFloat(document.querySelector('input[name="tem"]').value) / 100;
+        const cantidadCuotas = parseInt(document.querySelector('input[name="cantidad_cuotas"]').value);
+        const modalidad = document.querySelector('select[name="modalidad_pago"]').value;
+        const fechaPrimeraCuota = document.querySelector('input[name="fecha_p_cuota"]').value;
+
         if (isNaN(montoPrestamo) || isNaN(tasaAnual) || isNaN(cantidadCuotas) || cantidadCuotas <= 0 || !
             fechaPrimeraCuota) {
             alert("Por favor ingresa todos los datos correctamente.");
@@ -207,7 +243,6 @@
             saldoCapital -= cuota; // Restar la cuota al saldo de capital
             montoPagado += cuota; // Incrementar el monto pagado
 
-            // Agregar al listado de pagos con su interés diario
             listadoPagos.push({
                 fecha: fechaFormateada,
                 fechaVencimiento: fechaVencimientoFormateada,
@@ -231,34 +266,34 @@
         tablaDiv.innerHTML = ''; // Limpiar la tabla previa
 
         const cabecera = `
-    <table class="w-full table-auto border-collapse">
-      <thead>
-        <tr>
-          <th class="border px-4 py-2">Fecha de Pago</th>
-          <th class="border px-4 py-2">Fecha de Vencimiento</th>
-          <th class="border px-4 py-2">Monto</th>
-          <th class="border px-4 py-2">Saldo Capital</th>
-          <th class="border px-4 py-2">Subtotal</th>
-          <th class="border px-4 py-2">Monto Pagado</th>
-          <th class="border px-4 py-2">Interés Diario (%)</th>
-        </tr>
-      </thead>
-      <tbody>
-  `;
+            <table class="w-full table-auto border-collapse">
+            <thead>
+                <tr>
+                <th class="border px-4 py-2">Fecha de Pago</th>
+                <th class="border px-4 py-2">Fecha de Vencimiento</th>
+                <th class="border px-4 py-2">Monto</th>
+                <th class="border px-4 py-2">Saldo Capital</th>
+                <th class="border px-4 py-2">Subtotal</th>
+                <th class="border px-4 py-2">Monto Pagado</th>
+                <th class="border px-4 py-2">Interés Diario (%)</th>
+                </tr>
+            </thead>
+            <tbody>
+        `;
 
         let filas = '';
         pagos.forEach((pago, index) => {
             filas += `
-      <tr>
-        <td class="border px-4 py-2">${pago.fecha}</td>
-        <td class="border px-4 py-2">${pago.fechaVencimiento}</td>
-        <td class="border px-4 py-2">${pago.monto}</td>
-        <td class="border px-4 py-2">${pago.saldoCapital}</td>
-        <td class="border px-4 py-2">${pago.subtotal}</td>
-        <td class="border px-4 py-2">${pago.montoPagado}</td>
-        <td class="border px-4 py-2">${pago.interesDiario} %</td>
-      </tr>
-    `;
+        <tr>
+            <td class="border px-4 py-2">${pago.fecha}</td>
+            <td class="border px-4 py-2">${pago.fechaVencimiento}</td>
+            <td class="border px-4 py-2">${pago.monto}</td>
+            <td class="border px-4 py-2">${pago.saldoCapital}</td>
+            <td class="border px-4 py-2">${pago.subtotal}</td>
+            <td class="border px-4 py-2">${pago.montoPagado}</td>
+            <td class="border px-4 py-2">${pago.interesDiario} %</td>
+        </tr>
+        `;
         });
 
         const tablaCompleta = cabecera + filas + `</tbody></table>`;

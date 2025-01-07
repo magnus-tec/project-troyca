@@ -117,14 +117,4 @@
             </div>
         </div>
     </div>
-
-    {{-- <div class="mt-6 flex justify-end gap-4">
-        <button type="button" onclick="history.back()"
-            class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
-            Cancelar
-        </button>
-        <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600">
-            Continuar
-        </button>
-    </div> --}}
 </form>

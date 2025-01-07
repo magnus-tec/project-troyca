@@ -87,6 +87,7 @@
             Guardar y Finalizar
         </button>
     </div>
+
     @if ($errors->any())
         <div class="alert alert-danger">
             <ul>
@@ -96,6 +97,7 @@
             </ul>
         </div>
     @endif
+
 
     <script>
         function removerBeneficiario(button) {
@@ -241,7 +243,7 @@
                 const datos = {
                     _token: '{{ csrf_token() }}',
                     datosPersonales: datosPersonales,
-                    direccionDomiciliaria: direccionDomiciliaria,
+                    direcciones: direccionDomiciliaria,
                     datosLaborales: datosLaborales,
                     conyuges: conyuge,
                     beneficiarios: beneficiariosAgregar,
@@ -254,13 +256,41 @@
                         },
                         body: JSON.stringify(datos),
                     })
-                    .then(response => response.json())
+                    .then(response => {
+                        console.log(response);
+                        if (!response.ok) {
+                            return response.json().then(err => {
+                                let errorMessages = '';
+
+                                // Recorrer todos los campos en 'errors'
+                                for (let field in err.errors) {
+                                    // Unir todos los errores en un string con saltos de línea
+                                    errorMessages += `${err.errors[field].join(', ')}\n`;
+                                }
+
+                                // Mostrar el mensaje de error con SweetAlert2
+                                if (errorMessages) {
+                                    Swal.fire({
+                                        title: 'Errores de Validación',
+                                        text: errorMessages,
+                                        icon: 'error',
+                                        confirmButtonText: 'Aceptar'
+                                    });
+                                }
+
+                                throw new Error('Error en la respuesta del servidor');
+                            });
+
+                        }
+                        return response.json();
+                    })
                     .then(data => {
                         alert('¡Socio registrado con éxito!');
-                        window.location.href = "{{ route('socios.index') }}";
+                        //window.location.href = "{{ route('socios.index') }}";
                     })
                     .catch(error => {
-                        console.error('Error:', error);
+                        console.log("catch");
+                        console.error(error);
                     });
             }));
             // Agregar beneficiario

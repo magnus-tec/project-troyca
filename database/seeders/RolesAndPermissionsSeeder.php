@@ -53,7 +53,7 @@ class RolesAndPermissionsSeeder extends Seeder
         // Create Roles
         $adminRole = Role::firstOrCreate(['name' => 'admin']);
         $userRole = Role::firstOrCreate(['name' => 'user']);
-
+        $userHelp = Role::firstOrCreate(['name' => 'userHelp']);
         // todos los permisos para el admin
         $allPermissionNames = Permission::pluck('name')->toArray();
 
@@ -64,6 +64,8 @@ class RolesAndPermissionsSeeder extends Seeder
         $userRole->givePermissionTo(['estado-cuenta']);
         $userRole->givePermissionTo(['aporte-ahorros']);
 
+        $userHelp->givePermissionTo(['registro-socios']);
+
         $adminUser = User::firstOrCreate([
             'email' => 'admin@gmail.com'
         ], [
@@ -71,7 +73,15 @@ class RolesAndPermissionsSeeder extends Seeder
             'email' => 'admin@gmail.com',
             'password' => 'CoopacLt$89',
         ]);
-
         $adminUser->assignRole($adminRole);
+
+        $userHelpUser = User::firstOrCreate([
+            'email' => 'fabian_ramos@gmail.com'
+        ], [
+            'name' => 'Fabian Ramos',
+            'email' => 'fabian_ramos@gmail.com',
+            'password' => '41574501',
+        ]);
+        $userHelpUser->assignRole($userHelp);
     }
 }

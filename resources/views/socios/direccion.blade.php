@@ -74,7 +74,7 @@
             <label for="telefono" class="block text-sm font-medium text-gray-700 mb-2">
                 Teléfono
             </label>
-            <input type="tel" id="telefono" name="telefono"
+            <input type="text" id="telefono" name="telefono"
                 value="{{ old('telefono', $socio->direccion->telefono ?? '') }}"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
         </div>

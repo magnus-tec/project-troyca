@@ -27,10 +27,10 @@ Route::get('/', function () {
 // })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'role:admin|user'])
+    ->middleware(['auth', 'role:admin|user|userHelp'])
     ->name('dashboard');
 
-Route::group(['middleware' => ['role:admin|user']], function () {
+Route::group(['middleware' => ['role:admin|user|userHelp']], function () {
 
     Route::resource('permissions', App\Http\Controllers\PermissionController::class);
     Route::get('permissions/{permissionId}/delete', [App\Http\Controllers\PermissionController::class, 'destroy']);
