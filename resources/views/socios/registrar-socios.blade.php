@@ -75,10 +75,12 @@
                                 </span>
                             </td> --}}
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <a href="{{ route('socios.edit', $registro->id) }}"
-                                    class="text-indigo-600 hover:text-indigo-900 mr-3">
-                                    Editar
-                                </a>
+                                @can('actualizar-socio')
+                                    <a href="{{ route('socios.edit', $registro->id) }}"
+                                        class="text-indigo-600 hover:text-indigo-900 mr-3">
+                                        Editar
+                                    </a>
+                                @endcan
                                 <a href="{{ route('registro.generar-pdf', $registro->id) }}"
                                     class="text-green-600 hover:text-green-900 mr-3">
                                     PDF
