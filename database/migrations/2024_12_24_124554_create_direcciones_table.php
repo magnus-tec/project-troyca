@@ -19,9 +19,9 @@ return new class extends Migration
             $table->string('distrito')->nullable();
             $table->enum('tipo_vivienda', ['propia', 'alquilada', 'familiar', 'otro'])->nullable();
             $table->string('direccion')->nullable();
-            $table->string('referencia')->nullable()->nullable();
-            $table->string('telefono')->nullable()->nullable();
-            $table->string('correo')->nullable()->nullable();
+            $table->string('referencia')->nullable();
+            $table->string('telefono')->nullable();
+            $table->string('correo')->unique();
             $table->timestamps();
         });
     }
