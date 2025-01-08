@@ -286,7 +286,7 @@
                     })
                     .then(data => {
                         alert('¡Socio registrado con éxito!');
-                        //window.location.href = "{{ route('socios.index') }}";
+                        window.location.href = "{{ route('socios.index') }}";
                     })
                     .catch(error => {
                         console.log("catch");
