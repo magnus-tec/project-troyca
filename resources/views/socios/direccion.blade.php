@@ -57,7 +57,7 @@
                 Dirección
             </label>
             <input type="text" id="direccion" name="direccion"
-                value="{{ old('distrito', $socio->direccion->distrito ?? '') }}"
+                value="{{ old('distrito', $socio->direccion->direccion ?? '') }}"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
         </div>
 
