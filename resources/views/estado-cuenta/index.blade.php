@@ -88,7 +88,8 @@
                                         class="text-indigo-600 hover:text-indigo-900 mr-3 transition-all">Ver mas</a>
                                 @endcan
                                 <a href="{{ route('prestamo-pdf', $prestamo->id) }}"
-                                    class="text-green-600 hover:text-green-900 mr-3 transition-all">PDF</a>
+                                    class="text-green-600 hover:text-green-900 mr-3 transition-all"
+                                    target="_blank">PDF</a>
                                 @can('eliminar-prestamo')
                                     <form class="inline-block">
                                         @csrf

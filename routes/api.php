@@ -25,7 +25,8 @@ Route::middleware(['auth:sanctum'])->get('socios/findAll', [RegistroSocioControl
 //APIS ESTADO CUENTA
 Route::middleware(['auth:sanctum'])->get('estado_cuenta/findAll', [EstadoDeCuentaController::class, 'findAll']);
 Route::middleware(['auth:sanctum'])->get('estado_cuenta/{id}', [EstadoDeCuentaController::class, 'findOne']);
-Route::middleware(['auth:sanctum'])->get('prestamo/pdf_base64/{id}', [EstadoDeCuentaController::class, 'generarPDFBase64']);
+// Route::middleware(['auth:sanctum'])->get('prestamo/generarPDF/{id}', [EstadoDeCuentaController::class, 'generarPDFBase64']);
+Route::middleware(['auth:sanctum'])->get('prestamo/generarPDF/{id}', [EstadoDeCuentaController::class, 'generarPDF']);
 Route::middleware(['auth:sanctum'])->put('cuotas/{id}/pagar', [EstadoDeCuentaController::class, 'pagarCuotaApi']);
 Route::middleware(['auth:sanctum'])->get('socios/disponibles', [EstadoDeCuentaController::class, 'getSociosDisponibles']);
 Route::middleware(['auth:sanctum'])->post('estado_cuenta/create', [EstadoDeCuentaController::class, 'storePrestamo']);

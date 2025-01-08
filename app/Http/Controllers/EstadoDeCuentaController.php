@@ -248,15 +248,21 @@ class EstadoDeCuentaController extends Controller
     }
     public function generarPDF($id)
     {
-        $prestamo = Prestamo::with('registroSocio.datosPersonales')->find($id);
+        try {
+            $prestamo = Prestamo::with('registroSocio.datosPersonales')->find($id);
 
-        $detalles = DetallePrestamo::where('prestamos_id', $id)->first();
-        $prestamoCuotas = PrestamoCuota::where('prestamos_id', $id)->where('estado', 1)->get();
+            $detalles = DetallePrestamo::where('prestamos_id', $id)->first();
+            $prestamoCuotas = PrestamoCuota::where('prestamos_id', $id)->where('estado', 1)->get();
 
-        $pdf = Pdf::loadView('pdfs.prestamo', compact('prestamo', 'detalles', 'prestamoCuotas'));
+            $pdf = Pdf::loadView('pdfs.prestamo', compact('prestamo', 'detalles', 'prestamoCuotas'));
 
-        // return $pdf->download('prestamo_' . $prestamo->id . '.pdf');
-        return $pdf->download('prestamo_' . $prestamo->id . '.pdf');
+            return $pdf->stream('prestamo_' . $prestamo->id . '.pdf');
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al generar el PDF',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
     public function generarPago($id)
     {
