@@ -8,6 +8,7 @@ use App\Models\PrestamoCuota;
 use App\Models\RegistroSocio;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use Dotenv\Exception\ValidationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -203,48 +204,64 @@ class EstadoDeCuentaController extends Controller
      */
     public function store(Request $request)
     {
-        $prestamo = Prestamo::create([
-            'fecha_solicitud' => $request->fecha_solicitud,
-            'registro_socio_id' => $request->clientes,
-            'producto' => $request->producto,
-            'garantia' => $request->garantia,
-            'detalle_garantia' => $request->detalle_garantia,
-            'fecha_desembolso' => $request->fecha_desembolso,
-            'dni' => $request->dni,
-            'asesor' => $request->asesor,
-            'expediente' => $request->expediente,
-            'estado' => 0,
-
-        ]);
-
-        $detalle_prestamo = DetallePrestamo::create([
-            'prestamos_id' => $prestamo->id,
-            'monto' => $request->monto_prestamo,
-            'modalidad' => $request->modalidad_pago,
-            'tem' => $request->tem,
-            'cantidad_cuotas' => $request->cantidad_cuotas,
-            'cuota' => $request->cuota,
-            'f_primera_cuota' => $request->fecha_p_cuota,
-            'ted' => $request->ted,
-        ]);
-        $listado_pagos = json_decode($request->listado_pagos, true);
-        foreach ($listado_pagos as $pago) {
-            PrestamoCuota::create([
-                'prestamos_id' => $prestamo->id,
-                'fecha_pago' => $pago['fecha'],
-                'fecha_vencimiento' => $pago['fechaVencimiento'],
-                'cuota' => $pago['monto'],
-                'saldo_capital' => $pago['saldoCapital'],
-                'subtotal' => $pago['subtotal'],
-                'ted' => $pago['interesDiario'],
-                'monto_pago' => $pago['montoPagado'],
-                'estado' => 0,
+        try {
+            $request->validate([
+                'fecha_solicitud' => 'required|date',
+                'dni' => 'required|string|max:8',
+                'fecha_desembolso' => 'required|date',
+            ], [
+                'fecha_solicitud.required' => 'La fecha de solicitud es obligatoria.',
+                'dni.required' => 'El DNI es obligatorio.',
+                'dni.max' => 'El DNI no debe tener más de 8 caracteres.',
+                'fecha_desembolso.required' => 'La fecha de desembolso es obligatoria.',
             ]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
         }
+        try {
+            $prestamo = Prestamo::create([
+                'fecha_solicitud' => $request->fecha_solicitud,
+                'registro_socio_id' => $request->clientes,
+                'producto' => $request->producto,
+                'garantia' => $request->garantia,
+                'detalle_garantia' => $request->detalle_garantia,
+                'fecha_desembolso' => $request->fecha_desembolso,
+                'dni' => $request->dni,
+                'asesor' => $request->asesor,
+                'expediente' => $request->expediente,
+                'estado' => 0,
 
+            ]);
 
-        // Retornar una respuesta de éxito
-        return redirect()->route('prestamos.index')->with('success', 'Préstamo guardado con éxito');
+            $detalle_prestamo = DetallePrestamo::create([
+                'prestamos_id' => $prestamo->id,
+                'monto' => $request->monto_prestamo,
+                'modalidad' => $request->modalidad_pago,
+                'tem' => $request->tem,
+                'cantidad_cuotas' => $request->cantidad_cuotas,
+                'cuota' => $request->cuota,
+                'f_primera_cuota' => $request->fecha_p_cuota,
+                'ted' => $request->ted,
+            ]);
+            $listado_pagos = json_decode($request->listado_pagos, true);
+            foreach ($listado_pagos as $pago) {
+                PrestamoCuota::create([
+                    'prestamos_id' => $prestamo->id,
+                    'fecha_pago' => $pago['fecha'],
+                    'fecha_vencimiento' => $pago['fechaVencimiento'],
+                    'cuota' => $pago['monto'],
+                    'saldo_capital' => $pago['saldoCapital'],
+                    'subtotal' => $pago['subtotal'],
+                    'ted' => $pago['interesDiario'],
+                    'monto_pago' => $pago['montoPagado'],
+                    'estado' => 0,
+                ]);
+            }
+            // Retornar una respuesta de éxito
+            return response()->json(['success' => true, 'message' => 'Préstamo guardado con éxito']);
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'Ocurrió un error al guardar el préstamo: ' . $e->getMessage()]);
+        }
     }
     public function generarPDF($id)
     {

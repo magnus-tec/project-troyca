@@ -52,7 +52,7 @@
             <label class="block text-sm font-medium text-gray-700 mb-2">
                 Dni
             </label>
-            <input type="text" name="dni"
+            <input type="number" name="dni"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
         </div>
         <div>
@@ -69,6 +69,7 @@
             <input type="text" name="expediente"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
         </div>
+
         <!-- CALCULAR CUOTA -->
         <br>
         <div>
@@ -110,7 +111,7 @@
             <label class="block text-sm font-medium text-gray-700 mb-2">
                 CUOTA
             </label>
-            <input type="text" name="cuota" maxlength="8"
+            <input type="number" name="cuota" maxlength="8" disabled
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
         </div>
         <div>
@@ -124,7 +125,7 @@
             <label class="block text-sm font-medium text-gray-700 mb-2">
                 TAsa de interes diario
             </label>
-            <input type="text" name="ted" maxlength="8"
+            <input type="text" name="ted" maxlength="8" disabled
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
         </div>
         <input type="hidden" name="listado_pagos" id="listado_pagos">
@@ -149,6 +150,56 @@
 </form>
 <div id="tabla-pagos"></div>
 <script>
+    document.getElementById('formPrestamo').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const form = event.target;
+        const formData = new FormData(form);
+        fetch(form.action, {
+                method: form.method,
+                body: formData,
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => {
+                        let errorMessages = '';
+                        for (let field in err.errors) {
+                            // Unir todos los errores en un string con saltos de línea
+                            errorMessages += `${err.errors[field].join(', ')}\n`;
+                        }
+
+                        // Mostrar el mensaje de error con SweetAlert2
+                        if (errorMessages) {
+                            Swal.fire({
+                                title: 'Errores de Validación',
+                                text: errorMessages,
+                                icon: 'error',
+                                confirmButtonText: 'Aceptar'
+                            });
+                        }
+
+                        throw new Error('Error en la respuesta del servidor');
+                    });
+
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Éxito!',
+                        text: data.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    });
+
+    //.................fin
     function validaYCalculaCuota() {
         const montoPrestamo = parseFloat(document.querySelector('input[name="monto_prestamo"]').value);
         const tasaAnual = parseFloat(document.querySelector('input[name="tem"]').value) / 100;

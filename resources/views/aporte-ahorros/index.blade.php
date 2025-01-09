@@ -30,11 +30,11 @@
         @endif
 
         <!-- Lista de socios registrados -->
-        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div class="bg-white rounded-lg shadow-lg overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th class="px-6 py-3 text-left text-xs  font-medium text-gray-500 uppercase tracking-wider">
                             Nombres y Apellidos
                         </th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -61,7 +61,7 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <a href="{{ route('aporte-pdf', $aporte->id) }}"
+                                <a href="{{ route('aporte-pdf', $aporte->id) }}" target="_blank"
                                     class="text-green-600 hover:text-green-800 mr-3 transition duration-200">
                                     PDF
                                 </a>

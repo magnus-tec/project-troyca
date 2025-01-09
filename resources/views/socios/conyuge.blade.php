@@ -14,7 +14,7 @@
             <label for="dni" class="block text-sm font-medium text-gray-700 mb-2">
                 DNI N°
             </label>
-            <input type="text" id="dni_conyuge" name="dni_conyuge"
+            <input type="number" id="dni_conyuge" name="dni_conyuge"
                 value="{{ old('dni', $socio->conyuge->dni ?? '') }}" maxlength="8" required
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
         </div>

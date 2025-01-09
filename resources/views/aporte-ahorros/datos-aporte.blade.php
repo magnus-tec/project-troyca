@@ -17,7 +17,7 @@
             <label class="block text-sm font-medium text-gray-700 mb-2">
                 Monto Aporte
             </label>
-            <input type="text" name="monto" id="monto"
+            <input type="number" name="monto" id="monto"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
         </div>
         <div>
@@ -44,7 +44,7 @@
     function obtenerTotalAporte(clienteId) {
         $.ajax({
             url: "{{ route('obtener-total-aporte', ['id' => 'clienteId']) }}".replace('clienteId',
-                clienteId), // Reemplaza 'clienteId' con el valor real
+                clienteId),
             method: 'GET',
             success: function(response) {
                 $('#formAporte [name="total_ahorros"]').val(response.total);
@@ -57,7 +57,11 @@
         var montoAporte = $(this).find('[name="monto"]').val();
 
         if (!montoAporte) {
-            alert('Por favor, ingresa un monto de aporte.');
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Por favor, ingresa un monto de aporte.',
+            });
             return;
         }
         $.ajax({
@@ -72,7 +76,18 @@
                 obtenerTotalAporte(clienteId);
                 $('#formAporte [name="monto"]').val("");
                 if (response.success) {
-                    alert('Aporte guardado correctamente');
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Éxito!',
+                        text: 'Aporte registrado exitosamente. ¿Deseas generar el voucher?',
+                        showConfirmButton: true,
+                        confirmButtonText: 'Generar Voucher',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.open('/aporte/generar-voucher-pdf/' + response
+                                .nuevoTotal + '/' + response.aporteDetalle, '_blank');
+                        }
+                    });
                 }
             }
         });
@@ -82,7 +97,6 @@
         if (clienteId) {
             obtenerTotalAporte(clienteId);
         }
-
         $('#select_clientes').on('change', function() {
             var clienteId = $(this).val();
             obtenerTotalAporte(clienteId);

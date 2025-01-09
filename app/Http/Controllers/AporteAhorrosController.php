@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AporteAhorro;
+use App\Models\DatosPersonale;
 use App\Models\DetalleAporte;
 use App\Models\RegistroSocio;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -17,9 +18,6 @@ class AporteAhorrosController extends Controller
      */
     public function index()
     {
-        // $aportes = AporteAhorro::where('estado', 0)->with('registroSocio.datosPersonales')->get();
-        // return view('aporte-ahorros.index', compact('aportes'));
-
         $aporteSocioId = RegistroSocio::where('user_id', auth()->user()->id)->first()->id ?? null;
         $aportes = AporteAhorro::where('estado', 0)
             ->when(!auth()->user()->hasRole('admin'), function ($query) use ($aporteSocioId) {
@@ -31,7 +29,16 @@ class AporteAhorrosController extends Controller
             ->get();
         return view('aporte-ahorros.index', compact('aportes'));
     }
-
+    public function generarVoucher($nuevoTotal, $aporteDetalleId)
+    {
+        $aporteDetalleInfo = DetalleAporte::find($aporteDetalleId);
+        $aporteId = $aporteDetalleInfo->aporte_id;
+        $aporteInfo = AporteAhorro::find($aporteId);
+        $socioCodigo = RegistroSocio::find($aporteInfo->registro_socio_id);
+        $socioInfo = DatosPersonale::find($aporteInfo->registro_socio_id);
+        $pdf = PDF::loadView('pdfs.vaucher_aporte', compact('aporteDetalleInfo', 'aporteInfo', 'socioCodigo', 'socioInfo'));
+        return $pdf->stream('voucher_aporte.pdf');
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -64,6 +71,8 @@ class AporteAhorrosController extends Controller
                 $aporte->total_aportes = $request->monto;
                 $aporte->save();
             }
+            $socio = RegistroSocio::find($request->clientes)->with('datosPersonales',)->first();
+
             $aporteDetalle = new DetalleAporte();
             $aporteDetalle->aporte_id = $aporte->id;
             $aporteDetalle->monto = $request->monto;
@@ -73,7 +82,10 @@ class AporteAhorrosController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Aporte guardado con éxito',
-                'nuevoTotal' => $aporte->total_aportes
+                'nuevoTotal' => $aporte->total_aportes,
+                'aporteDetalle' => $aporteDetalle->id,
+                // 'aporte' => $aporte,
+                'socio' => $socio->id
             ]);
         } catch (\Exception $e) {
             return response()->json([

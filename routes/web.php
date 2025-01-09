@@ -27,10 +27,10 @@ Route::get('/', function () {
 // })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'role:admin|user|userHelp'])
+    ->middleware(['auth', 'role:admin|user|userHelp|userAporte'])
     ->name('dashboard');
 
-Route::group(['middleware' => ['role:admin|user|userHelp']], function () {
+Route::group(['middleware' => ['role:admin|user|userHelp|userAporte']], function () {
 
     Route::resource('permissions', App\Http\Controllers\PermissionController::class);
     Route::get('permissions/{permissionId}/delete', [App\Http\Controllers\PermissionController::class, 'destroy']);
@@ -53,6 +53,7 @@ Route::group(['middleware' => ['role:admin|user|userHelp']], function () {
     Route::resource('aportes', AporteAhorrosController::class);
     Route::get('/aporte/{id}/pdf', [AporteAhorrosController::class, 'generarPDF'])->name('aporte-pdf');
     Route::get('/aporte/totalAportes/{id}', [AporteAhorrosController::class, 'totalAportes'])->name('obtener-total-aporte');
+    Route::get('/aporte/generar-voucher-pdf/{nuevoTotal}/{aporteDetalle}', [AporteAhorrosController::class, 'generarVoucher']);
 
     // SOCIOS 
     Route::resource('socios', RegistroSocioController::class);

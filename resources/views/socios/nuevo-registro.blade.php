@@ -310,7 +310,7 @@
                             <label for="dni_${beneficiarioCount}" class="block font-medium text-gray-700 mb-1">
                                 DNI N°
                             </label>
-                            <input type="text" id="dni_beneficiario_${beneficiarioCount}" name="beneficiarios[${beneficiarioCount}][dni]" maxlength="8" class="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 text-sm">
+                            <input type="number" id="dni_beneficiario_${beneficiarioCount}" name="beneficiarios[${beneficiarioCount}][dni]" maxlength="8" class="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 text-sm">
                         </div>
                         <div>
                             <label for="fecha_nacimiento_${beneficiarioCount}" class="block font-medium text-gray-700 mb-1">
