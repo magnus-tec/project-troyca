@@ -36,7 +36,7 @@ class AporteAhorrosController extends Controller
         $aporteInfo = AporteAhorro::find($aporteId);
         $socioCodigo = RegistroSocio::find($aporteInfo->registro_socio_id);
         $socioInfo = DatosPersonale::find($aporteInfo->registro_socio_id);
-        $pdf = PDF::loadView('pdfs.vaucher_aporte', compact('aporteDetalleInfo', 'aporteInfo', 'socioCodigo', 'socioInfo'));
+        $pdf = PDF::loadView('pdfs.voucher_aporte', compact('aporteDetalleInfo', 'aporteInfo', 'socioCodigo', 'socioInfo'))->setPaper([0, 0, 226.77, 200], 'portrait');
         return $pdf->stream('voucher_aporte.pdf');
     }
     /**
@@ -57,6 +57,19 @@ class AporteAhorrosController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    public function generateCodigoAporte()
+    {
+        $lastCodigo = AporteAhorro::max('codigo') ?? '0000000';
+        $nextCodigo = intval($lastCodigo) + 1;
+        return str_pad($nextCodigo, 7, '0', STR_PAD_LEFT);
+    }
+    public function generateCodigoAporteCuotas()
+    {
+        $lastCodigo = DetalleAporte::max('codigo') ?? '0000000';
+        $nextId = intval($lastCodigo) + 1;
+        return str_pad($nextId, 7, '0', STR_PAD_LEFT);
+    }
+
     public function store(Request $request)
     {
         try {
@@ -69,6 +82,7 @@ class AporteAhorrosController extends Controller
                 $aporte->registro_socio_id = $request->clientes;
                 $aporte->estado = 0;
                 $aporte->total_aportes = $request->monto;
+                $aporte->codigo = $this->generateCodigoAporte();
                 $aporte->save();
             }
             $socio = RegistroSocio::find($request->clientes)->with('datosPersonales',)->first();
@@ -77,6 +91,7 @@ class AporteAhorrosController extends Controller
             $aporteDetalle->aporte_id = $aporte->id;
             $aporteDetalle->monto = $request->monto;
             $aporteDetalle->estado = 0;
+            $aporteDetalle->codigo = $this->generateCodigoAporteCuotas();
             $aporteDetalle->save();
 
             return response()->json([

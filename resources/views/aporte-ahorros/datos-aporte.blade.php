@@ -80,12 +80,31 @@
                         icon: 'success',
                         title: '¡Éxito!',
                         text: 'Aporte registrado exitosamente. ¿Deseas generar el voucher?',
+
+                        showCancelButton: true,
+                        cancelButtonText: 'No generar Voucher',
                         showConfirmButton: true,
                         confirmButtonText: 'Generar Voucher',
+                        reverseButtons: true,
+                        customClass: {
+                            confirmButton: 'bg-green-500 text-white px-4 py-2 m-2 rounded',
+                            cancelButton: 'bg-red-500 text-white px-4 py-2 m-2 rounded',
+                        },
+                        buttonsStyling: false,
+
                     }).then((result) => {
                         if (result.isConfirmed) {
                             window.open('/aporte/generar-voucher-pdf/' + response
                                 .nuevoTotal + '/' + response.aporteDetalle, '_blank');
+                        } else if (result.dismiss === Swal.DismissReason.cancel) {
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Voucher no generado',
+                                text: 'El voucher no se generará en esta ocasión.',
+                                timer: 2000,
+                                timerProgressBar: true,
+                                showConfirmButton: false,
+                            });
                         }
                     });
                 }
