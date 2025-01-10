@@ -107,7 +107,7 @@
     <table class="table-details">
         <thead>
             <tr>
-                <th>#</th>
+                <th>Codigo</th>
                 <th>Fecha y Hora</th>
                 <th>Aporte</th>
             </tr>
@@ -115,7 +115,7 @@
         <tbody>
             @foreach ($aporteDetalles as $index => $detalle)
                 <tr>
-                    <td>{{ $index + 1 }}</td>
+                    <td>{{ $detalle->codigo }}</td>
                     <td>{{ $detalle->fecha_registro }}</td>
                     <td>S/ {{ number_format($detalle->monto, 2) }}</td>
                 </tr>

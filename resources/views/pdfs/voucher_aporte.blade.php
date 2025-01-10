@@ -8,8 +8,10 @@
      <title>Voucher de Aporte</title>
      <style>
          body {
-             font-family: 'Helvetica Neue', Arial, sans-serif;
+             font-family: 'Roboto Mono', monospace;
              color: #333;
+             font-weight: 700;
+             /* Bold */
 
          }
 
@@ -68,8 +70,8 @@
          }
 
          .total-amount {
-             background-color: #0a134e;
-             color: #ffffff;
+             background-color: #eeeeee;
+             color: #000000;
              padding: 1px;
              text-align: center;
              font-size: 10px;

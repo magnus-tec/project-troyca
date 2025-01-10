@@ -35,6 +35,9 @@
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-6 py-3 text-left text-xs  font-medium text-gray-500 uppercase tracking-wider">
+                            Codigo
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs  font-medium text-gray-500 uppercase tracking-wider">
                             Nombres y Apellidos
                         </th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -48,6 +51,11 @@
                 <tbody class="bg-white divide-y divide-gray-200">
                     @forelse($aportes as $aporte)
                         <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">
+                                    {{ $aporte->codigo }}
+                                </div>
+                            </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm font-medium text-gray-900">
                                     {{ $aporte->registroSocio->datosPersonales->apellido_paterno }}
