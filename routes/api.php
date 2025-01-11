@@ -32,10 +32,11 @@ Route::middleware(['auth:sanctum'])->put('cuotas/{id}/pagar', [EstadoDeCuentaCon
 Route::middleware(['auth:sanctum'])->get('socios/disponibles', [EstadoDeCuentaController::class, 'getSociosDisponibles']);
 Route::middleware(['auth:sanctum'])->post('estado_cuenta/create', [EstadoDeCuentaController::class, 'storePrestamo']);
 //APIS APORTE AHORROS
-Route::middleware(['auth:sanctum'])->get('aportes/findAll', [AporteAhorrosController::class, 'index']);
+Route::middleware(['auth:sanctum'])->get('aportes/findAll', [AporteAhorrosController::class, 'findAll']);
 Route::middleware(['auth:sanctum'])->get('aportes/generarPDF/{id}', [AporteAhorrosController::class, 'generarPDF']);
 Route::middleware(['auth:sanctum'])->post('aportes/create', [AporteAhorrosController::class, 'store']);
-Route::middleware(['auth:sanctum'])->post('aportes/generar-voucher-pdf/{nuevoTotal}/{aporteDetalle}', [AporteAhorrosController::class, 'generarVoucher']);
+Route::middleware(['auth:sanctum'])->post('aportes/generar-voucher-pdf/{aporteDetalle}', [AporteAhorrosController::class, 'generarVoucher']);
+Route::middleware(['auth:sanctum'])->get('aportes/totalAportes/{id}', [AporteAhorrosController::class, 'totalAportes']);
 
 
 

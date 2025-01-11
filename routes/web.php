@@ -53,7 +53,7 @@ Route::group(['middleware' => ['role:admin|user|userHelp|userAporte|userHelpAdmi
     Route::resource('aportes', AporteAhorrosController::class);
     Route::get('/aporte/{id}/pdf', [AporteAhorrosController::class, 'generarPDF'])->name('aporte-pdf');
     Route::get('/aporte/totalAportes/{id}', [AporteAhorrosController::class, 'totalAportes'])->name('obtener-total-aporte');
-    Route::get('/aporte/generar-voucher-pdf/{nuevoTotal}/{aporteDetalle}', [AporteAhorrosController::class, 'generarVoucher']);
+    Route::get('/aporte/generar-voucher-pdf/{aporteDetalle}', [AporteAhorrosController::class, 'generarVoucher']);
 
     // SOCIOS 
     Route::resource('socios', RegistroSocioController::class);

@@ -95,7 +95,7 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             window.open('/aporte/generar-voucher-pdf/' + response
-                                .nuevoTotal + '/' + response.aporteDetalle, '_blank');
+                                .aporteDetalle, '_blank');
                         } else if (result.dismiss === Swal.DismissReason.cancel) {
                             Swal.fire({
                                 icon: 'info',

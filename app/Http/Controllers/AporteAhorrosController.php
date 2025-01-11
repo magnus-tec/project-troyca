@@ -32,15 +32,36 @@ class AporteAhorrosController extends Controller
         }
         return view('aporte-ahorros.index', compact('aportes'));
     }
-    public function generarVoucher($nuevoTotal, $aporteDetalleId)
+    public function findAll()
     {
-        $aporteDetalleInfo = DetalleAporte::find($aporteDetalleId);
-        $aporteId = $aporteDetalleInfo->aporte_id;
-        $aporteInfo = AporteAhorro::find($aporteId);
-        $socioCodigo = RegistroSocio::find($aporteInfo->registro_socio_id);
-        $socioInfo = DatosPersonale::find($aporteInfo->registro_socio_id);
-        $pdf = PDF::loadView('pdfs.voucher_aporte', compact('aporteDetalleInfo', 'aporteInfo', 'socioCodigo', 'socioInfo'))->setPaper([0, 0, 226.77, 200], 'portrait');
-        return $pdf->stream('voucher_aporte.pdf');
+        $aporteSocioId = RegistroSocio::where('user_id', auth()->user()->id)->first()->id ?? null;
+        $aportes = AporteAhorro::where('estado', 0)
+            ->when(!auth()->user()->hasRole('admin'), function ($query) use ($aporteSocioId) {
+                if ($aporteSocioId) {
+                    return $query->where('registro_socio_id', $aporteSocioId);
+                }
+            })
+            ->with('registroSocio.datosPersonales')
+            ->get();
+        return response()->json($aportes);
+    }
+
+
+    public function generarVoucher($aporteDetalleId)
+    {
+        try {
+            $aporteDetalleInfo = DetalleAporte::find($aporteDetalleId);
+            $aporteId = $aporteDetalleInfo->aporte_id;
+            $aporteInfo = AporteAhorro::find($aporteId);
+            $socioCodigo = RegistroSocio::find($aporteInfo->registro_socio_id);
+            $socioInfo = DatosPersonale::find($aporteInfo->registro_socio_id);
+            $pdf = PDF::loadView('pdfs.voucher_aporte', compact('aporteDetalleInfo', 'aporteInfo', 'socioCodigo', 'socioInfo'))->setPaper([0, 0, 226.77, 200], 'portrait');
+            return $pdf->stream('voucher_aporte.pdf');
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Error al generar el voucher'
+            ], 500);
+        }
     }
     /**
      * Show the form for creating a new resource.
