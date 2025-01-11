@@ -27,6 +27,9 @@ class AporteAhorrosController extends Controller
             })
             ->with('registroSocio.datosPersonales')
             ->get();
+        if (request()->wantsJson()) {
+            return response()->json($aportes);
+        }
         return view('aporte-ahorros.index', compact('aportes'));
     }
     public function generarVoucher($nuevoTotal, $aporteDetalleId)
@@ -99,7 +102,6 @@ class AporteAhorrosController extends Controller
                 'message' => 'Aporte guardado con éxito',
                 'nuevoTotal' => $aporte->total_aportes,
                 'aporteDetalle' => $aporteDetalle->id,
-                // 'aporte' => $aporte,
                 'socio' => $socio->id
             ]);
         } catch (\Exception $e) {
@@ -141,6 +143,9 @@ class AporteAhorrosController extends Controller
     {
         //
     }
+    /*************  ✨ Codeium Command ⭐  *************/
+    /**
+/******  f606614b-9dca-42ca-b2f3-92bac4ce5fad  *******/
     public function totalAportes($id)
     {
         $total = AporteAhorro::where('registro_socio_id', $id)->value('total_aportes');
@@ -151,9 +156,16 @@ class AporteAhorrosController extends Controller
     }
     public function generarPDF($id)
     {
-        $aporte = AporteAhorro::with('registroSocio.datosPersonales')->find($id);
-        $aporteDetalles = DetalleAporte::where('aporte_id', $id)->get();
-        $pdf = Pdf::loadView('pdfs.aporte-ahorros', compact('aporte', 'aporteDetalles'));
-        return $pdf->stream('aporte-ahorros_' . $aporte->id . '.pdf');
+        try {
+            $aporte = AporteAhorro::with('registroSocio.datosPersonales')->find($id);
+            $aporteDetalles = DetalleAporte::where('aporte_id', $id)->get();
+            $pdf = Pdf::loadView('pdfs.aporte-ahorros', compact('aporte', 'aporteDetalles'));
+            return $pdf->stream('aporte-ahorros_' . $aporte->id . '.pdf');
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al generar el PDF',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }

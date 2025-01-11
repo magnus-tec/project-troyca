@@ -19,8 +19,8 @@
          html {
              margin: 0 auto;
              padding: 0;
-             width: 95%;
-             height: 95%;
+             width: 90%;
+             height: 90%;
          }
 
          .container {
@@ -35,7 +35,7 @@
          }
 
          .header span {
-             color: #0a134e;
+             color: #000000;
              font-weight: bold;
          }
 
@@ -50,7 +50,7 @@
          }
 
          .section table {
-             font-size: 9px;
+             font-size: 9.5px;
          }
 
          .section-title {
@@ -80,7 +80,7 @@
          .message {
              font-size: 3px;
              font-weight: bold;
-             color: #0a134e;
+             color: #000000;
              text-align: center;
          }
 
@@ -109,17 +109,17 @@
  <body>
      <div class="container">
          <div class="header" style="display: flex; flex-direction: column; align-items: center;">
-             <span style="font-size:9px;display: block;">LA TROYCA</span>
-             <span style="font-size: 8px;display: block;">Cooperativa de ahorro y crédito</span>
-             <span style="font-size: 7px;font-weight: normal;color: #000000;display: block;">Recibo de <strong
-                     style="color: #0a134e;">Aporte</strong></span>
+             <span style="font-size:12px;display: block;">LA TROYCA</span>
+             <span style="font-size: 10px;display: block;">Cooperativa de ahorro y crédito</span>
+             <span style="font-size: 9px;font-weight: normal;color: #000000;display: block;"> <strong
+                     style="color: #000000;">Recibo de Aporte</strong></span>
 
          </div>
          <div class="section">
              <table style="width: 100%; border: 0;">
                  <tr>
-                     <td style="width: 50%; text-align: left;">Nro Doc:</td>
-                     <td style="width: 50%; text-align: left;">{{ $aporteDetalleInfo->codigo }}</td>
+                     <td style="width: 40%; text-align: left;">Nro Doc:</td>
+                     <td style="width: 60%; text-align: left;">{{ $aporteDetalleInfo->codigo }}</td>
                  </tr>
                  <tr>
                      <td style="text-align: left;">Fecha:</td>
@@ -139,8 +139,8 @@
          <div class="section" style="margin-bottom: 25px;border-bottom: none;">
              <table style="width: 100%; border: 0;">
                  <tr>
-                     <td style="width: 50%; text-align: left;">Cuenta:</td>
-                     <td style="width: 50%; text-align: left;">{{ $socioCodigo->numero_socio }}</td>
+                     <td style="width: 40%; text-align: left;">Cuenta:</td>
+                     <td style="width: 60%; text-align: left;">{{ $socioCodigo->numero_socio }}</td>
                  </tr>
                  <tr>
                      <td style="text-align: left;">Socio:</td>

@@ -185,5 +185,14 @@ class RolesAndPermissionsSeeder extends Seeder
             'password' => 'aportes',
         ]);
         $userAporteUser->assignRole($userHelpAdmin);
+        //.........10
+        $userHelpUser10 = User::firstOrCreate([
+            'email' => 'lesterwas5@gmail.com'
+        ], [
+            'name' => 'Issa Jenny Rubio Robles',
+            'email' => 'lesterwas5@gmail.com',
+            'password' => '44864790',
+        ]);
+        $userHelpUser10->assignRole($userHelpAdmin);
     }
 }
