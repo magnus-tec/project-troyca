@@ -19,8 +19,8 @@
          html {
              margin: 0 auto;
              padding: 0;
-             width: 90%;
-             height: 90%;
+             width: 95%;
+             height: 95%;
          }
 
          .container {
@@ -50,7 +50,7 @@
          }
 
          .section table {
-             font-size: 9.5px;
+             font-size: 11px;
          }
 
          .section-title {
@@ -74,11 +74,10 @@
              color: #000000;
              padding: 1px;
              text-align: center;
-             font-size: 10px;
+             font-size: 11px;
          }
 
          .message {
-             font-size: 3px;
              font-weight: bold;
              color: #000000;
              text-align: center;
@@ -109,9 +108,9 @@
  <body>
      <div class="container">
          <div class="header" style="display: flex; flex-direction: column; align-items: center;">
-             <span style="font-size:12px;display: block;">LA TROYCA</span>
-             <span style="font-size: 10px;display: block;">Cooperativa de ahorro y crédito</span>
-             <span style="font-size: 9px;font-weight: normal;color: #000000;display: block;"> <strong
+             <span style="font-size:15px;display: block;">LA TROYCA</span>
+             <span style="font-size: 12px;display: block;">Cooperativa de ahorro y crédito</span>
+             <span style="font-size: 11px;font-weight: normal;color: #000000;display: block;"> <strong
                      style="color: #000000;">Recibo de Aporte</strong></span>
 
          </div>
@@ -136,7 +135,7 @@
              </table>
          </div>
 
-         <div class="section" style="margin-bottom: 25px;border-bottom: none;">
+         <div class="section" style="margin-bottom: 5px;border-bottom: none;">
              <table style="width: 100%; border: 0;">
                  <tr>
                      <td style="width: 40%; text-align: left;">Cuenta:</td>
@@ -167,7 +166,7 @@
          </div>
 
 
-         <div class="message" style="font-size: 8px;">
+         <div class="message" style="font-size: 10px;">
              <p>Aporte guardado con éxito</p>
          </div>
      </div>
