@@ -276,14 +276,21 @@ class RegistroSocioController extends Controller
         $imageData = base64_encode(file_get_contents($path));
         $src = 'data:image/jpeg;base64,' . $imageData;
         $pdf = Pdf::loadView('pdfs.registro_socio', compact('registro', 'src'));
-        return $pdf->download('registro_socio_' . $registro->numero_socio . '.pdf');
+        return $pdf->stream('registro_socio_' . $registro->numero_socio . '.pdf');
     }
 
     private function generarNumeroSocio()
     {
         $ultimoRegistro = RegistroSocio::latest()->first();
-        $ultimoNumero = $ultimoRegistro ? intval(substr($ultimoRegistro->numero_socio, 3)) : 0;
+
+        if ($ultimoRegistro) {
+            // Extraer la parte numérica ignorando cualquier prefijo ('SOC' o 'S')
+            $ultimoNumero = intval(preg_replace('/[^0-9]/', '', $ultimoRegistro->numero_socio));
+        } else {
+            $ultimoNumero = 0;
+        }
+
         $nuevoNumero = $ultimoNumero + 1;
-        return 'SOC' . str_pad($nuevoNumero, 6, '0', STR_PAD_LEFT);
+        return 'S' . str_pad($nuevoNumero, 7, '0', STR_PAD_LEFT);
     }
 }

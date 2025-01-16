@@ -175,16 +175,6 @@ class RolesAndPermissionsSeeder extends Seeder
             'password' => '73125703',
         ]);
         $userHelpUser9->assignRole($userHelpAdmin);
-
-        // Crear usuario que solo accede a los permisos de aportes y ahorros
-        $userAporteUser = User::firstOrCreate([
-            'email' => 'aportes@gmail.com'
-        ], [
-            'name' => 'Aportes',
-            'email' => 'aportes@gmail.com',
-            'password' => 'aportes',
-        ]);
-        $userAporteUser->assignRole($userHelpAdmin);
         //.........10
         $userHelpUser10 = User::firstOrCreate([
             'email' => 'lesterwas5@gmail.com'

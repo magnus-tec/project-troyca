@@ -11,15 +11,17 @@ class PrestamoCuota extends Model
     protected $table = 'prestamo_cuotas';
     protected $fillable = [
         'prestamos_id',
-        'fecha_pago',
         'fecha_vencimiento',
         'cuota',
         'saldo_capital',
         'subtotal',
-        'ted',
+        'interes',
         'monto_pago',
         'fecha_pago_realizado',
         'estado',
+        'mora',
+        'amortizacion'
+
     ];
     public function prestamo()
     {

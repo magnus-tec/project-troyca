@@ -24,8 +24,13 @@
             <label class="block text-sm font-medium text-gray-700 mb-2">
                 Producto
             </label>
-            <input type="text" name="producto"
+            <select name="producto" id=""
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
+                <option value="credito-prendario">credito prendario</option>
+                <option value="credito-consumo">credito consumo</option>
+                <option value="credito-hipotecario">credito hipotecario</option>
+                <option value="credito-mype">credito mype</option>
+            </select>
         </div>
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -59,15 +64,22 @@
             <label class="block text-sm font-medium text-gray-700 mb-2">
                 Asesor
             </label>
-            <input type="text" name="asesor"
+            <select name="asesor" id=""
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
+                @foreach ($asesores as $asesor)
+                    <option value="{{ $asesor->id }}">{{ $asesor->name }}</option>
+                @endforeach
+            </select>
+            {{-- <input type="text" name="asesor"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"> --}}
         </div>
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">
                 Expediente
             </label>
             <input type="text" name="expediente"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
+                disabled>
         </div>
 
         <!-- CALCULAR CUOTA -->
@@ -91,6 +103,8 @@
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
                 <option value="diario">Diario</option>
                 <option value="mensual">Mensual</option>
+                <option value="semanal">Semanal</option>
+
             </select>
         </div>
         <div>
@@ -121,13 +135,13 @@
             <input type="date" name="fecha_p_cuota" maxlength="8"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
         </div>
-        <div>
+        {{-- <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">
                 TAsa de interes diario
             </label>
             <input type="text" name="ted" maxlength="8" disabled
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
-        </div>
+        </div> --}}
         <input type="hidden" name="listado_pagos" id="listado_pagos">
 
         <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
@@ -152,22 +166,48 @@
 <script>
     document.getElementById('formPrestamo').addEventListener('submit', function(event) {
         event.preventDefault();
+
+        let fecha_solicitud = document.querySelector('input[name="fecha_solicitud"]').value;
+        let fecha_desembolso = document.querySelector('input[name="fecha_desembolso"]').value;
+        let monto_prestamo = document.querySelector('input[name="monto_prestamo"]').value;
+        let tem = document.querySelector('input[name="tem"]').value;
+        let cantidad_cuotas = document.querySelector('input[name="cantidad_cuotas"]').value;
+        let cuota = document.querySelector('input[name="cuota"]').value;
+        let fecha_p_cuota = document.querySelector('input[name="fecha_p_cuota"]').value;
+        // let ted = document.querySelector('input[name="ted"]').value;
+
+        if (fecha_solicitud > fecha_desembolso) {
+            Swal.fire({
+                title: 'Error',
+                text: 'La fecha de solicitud no puede ser mayor a la fecha de desembolso.',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+            return;
+        }
         const form = event.target;
         const formData = new FormData(form);
+        formData.append('expediente', document.querySelector('input[name="expediente"]').value);
+        formData.append('cuota', document.querySelector('input[name="cuota"]').value);
+        formData.append('tem', document.querySelector('input[name="tem"]').value);
+        let listadoPagos = document.querySelector('input[name="listado_pagos"]').value;
+
+
         fetch(form.action, {
                 method: form.method,
-                body: formData,
+                body: JSON.stringify(Object.fromEntries(formData)),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
             })
             .then(response => {
                 if (!response.ok) {
                     return response.json().then(err => {
                         let errorMessages = '';
                         for (let field in err.errors) {
-                            // Unir todos los errores en un string con saltos de línea
                             errorMessages += `${err.errors[field].join(', ')}\n`;
                         }
-
-                        // Mostrar el mensaje de error con SweetAlert2
                         if (errorMessages) {
                             Swal.fire({
                                 title: 'Errores de Validación',
@@ -175,12 +215,33 @@
                                 icon: 'error',
                                 confirmButtonText: 'Aceptar'
                             });
+                        } else if (err.error) {
+                            Swal.fire({
+                                title: 'Error',
+                                text: err
+                                    .error,
+                                icon: 'error',
+                                confirmButtonText: 'Aceptar'
+                            });
+                            codigoExpediente();
+                            // limpiarPrestamo();
+                        } else if (err.errorPago) {
+                            Swal.fire({
+                                title: 'Error',
+                                text: err
+                                    .errorPago,
+                                icon: 'error',
+                                confirmButtonText: 'Aceptar'
+                            })
+                            codigoExpediente();
+
                         }
 
                         throw new Error('Error en la respuesta del servidor');
                     });
 
                 }
+
                 return response.json();
             })
             .then(data => {
@@ -192,6 +253,9 @@
                         showConfirmButton: false,
                         timer: 1500
                     })
+                    codigoExpediente();
+                    limpiarPrestamo();
+
                 }
             })
             .catch(error => {
@@ -199,150 +263,125 @@
             });
     });
 
-    //.................fin
-    function validaYCalculaCuota() {
-        const montoPrestamo = parseFloat(document.querySelector('input[name="monto_prestamo"]').value);
-        const tasaAnual = parseFloat(document.querySelector('input[name="tem"]').value) / 100;
-        const cantidadCuotas = parseInt(document.querySelector('input[name="cantidad_cuotas"]').value);
-        const modalidad = document.querySelector('select[name="modalidad_pago"]').value;
-        const fechaPrimeraCuota = document.querySelector('input[name="fecha_p_cuota"]').value;
-
-        if (isNaN(montoPrestamo) || isNaN(tasaAnual) || isNaN(cantidadCuotas) || cantidadCuotas <= 0 || !
-            fechaPrimeraCuota) {
-            return;
-        }
-
-        let tasaInteres, numPagos, cuota, tasaDiaria;
-        let saldoCapital = montoPrestamo;
-
-        if (modalidad === "mensual") {
-            numPagos = cantidadCuotas;
-            tasaInteres = tasaAnual / 12;
-        } else {
-            numPagos = cantidadCuotas;
-            tasaInteres = tasaAnual / 365;
-        }
-
-        cuota = (montoPrestamo * Math.pow(1 + tasaInteres, numPagos) * tasaInteres) / (Math.pow(1 + tasaInteres,
-            numPagos) - 1);
-
-        document.querySelector('input[name="cuota"]').value = cuota.toFixed(2);
-
-        tasaDiaria = Math.pow(1 + tasaAnual, 1 / 365) - 1;
-        document.querySelector('input[name="ted"]').value = (tasaDiaria * 100).toFixed(
-            4);
+    function limpiarPrestamo() {
+        document.querySelector('input[name="fecha_solicitud"]').value = '';
+        document.querySelector('input[name="fecha_desembolso"]').value = '';
+        document.querySelector('input[name="garantia"]').value = '';
+        document.querySelector('input[name="detalle_garantia"]').value = '';
+        document.querySelector('input[name="dni"]').value = '';
+        document.getElementById('tabla-pagos').innerHTML = '';
+        document.querySelector('input[name="monto_prestamo"]').value = '';
+        document.querySelector('input[name="tem"]').value = '';
+        document.querySelector('input[name="cantidad_cuotas"]').value = '';
+        document.querySelector('input[name="fecha_p_cuota"]').value = '';
+        document.querySelector('input[name="cuota"]').value = '';
+        document.querySelector('input[name="ted"]').value = '';
     }
-    document.querySelectorAll(
-        'input[name="monto_prestamo"], input[name="tem"], input[name="cantidad_cuotas"], select[name="modalidad_pago"], input[name="fecha_p_cuota"]'
-    ).forEach(input => {
-        input.addEventListener('input', validaYCalculaCuota);
-    });
 
-    document.querySelector('#generarCuota').addEventListener('click', function(event) {
-        event.preventDefault();
-        const montoPrestamo = parseFloat(document.querySelector('input[name="monto_prestamo"]').value);
-        const tasaAnual = parseFloat(document.querySelector('input[name="tem"]').value) / 100;
-        const cantidadCuotas = parseInt(document.querySelector('input[name="cantidad_cuotas"]').value);
-        const modalidad = document.querySelector('select[name="modalidad_pago"]').value;
-        const fechaPrimeraCuota = document.querySelector('input[name="fecha_p_cuota"]').value;
+    function redondearHaciaArriba(numero, decimales) {
+        const factor = Math.pow(10, decimales);
+        return Math.ceil(numero * factor) / factor;
+    }
 
-        if (isNaN(montoPrestamo) || isNaN(tasaAnual) || isNaN(cantidadCuotas) || cantidadCuotas <= 0 || !
-            fechaPrimeraCuota) {
-            alert("Por favor ingresa todos los datos correctamente.");
-            return;
-        }
-        let tasaInteres, numPagos, cuota, tasaDiaria;
+    function calculandoCuota() {
+        let fechaPrimeraCuota = document.querySelector('input[name="fecha_p_cuota"]').value;
+        let tasaInteres, numPagos, cuota, tasaDiaria, amortizacion, saldoCapital;
         let listadoPagos = [];
-        let saldoCapital = montoPrestamo;
-        if (modalidad === "mensual") {
-            numPagos = cantidadCuotas;
-            tasaInteres = tasaAnual / 12;
-        } else {
-            numPagos = cantidadCuotas;
-            tasaInteres = tasaAnual / 365;
-        }
+        const modalidad = document.querySelector('select[name="modalidad_pago"]').value;
+        const montoPrestamo = parseFloat(document.querySelector('input[name="monto_prestamo"]').value);
+        const tasa = parseFloat(document.querySelector('input[name="tem"]').value) / 100;
+        const cantidadCuotas = parseInt(document.querySelector('input[name="cantidad_cuotas"]').value);
+        saldoCapital = montoPrestamo;
+        let calculoElevado = Math.pow(1 + tasa, cantidadCuotas);
 
-        // Calcular la cuota con la fórmula de amortización
-        cuota = (montoPrestamo * Math.pow(1 + tasaInteres, numPagos) * tasaInteres) / (Math.pow(1 + tasaInteres,
-            numPagos) - 1);
-
-        // Mostrar la cuota calculada
-        document.querySelector('input[name="cuota"]').value = cuota.toFixed(2);
-
-        // Calcular tasa de interés diaria (TED) con la fórmula correcta
-        tasaDiaria = Math.pow(1 + tasaAnual, 1 / 365) - 1; // Calcular tasa diaria
-        document.querySelector('input[name="ted"]').value = (tasaDiaria * 100).toFixed(
-            4); // Mostrar tasa diaria en porcentaje
-
-        // Calcular fechas de los pagos, vencimientos y generar los detalles
+        cuota = (saldoCapital * tasa * calculoElevado) / (calculoElevado - 1);
+        document.querySelector('input[name="cuota"]').value = redondearHaciaArriba(cuota, 2);
+        console.log(cuota)
         let fecha = new Date(fechaPrimeraCuota);
         let montoPagado = 0;
-        for (let i = 0; i < numPagos; i++) {
+        for (let i = 0; i < cantidadCuotas; i++) {
+            console.log("bucle");
             let fechaPago = new Date(fecha);
             let fechaVencimiento;
             if (modalidad === "diario") {
                 fechaPago.setDate(fecha.getDate() + i);
-                fechaVencimiento = new Date(fecha.getDate() + i + 1); // Vence al siguiente día
-            } else {
+                fechaVencimiento = new Date(fecha.getDate() + i + 1);
+            } else if (modalidad === "semanal") {
+                fechaPago.setDate(fecha.getDate() + i * 7);
+                fechaVencimiento = new Date(fecha.getDate() + i * 7 + 1);
+            } else if (modalidad === "mensual") {
                 fechaPago.setMonth(fecha.getMonth() + i);
                 fechaVencimiento = new Date(fecha.getFullYear(), fecha.getMonth() + i + 1,
-                    0); // Un día antes del siguiente mes
+                    0);
             }
             let fechaFormateada = fechaPago.toISOString().split('T')[0];
             let fechaVencimientoFormateada = fechaVencimiento.toISOString().split('T')[0];
 
-            saldoCapital -= cuota; // Restar la cuota al saldo de capital
-            montoPagado += cuota; // Incrementar el monto pagado
-
+            interes = saldoCapital * tasa;
+            montoPagado += cuota;
+            amortizacion = cuota - interes;
+            saldoCapital -= amortizacion;
             listadoPagos.push({
-                fecha: fechaFormateada,
-                fechaVencimiento: fechaVencimientoFormateada,
+                // fecha: fechaFormateada,
+                fechaVencimiento: fechaFormateada,
                 monto: cuota.toFixed(2),
                 saldoCapital: saldoCapital.toFixed(2),
-                subtotal: (montoPrestamo - saldoCapital).toFixed(2),
-                interesDiario: (tasaDiaria * 100).toFixed(4), // Interés diario
+                interes: (tasaDiaria * 100).toFixed(4),
                 montoPagado: montoPagado.toFixed(2),
-                tem: tasaAnual,
-                pagado: false // Inicialmente no pagado
+                tem: tasa,
+                amortizacion: amortizacion.toFixed(2),
+                interes: interes.toFixed(2),
+                pagado: false
             });
         }
-
+        console.log("before")
         mostrarTablaPagos(listadoPagos);
+        console.log("after")
         document.getElementById('listado_pagos').value = JSON.stringify(listadoPagos);
+    }
+
+    document.querySelector('#generarCuota').addEventListener('click', function(event) {
+        event.preventDefault();
+        calculandoCuota();
     });
 
-    // Función para mostrar la tabla de pagos
     function mostrarTablaPagos(pagos) {
+        console.log("tabla")
         const tablaDiv = document.getElementById('tabla-pagos');
-        tablaDiv.innerHTML = ''; // Limpiar la tabla previa
+        tablaDiv.innerHTML = '';
 
         const cabecera = `
             <table class="w-full table-auto border-collapse">
             <thead>
-                <tr>
-                <th class="border px-4 py-2">Fecha de Pago</th>
+                <th class="border px-4 py-2">Nro Cuota</th>
                 <th class="border px-4 py-2">Fecha de Vencimiento</th>
-                <th class="border px-4 py-2">Monto</th>
                 <th class="border px-4 py-2">Saldo Capital</th>
+                <th class="border px-4 py-2">Amortizacion</th>
+                <th class="border px-4 py-2">Interes</th>
+                <th class="border px-4 py-2">Cuota</th>
+                <th class="border px-4 py-2">Mora</th>
                 <th class="border px-4 py-2">Subtotal</th>
                 <th class="border px-4 py-2">Monto Pagado</th>
-                <th class="border px-4 py-2">Interés Diario (%)</th>
                 </tr>
             </thead>
             <tbody>
         `;
 
         let filas = '';
+        console.log(pagos)
         pagos.forEach((pago, index) => {
             filas += `
         <tr>
-            <td class="border px-4 py-2">${pago.fecha}</td>
+            <td class="border px-4 py-2">Cuota ${index + 1}</td>
             <td class="border px-4 py-2">${pago.fechaVencimiento}</td>
-            <td class="border px-4 py-2">${pago.monto}</td>
             <td class="border px-4 py-2">${pago.saldoCapital}</td>
-            <td class="border px-4 py-2">${pago.subtotal}</td>
-            <td class="border px-4 py-2">${pago.montoPagado}</td>
-            <td class="border px-4 py-2">${pago.interesDiario} %</td>
+            <td class="border px-4 py-2">${pago.amortizacion}</td>
+            <td class="border px-4 py-2">${pago.interes}</td>
+            <td class="border px-4 py-2">${pago.monto}</td>
+            <td class="border px-4 py-2">0.00</td>
+            <td class="border px-4 py-2">${pago.monto}</td>
+            <td class="border px-4 py-2">0.00</td>
+
         </tr>
         `;
         });
@@ -350,4 +389,31 @@
         const tablaCompleta = cabecera + filas + `</tbody></table>`;
         tablaDiv.innerHTML = tablaCompleta;
     }
+
+    function codigoExpediente() {
+        fetch('/expediente', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data.expediente);
+                document.querySelector('input[name="expediente"]').value = data.expediente;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+
+            });
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        codigoExpediente();
+    })
 </script>

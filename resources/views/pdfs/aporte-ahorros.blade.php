@@ -100,6 +100,14 @@
                 <th>Total de Aportes</th>
                 <td>S/ {{ number_format($aporte->total_aportes, 2) }}</td>
             </tr>
+            <tr>
+                <th>Fecha registro</th>
+                <td>{{ $aporte->fecha_registro }}</td>
+            </tr>
+            <tr>
+                <th>Usuario</th>
+                <td>{{ isset($aporte->user) ? $aporte->user->name : 'No especificado' }}</td>
+            </tr>
         </table>
     </div>
 
@@ -108,6 +116,7 @@
         <thead>
             <tr>
                 <th>Codigo</th>
+                <th>Ejecutivo</th>
                 <th>Fecha y Hora</th>
                 <th>Aporte</th>
             </tr>
@@ -116,6 +125,7 @@
             @foreach ($aporteDetalles as $index => $detalle)
                 <tr>
                     <td>{{ $detalle->codigo }}</td>
+                    <td>{{ isset($detalle->user) ? $detalle->user->name : 'No especificado' }}</td>
                     <td>{{ $detalle->fecha_registro }}</td>
                     <td>S/ {{ number_format($detalle->monto, 2) }}</td>
                 </tr>

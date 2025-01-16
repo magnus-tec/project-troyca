@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DetalleAporte;
 use App\Models\DetallePrestamo;
 use App\Models\Prestamo;
 use App\Models\PrestamoCuota;
 use App\Models\RegistroSocio;
+use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Dotenv\Exception\ValidationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException as ValidationValidationException;
 
 class EstadoDeCuentaController extends Controller
 {
@@ -29,16 +32,14 @@ class EstadoDeCuentaController extends Controller
             })
             ->with('registroSocio.datosPersonales')
             ->get();
-
-        if ($prestamos->isEmpty()) {
-            $prestamos = collect([]);
-        }
         return view('estado-cuenta.index', compact('prestamos'));
     }
-
-
-
-
+    public function generarNumeroExpediente()
+    {
+        $lastCodigo = Prestamo::max('expediente') ?? '0000000';
+        $nextId = intval($lastCodigo) + 1;
+        return response()->json(['expediente' => str_pad($nextId, 7, '0', STR_PAD_LEFT)]);
+    }
     public function findAll()
     {
         if (!auth()->user()->hasRole('admin')) {
@@ -51,62 +52,8 @@ class EstadoDeCuentaController extends Controller
                 ->with('registroSocio.datosPersonales')
                 ->get();
         }
-
-        // Retornar los préstamos como respuesta JSON
         return response()->json($prestamos);
     }
-    public function storePrestamo(Request $request)
-    {
-        // return response()->json($request->all());
-        $prestamo = Prestamo::create([
-            'fecha_solicitud' => $request->fecha_solicitud,
-            'registro_socio_id' => $request->registro_socio_id,
-            'producto' => $request->producto,
-            'garantia' => $request->garantia,
-            'detalle_garantia' => $request->detalle_garantia,
-            'fecha_desembolso' => $request->fecha_desembolso,
-            'dni' => $request->dni,
-            'asesor' => $request->asesor,
-            'expediente' => $request->expediente,
-            'estado' => 0,
-        ]);
-
-        $detalle_prestamo = DetallePrestamo::create([
-            'prestamos_id' => $prestamo->id,
-            'monto' => $request->monto,
-            'modalidad' => $request->modalidad,
-            'tem' => $request->tem,
-            'cantidad_cuotas' => $request->cantidad_cuotas,
-            'cuota' => $request->cuota,
-            'f_primera_cuota' => $request->f_primera_cuota,
-            'ted' => $request->ted,
-        ]);
-
-        $listado_pagos = json_decode($request->listado_pagos, true);
-        foreach ($listado_pagos as $pago) {
-            PrestamoCuota::create([
-                'prestamos_id' => $prestamo->id,
-                'fecha_pago' => $pago['fecha'],
-                'fecha_vencimiento' => $pago['fechaVencimiento'],
-                'cuota' => $pago['monto'],
-                'saldo_capital' => $pago['saldoCapital'],
-                'subtotal' => $pago['subtotal'],
-                'ted' => $pago['interesDiario'],
-                'monto_pago' => $pago['montoPagado'],
-                'estado' => 0,
-            ]);
-        }
-
-        // Retornar una respuesta JSON con los datos creados
-        return response()->json([
-            'message' => 'Préstamo creado con éxito.',
-            'prestamo' => $prestamo,
-            'detalle_prestamo' => $detalle_prestamo,
-            'listado_pagos' => $listado_pagos,
-        ], 201);
-    }
-
-
     public function getSociosDisponibles()
     {
         $socios = RegistroSocio::where('registro_socios.estado', 0)
@@ -126,7 +73,6 @@ class EstadoDeCuentaController extends Controller
             'socios' => $socios
         ], 200);
     }
-
     public function pagarCuotaApi($id)
     {
         $cuota = PrestamoCuota::find($id);
@@ -140,35 +86,14 @@ class EstadoDeCuentaController extends Controller
         $cuota->fecha_pago_realizado = $cuota->estado == 1 ? $fechaActual : null;
         $cuota->save();
 
-        $totalPagado = PrestamoCuota::where('estado', 1)->sum('cuota');
+        $totalPagado = PrestamoCuota::where('prestamos_id', $cuota->prestamos_id)->where('estado', 1)->sum('cuota');
+
         return response()->json([
+            'cuota' => $cuota,
             'estado' => $cuota->estado,
             'mensaje' => $cuota->estado == 1 ? 'Pagado' : 'Pendiente',
             'totalPagado' => number_format($totalPagado, 2),
             'fechaPago' => $cuota->fecha_pago_realizado
-        ]);
-    }
-    public function generarPDFBase64($id): JsonResponse
-    {
-        $prestamo = Prestamo::with('registroSocio.datosPersonales')->find($id);
-
-        if (!$prestamo) {
-            return response()->json(['error' => 'El préstamo no fue encontrado'], 404);
-        }
-
-        $detalles = DetallePrestamo::where('prestamos_id', $id)->first();
-        $prestamoCuotas = PrestamoCuota::where('prestamos_id', $id)->where('estado', 1)->get();
-
-        $pdf = Pdf::loadView('pdfs.prestamo', compact('prestamo', 'detalles', 'prestamoCuotas'));
-
-        $pdfContent = $pdf->output();
-
-        $base64Pdf = base64_encode($pdfContent);
-
-        return response()->json([
-            'message' => 'PDF generado correctamente',
-            'pdf_base64' => $base64Pdf,
-            'file_name' => 'prestamo_' . $prestamo->id . '.pdf',
         ]);
     }
     public function findOne($id)
@@ -195,8 +120,11 @@ class EstadoDeCuentaController extends Controller
                 DB::raw("CONCAT(datos_personales.nombres, ' ', datos_personales.apellido_paterno, ' ', datos_personales.apellido_materno) AS nombre_completo")
             )
             ->get();
+        $roles = ['userHelpAdmin', 'admin'];
 
-        return view('estado-cuenta.nuevo-prestamo', compact('socios'));
+        $asesores = User::role($roles)->get();
+
+        return view('estado-cuenta.nuevo-prestamo', compact('socios', 'asesores'));
     }
 
     /**
@@ -204,19 +132,47 @@ class EstadoDeCuentaController extends Controller
      */
     public function store(Request $request)
     {
+        $expedienteExistente = Prestamo::where('expediente', $request->input('expediente'))->exists();
+        if ($expedienteExistente) {
+            return response()->json(['error' => 'El número de expediente ya ha sido utilizado, vuelve a guardarlo.'], 422);
+        }
+        if (!$request->listado_pagos) {
+            return response()->json(['errorPago' => 'Genere sus cuotas'], 422);
+        }
+        // DB::beginTransaction();
+
         try {
-            $request->validate([
-                'fecha_solicitud' => 'required|date',
-                'dni' => 'required|string|max:8',
-                'fecha_desembolso' => 'required|date',
-            ], [
-                'fecha_solicitud.required' => 'La fecha de solicitud es obligatoria.',
-                'dni.required' => 'El DNI es obligatorio.',
-                'dni.max' => 'El DNI no debe tener más de 8 caracteres.',
-                'fecha_desembolso.required' => 'La fecha de desembolso es obligatoria.',
-            ]);
-        } catch (ValidationException $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            $request->validate(
+                [
+                    'fecha_solicitud' => 'required|date',
+                    'dni' => 'required|string|max:8',
+                    'fecha_desembolso' => 'required|date',
+                ],
+                [
+                    'fecha_solicitud.required' => 'La fecha de solicitud es obligatoria.',
+                    'dni.required' => 'El DNI es obligatorio.',
+                    'dni.max' => 'El DNI no debe tener más de 8 caracteres.',
+                    'fecha_desembolso.required' => 'La fecha de desembolso es obligatoria.',
+                ]
+            );
+        } catch (ValidationValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 500);
+        }
+        try {
+            $request->validate(
+                [
+                    'monto_prestamo' => 'required',
+                    'tem' => 'required',
+                    'cantidad_cuotas' => 'required',
+                    'cuota' => 'required',
+                    'fecha_p_cuota' => 'required',
+                ],
+                [
+                    'required' => 'Llena los campos para calcular las cuotas',
+                ]
+            );
+        } catch (ValidationValidationException   $e) {
+            return response()->json(['error' => 'Llena todos los campos para calcular las cuotas.'], 422);
         }
         try {
             $prestamo = Prestamo::create([
@@ -227,7 +183,7 @@ class EstadoDeCuentaController extends Controller
                 'detalle_garantia' => $request->detalle_garantia,
                 'fecha_desembolso' => $request->fecha_desembolso,
                 'dni' => $request->dni,
-                'asesor' => $request->asesor,
+                'asesor_id' => $request->asesor,
                 'expediente' => $request->expediente,
                 'estado' => 0,
 
@@ -241,26 +197,29 @@ class EstadoDeCuentaController extends Controller
                 'cantidad_cuotas' => $request->cantidad_cuotas,
                 'cuota' => $request->cuota,
                 'f_primera_cuota' => $request->fecha_p_cuota,
-                'ted' => $request->ted,
+                // 'ted' => $request->ted,
             ]);
+
             $listado_pagos = json_decode($request->listado_pagos, true);
             foreach ($listado_pagos as $pago) {
                 PrestamoCuota::create([
                     'prestamos_id' => $prestamo->id,
-                    'fecha_pago' => $pago['fecha'],
+                    // 'fecha_pago' => $pago['fecha'],
                     'fecha_vencimiento' => $pago['fechaVencimiento'],
                     'cuota' => $pago['monto'],
                     'saldo_capital' => $pago['saldoCapital'],
-                    'subtotal' => $pago['subtotal'],
-                    'ted' => $pago['interesDiario'],
+                    'subtotal' => $pago['monto'],
+                    'interes' => $pago['interes'],
+                    'amortizacion' => $pago['amortizacion'],
                     'monto_pago' => $pago['montoPagado'],
                     'estado' => 0,
                 ]);
             }
-            // Retornar una respuesta de éxito
+            // DB::commit();
             return response()->json(['success' => true, 'message' => 'Préstamo guardado con éxito']);
         } catch (\Exception $e) {
-            return redirect()->back()->withErrors(['error' => 'Ocurrió un error al guardar el préstamo: ' . $e->getMessage()]);
+            // DB::rollBack();
+            return response()->json(['error' => 'Ocurrió un error al guardar el préstamo.'], 500);
         }
     }
     public function generarPDF($id)
@@ -284,7 +243,13 @@ class EstadoDeCuentaController extends Controller
     public function generarPago($id)
     {
         $cuotas = PrestamoCuota::where('prestamos_id', $id)->get();
-        return view('estado-cuenta.pagar-prestamo', compact('cuotas'));
+        $totalPagado = PrestamoCuota::where('prestamos_id', $id)->where('estado', 1)->sum('cuota');
+        $totalAmortizacion = PrestamoCuota::where('prestamos_id', $id)->sum('amortizacion');
+        $totalInteres = PrestamoCuota::where('prestamos_id', $id)->sum('interes');
+        $totalCuota = PrestamoCuota::where('prestamos_id', $id)->sum('subtotal');
+        $subtotal = $totalCuota - $totalPagado;
+        $totalMora = PrestamoCuota::where('prestamos_id', $id)->sum('mora');
+        return view('estado-cuenta.pagar-prestamo', compact('cuotas', 'totalPagado', 'totalAmortizacion', 'totalInteres', 'totalCuota', 'subtotal', 'totalMora'));
     }
     public function pagarCuota($id)
     {
@@ -299,14 +264,24 @@ class EstadoDeCuentaController extends Controller
         }
         $cuota->save();
 
-        $totalPagado = PrestamoCuota::where('estado', 1)->sum('cuota');
+        $totalPagado = PrestamoCuota::where('prestamos_id', $cuota->prestamos_id)->where('estado', 1)->sum('cuota');
+        $totalAmortizacion = PrestamoCuota::where('prestamos_id', $cuota->prestamos_id)->sum('amortizacion');
 
+        $totalInteres = PrestamoCuota::where('prestamos_id', $cuota->prestamos_id)->sum('interes');
+        $totalCuota = PrestamoCuota::where('prestamos_id', $cuota->prestamos_id)->sum('subtotal');
+        $subtotal = $totalCuota - $totalPagado;
+        $totalMora = PrestamoCuota::where('prestamos_id', $cuota->prestamos_id)->sum('mora');
 
         return response()->json([
             'estado' => $cuota->estado,
             'mensaje' => $cuota->estado == 1 ? 'Pagado' : 'Pendiente',
             'totalPagado' => number_format($totalPagado, 2),
-            'fechaPago' => $cuota->fecha_pago_realizado
+            'fechaPago' => $cuota->fecha_pago_realizado,
+            'totalAmortizacion' => number_format($totalAmortizacion, 2),
+            'totalInteres' => number_format($totalInteres, 2),
+            'totalCuota' => number_format($totalCuota, 2),
+            'totalMora' => number_format($totalMora, 2),
+            'subtotal' => number_format($subtotal, 2),
 
         ]);
     }

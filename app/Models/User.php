@@ -48,4 +48,8 @@ class User extends Authenticatable
     {
         return $this->hasOne(RegistroSocio::class);
     }
+    public function aporteAhorro()
+    {
+        return $this->hasMany(AporteAhorro::class, 'user_register', 'id');
+    }
 }

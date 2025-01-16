@@ -135,7 +135,7 @@
              </table>
          </div>
 
-         <div class="section" style="margin-bottom: 5px;border-bottom: none;">
+         <div class="section" style="margin-bottom: 0px;border-bottom: none;">
              <table style="width: 100%; border: 0;">
                  <tr>
                      <td style="width: 40%; text-align: left;">Cuenta:</td>
@@ -153,7 +153,7 @@
              </table>
          </div>
 
-         <div class="section" style="border-top: 0.1px solid #e0e0e0;margin-bottom: 5px;border-bottom: none;">
+         <div class="section" style="border-top: 0.1px solid #e0e0e0;margin-bottom: 0px;border-bottom: none;">
              <table style="width: 100%;">
                  <tr>
                      <td style="width: 50%; text-align: left;">Monto:</td>
@@ -166,7 +166,7 @@
          </div>
 
 
-         <div class="message" style="font-size: 10px;">
+         <div class="message" style="font-size: 9px;">
              <p>Aporte guardado con éxito</p>
          </div>
      </div>

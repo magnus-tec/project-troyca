@@ -90,12 +90,16 @@
 
         .signatures {
             display: flex;
-            /* Usa Flexbox para alinear los elementos */
             justify-content: space-between;
-            /* Distribuye los elementos a los extremos */
             margin-top: 50px;
-            /* Espacio encima de las firmas */
         }
+
+        .signatures-center {
+            display: flex;
+            justify-content: center;
+            margin-top: 70px;
+        }
+
 
         .signature-line {
             width: 45%;
@@ -133,33 +137,38 @@
         /* Para la firma de la izquierda */
         .signature-line-left {
             float: left;
-            /* Coloca el div a la izquierda */
             width: 45%;
-            /* Ancho de la firma */
             text-align: center;
-            /* Centra el texto dentro del div */
             border-top: 1px solid black;
-            /* Línea de la firma */
             padding-top: 5px;
-            /* Espacio entre la línea y el texto */
             margin-top: 30px;
-            /* Espacio encima de la firma */
         }
 
-        /* Para la firma de la derecha */
         .signature-line-right {
             float: right;
-            /* Coloca el div a la derecha */
             width: 45%;
-            /* Asigna el 45% del ancho de la página */
             text-align: center;
-            /* Centra el texto dentro del div */
             border-top: 1px solid black;
-            /* Línea de la firma */
             padding-top: 5px;
-            /* Espacio entre la línea y el texto */
             margin-top: 30px;
-            /* Espacio encima de la firma */
+        }
+
+
+        .signatures-center {
+            display: flex;
+            justify-content: center;
+            margin-top: 50px;
+        }
+
+        .signature-line-center {
+            width: 45%;
+            text-align: center;
+            border-top: 1px solid black;
+            padding-top: 5px;
+            margin-top: 30px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .texto-small {
@@ -172,9 +181,6 @@
 <body>
     <div class="page" style="margin: 50px; margin-top: 100px;">
         <div class="header">
-            {{-- <h1>COORAC.LT</h1>
-            <h1>COOPERATIVA DE AHORRO Y CRÉDITO LA TROYCA Ltda.</h1>
-            <p>Agencia principal Jirón José Olaya 438 - Huamachuco</p> --}}
             <h2>REGISTRO DE SOCIOS</h2>
         </div>
 
@@ -383,7 +389,7 @@
                     </td>
                     <td><strong>CELULAR:</strong>
                         <span class="mayusculas">
-                            {{ $registro->conyuge->celular ? 'No especificado' : $registro->conyuge->celular }}
+                            {{ !isset($registro->conyuge->celular) ? 'No especificado' : $registro->conyuge->celular }}
                         </span>
 
                     </td>
@@ -431,23 +437,21 @@
                         {{ !isset($beneficiario->parentesco) ? 'No especificado' : $beneficiario->parentesco }}</td>
                         <td><strong>SEXO:</strong>
                             <span class="mayusculas">
-                                {{ !isset($beneficiario->parentesco) ? 'No especificado' : $beneficiario->parentesco }}
+                                {{ !isset($beneficiario->sexo) ? 'No especificado' : $beneficiario->sexo }}
                         </td>
                         </span>
                     </tr>
                 </table>
             @endforeach
         @endif
-
-        <div class="signatures" style="margin-top: 50px;">
+        <div class="signatures">
             <div class="signature-line-left">SOCIO</div>
-            <div class="signature-line-right">JEFE DE OPERACIONES</div>
+            <div class="signature-line-right"></div>
         </div>
-
+        <div class="signatures-center" style="margin-top: 70px;">
+            <div class="signature-line-center">JEFE DE OPERACIONES</div>
+        </div>
     </div>
-
-
-
 </body>
 
 </html>

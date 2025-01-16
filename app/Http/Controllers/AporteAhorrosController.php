@@ -6,6 +6,7 @@ use App\Models\AporteAhorro;
 use App\Models\DatosPersonale;
 use App\Models\DetalleAporte;
 use App\Models\RegistroSocio;
+use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -164,9 +165,7 @@ class AporteAhorrosController extends Controller
     {
         //
     }
-    /*************  ✨ Codeium Command ⭐  *************/
-    /**
-/******  f606614b-9dca-42ca-b2f3-92bac4ce5fad  *******/
+
     public function totalAportes($id)
     {
         $total = AporteAhorro::where('registro_socio_id', $id)->value('total_aportes');

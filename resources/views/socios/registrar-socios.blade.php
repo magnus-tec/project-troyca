@@ -82,7 +82,7 @@
                                     </a>
                                 @endcan
                                 <a href="{{ route('registro.generar-pdf', $registro->id) }}"
-                                    class="text-green-600 hover:text-green-900 mr-3">
+                                    class="text-green-600 hover:text-green-900 mr-3" target="_blank">
                                     PDF
                                 </a>
 

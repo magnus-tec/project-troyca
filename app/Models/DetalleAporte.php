@@ -14,9 +14,21 @@ class DetalleAporte extends Model
         'aporte_id',
         'monto',
         'estado',
+        'codigo',
+        'user_register',
     ];
     public function aporteAhorro()
     {
         return $this->belongsTo(AporteAhorro::class, 'aporte_id');
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_register', 'id');
+    }
+    protected static function booted()
+    {
+        static::creating(function ($model) {
+            $model->user_register = auth()->id();
+        });
     }
 }
