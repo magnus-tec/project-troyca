@@ -42,17 +42,22 @@ class EstadoDeCuentaController extends Controller
     }
     public function findAll()
     {
-        if (!auth()->user()->hasRole('admin')) {
+        try {
+            $registroSocioId = RegistroSocio::where('user_id', auth()->user()->id)->first()->id ?? null;
+
             $prestamos = Prestamo::where('estado', 0)
-                // ->where('registro_socios_id', auth()->user()->id)
-                ->with('registroSocio.datosPersonales')
+                ->when(!auth()->user()->hasRole('admin'), function ($query) use ($registroSocioId) {
+                    if ($registroSocioId) {
+                        return $query->where('registro_socio_id', $registroSocioId);
+                    }
+                })
+                ->with('registroSocio.datosPersonales', 'asesor')
                 ->get();
-        } else {
-            $prestamos = Prestamo::where('estado', 0)
-                ->with('registroSocio.datosPersonales')
-                ->get();
+
+            return response()->json($prestamos);
+        } catch (\Throwable $th) {
+            return response()->json(['error' => $th->getMessage()], 500);
         }
-        return response()->json($prestamos);
     }
     public function getSociosDisponibles()
     {
@@ -87,26 +92,49 @@ class EstadoDeCuentaController extends Controller
         $cuota->save();
 
         $totalPagado = PrestamoCuota::where('prestamos_id', $cuota->prestamos_id)->where('estado', 1)->sum('cuota');
+        $totalAmortizacion = PrestamoCuota::where('prestamos_id', $cuota->prestamos_id)->sum('amortizacion');
+
+        $totalInteres = PrestamoCuota::where('prestamos_id', $cuota->prestamos_id)->sum('interes');
+        $totalCuota = PrestamoCuota::where('prestamos_id', $cuota->prestamos_id)->sum('subtotal');
+        $subtotal = $totalCuota - $totalPagado;
+        $totalMora = PrestamoCuota::where('prestamos_id', $cuota->prestamos_id)->sum('mora');
 
         return response()->json([
-            'cuota' => $cuota,
             'estado' => $cuota->estado,
             'mensaje' => $cuota->estado == 1 ? 'Pagado' : 'Pendiente',
             'totalPagado' => number_format($totalPagado, 2),
-            'fechaPago' => $cuota->fecha_pago_realizado
+            'fechaPago' => $cuota->fecha_pago_realizado,
+            'totalAmortizacion' => number_format($totalAmortizacion, 2),
+            'totalInteres' => number_format($totalInteres, 2),
+            'totalCuota' => number_format($totalCuota, 2),
+            'totalMora' => number_format($totalMora, 2),
+            'subtotal' => number_format($subtotal, 2),
         ]);
     }
     public function findOne($id)
     {
         $estadoCuenta = PrestamoCuota::where('prestamos_id', $id)->with('prestamo')->get();
-
+        $totalPagado = PrestamoCuota::where('prestamos_id', $id)->where('estado', 1)->sum('cuota');
+        $totalAmortizacion = PrestamoCuota::where('prestamos_id', $id)->sum('amortizacion');
+        $totalInteres = PrestamoCuota::where('prestamos_id', $id)->sum('interes');
+        $totalCuota = PrestamoCuota::where('prestamos_id', $id)->sum('subtotal');
+        $subtotal = $totalCuota - $totalPagado;
+        $totalMora = PrestamoCuota::where('prestamos_id', $id)->sum('mora');
         if (!$estadoCuenta) {
             return response()->json([
                 'error' => 'Estado de cuenta no encontrado.'
             ], 404);
         }
 
-        return response()->json($estadoCuenta);
+        return response()->json([
+            'estadoCuenta' => $estadoCuenta,
+            'totalPagado' => number_format($totalPagado, 2),
+            'totalAmortizacion' => number_format($totalAmortizacion, 2),
+            'totalInteres' => number_format($totalInteres, 2),
+            'totalCuota' => number_format($totalCuota, 2),
+            'totalMora' => number_format($totalMora, 2),
+            'subtotal' => number_format($subtotal, 2)
+        ]);
     }
     /**
      * Show the form for creating a new resource.
