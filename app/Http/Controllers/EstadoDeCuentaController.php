@@ -113,28 +113,24 @@ class EstadoDeCuentaController extends Controller
     }
     public function findOne($id)
     {
-        $estadoCuenta = PrestamoCuota::where('prestamos_id', $id)->with('prestamo')->get();
-        $totalPagado = PrestamoCuota::where('prestamos_id', $id)->where('estado', 1)->sum('cuota');
-        $totalAmortizacion = PrestamoCuota::where('prestamos_id', $id)->sum('amortizacion');
-        $totalInteres = PrestamoCuota::where('prestamos_id', $id)->sum('interes');
-        $totalCuota = PrestamoCuota::where('prestamos_id', $id)->sum('subtotal');
-        $subtotal = $totalCuota - $totalPagado;
-        $totalMora = PrestamoCuota::where('prestamos_id', $id)->sum('mora');
-        if (!$estadoCuenta) {
-            return response()->json([
-                'error' => 'Estado de cuenta no encontrado.'
-            ], 404);
-        }
+        try {
+            $estadoCuenta = PrestamoCuota::where('prestamos_id', $id)->with('prestamo')->get();
+            $totalPagado = PrestamoCuota::where('prestamos_id', $id)->where('estado', 1)->sum('cuota');
+            $totalAmortizacion = PrestamoCuota::where('prestamos_id', $id)->sum('amortizacion');
+            $totalInteres = PrestamoCuota::where('prestamos_id', $id)->sum('interes');
+            $totalCuota = PrestamoCuota::where('prestamos_id', $id)->sum('subtotal');
+            $subtotal = $totalCuota - $totalPagado;
+            $totalMora = PrestamoCuota::where('prestamos_id', $id)->sum('mora');
+            if (!$estadoCuenta) {
+                return response()->json([
+                    'error' => 'Estado de cuenta no encontrado.'
+                ], 404);
+            }
 
-        return response()->json([
-            'estadoCuenta' => $estadoCuenta,
-            'totalPagado' => number_format($totalPagado, 2),
-            'totalAmortizacion' => number_format($totalAmortizacion, 2),
-            'totalInteres' => number_format($totalInteres, 2),
-            'totalCuota' => number_format($totalCuota, 2),
-            'totalMora' => number_format($totalMora, 2),
-            'subtotal' => number_format($subtotal, 2)
-        ]);
+            return response()->json($estadoCuenta);
+        } catch (\Throwable $th) {
+            return response()->json(['error' => $th->getMessage()], 500);
+        }
     }
     /**
      * Show the form for creating a new resource.
