@@ -266,6 +266,7 @@ class EstadoDeCuentaController extends Controller
     }
     public function generarPago($id)
     {
+        $detallePrestamo = DetallePrestamo::where('prestamos_id', $id)->first();
         $cuotas = PrestamoCuota::where('prestamos_id', $id)->get();
         $totalPagado = PrestamoCuota::where('prestamos_id', $id)->where('estado', 1)->sum('cuota');
         $totalAmortizacion = PrestamoCuota::where('prestamos_id', $id)->sum('amortizacion');
@@ -273,7 +274,7 @@ class EstadoDeCuentaController extends Controller
         $totalCuota = PrestamoCuota::where('prestamos_id', $id)->sum('subtotal');
         $subtotal = $totalCuota - $totalPagado;
         $totalMora = PrestamoCuota::where('prestamos_id', $id)->sum('mora');
-        return view('estado-cuenta.pagar-prestamo', compact('cuotas', 'totalPagado', 'totalAmortizacion', 'totalInteres', 'totalCuota', 'subtotal', 'totalMora'));
+        return view('estado-cuenta.pagar-prestamo', compact('cuotas', 'totalPagado', 'totalAmortizacion', 'totalInteres', 'totalCuota', 'subtotal', 'totalMora', 'detallePrestamo'));
     }
     public function pagarCuota($id)
     {

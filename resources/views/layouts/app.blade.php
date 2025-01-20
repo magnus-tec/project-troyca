@@ -19,6 +19,20 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
+    <style>
+        .input-3d,
+        .button-3d {
+            box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.4), -8px -8px 16px rgba(255, 255, 255, 0.1), inset 2px 2px 5px rgba(255, 255, 255, 0.1), inset -2px -2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .button-3d:active {
+            box-shadow: inset 8px 8px 16px rgba(0, 0, 0, 0.4), inset -8px -8px 16px rgba(255, 255, 255, 0.1);
+        }
+
+        .circle-3d {
+            box-shadow: 12px 12px 24px rgba(0, 0, 0, 0.4), -12px -12px 24px rgba(255, 255, 255, 0.1);
+        }
+    </style>
 </head>
 
 <body class="font-sans antialiased">
