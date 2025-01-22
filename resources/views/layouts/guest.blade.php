@@ -27,7 +27,7 @@
         }
 
         .bg-blue-600 {
-            background-color: #1d4ed8 !important;
+            background-color: #FDB758 !important;
         }
 
         .text-white {
@@ -51,18 +51,29 @@
                 1px 3px 3px rgba(0, 0, 0, 0.4),
                 -4px -4px 10px rgba(105, 105, 105, 0.2);
         }
+
+        .fondo-login {
+            background-image: url('images/fondo-login.jpeg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: left;
+            height: 100vh;
+            width: 100%;
+        }
     </style>
 </head>
 
-<body class="font-sans text-gray-900 antialiased ">
-    <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 ">
+<body class="font-sans text-gray-900 antialiased fondo-login  ">
+    <div class=" min-h-screen  mx-auto flex flex-col sm:justify-center items-stretch  pt-6 sm:pt-0 justify-evenly ">
         {{-- <div>
             <a href="/">
                  <x-application-logo class="w-20 h-20 fill-current text-gray-500" /> 
             </a>
         </div> --}}
-        <div class="w-96 bg-blue-500 shadow-lg rounded-2xl box-shadow-form  p-8 relative">
-            <div class="w-24 h-24 bg-blue-700 rounded-full mx-auto -mt-16 flex items-center justify-center button-3d">
+        <div class="w-96 bg-blue-500 shadow-lg rounded-2xl box-shadow-form  p-8 relative  ml-28"
+            style="background-color: #ADADF7;">
+            <div class="w-24 h-24 bg-blue-700 rounded-full mx-auto -mt-16 flex items-center justify-center button-3d"
+                style="background-color: #ADADF7;">
                 <svg class="w-16 h-16 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                     fill="currentColor">
                     <path
@@ -71,7 +82,7 @@
                 {{-- <span class="text-1xl font-bold text-white">Troyca</span> --}}
             </div>
 
-            <div class="rounded-lg relative  mb-10 ">
+            <div class="rounded-lg relative  mb-10  ">
                 {{ $slot }}
             </div>
         </div>

@@ -27,7 +27,7 @@ class AporteAhorrosController extends Controller
                 }
             })
             ->with('registroSocio.datosPersonales')
-            ->get();
+            ->paginate(10);
         if (request()->wantsJson()) {
             return response()->json($aportes);
         }

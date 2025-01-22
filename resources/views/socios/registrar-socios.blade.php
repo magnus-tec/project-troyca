@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="container mx-auto px-4 py-12">
+    <div class="max-w-7xl  mx-auto px-4 py-12">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-semibold text-gray-800">Registro de Socios</h2>
             <a href="{{ route('socios.create') }}"
@@ -29,20 +29,20 @@
         @endif
 
         <!-- Tabla de registros -->
-        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="bg-white rounded-lg shadow-md overflow-hidden mb-5">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th class="px-3 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Nº Socio
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th class="px-3 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Nombres y Apellidos
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th class="px-3 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Estado
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th class="px-3 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Acciones
                         </th>
                     </tr>
@@ -50,13 +50,13 @@
                 <tbody class="bg-white divide-y divide-gray-200">
                     @forelse($registros as $registro)
                         <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <td class="px-3 py-1 whitespace-nowrap text-sm text-gray-900">
                                 {{ $registro->numero_socio }}
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            <td class="px-3 py-1 whitespace-nowrap text-sm font-medium text-gray-900">
                                 {{ $registro->nombre_completo }}
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            <td class="px-3 py-1 whitespace-nowrap text-sm font-medium text-gray-900">
                                 <button type="button" id ="btn-{{ $registro->id }}"
                                     class=" px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full shadow-md {{ $registro->estado == 0 ? 'bg-green-200 text-green-700' : 'text-red-700  bg-red-200' }}"
                                     onclick="confirmDelete({{ $registro->id }}, '{{ $registro->estado == 0 ? '¿Está seguro de desactivar este registro?' : '¿Está seguro de activar este registro?' }}')">
@@ -74,7 +74,7 @@
                                     {{ ucfirst($registro->estado == 0 ? 'activo' : 'desactivado') }}
                                 </span>
                             </td> --}}
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <td class="px-3 py-1 whitespace-nowrap text-sm font-medium">
                                 @can('actualizar-socio')
                                     <a href="{{ route('socios.edit', $registro->id) }}"
                                         class="text-indigo-600 hover:text-indigo-900 mr-3">
@@ -90,7 +90,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="px-6 py-4 text-center text-gray-500">
+                            <td colspan="4" class="px-3 py-1 text-center text-gray-500">
                                 No hay registros disponibles
                             </td>
                         </tr>
@@ -98,7 +98,10 @@
                 </tbody>
             </table>
         </div>
+        {{ $registros->links() }}
     </div>
+    <!-- Mostrar los enlaces de paginación -->
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         function confirmDelete(id, message) {

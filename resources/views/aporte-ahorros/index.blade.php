@@ -30,23 +30,23 @@
         @endif
 
         <!-- Lista de socios registrados -->
-        <div class="bg-white rounded-lg shadow-lg overflow-x-auto">
+        <div class="bg-white rounded-lg shadow-lg overflow-x-auto mb-5">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs  font-medium text-gray-500 uppercase tracking-wider">
+                        <th class="px-3 py-1 text-left text-xs  font-medium text-gray-500 uppercase tracking-wider">
                             Codigo
                         </th>
-                        <th class="px-6 py-3 text-left text-xs  font-medium text-gray-500 uppercase tracking-wider">
+                        <th class="px-3 py-1 text-left text-xs  font-medium text-gray-500 uppercase tracking-wider">
                             Nombres y Apellidos
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th class="px-3 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Total de Aportes
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th class="px-3 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Fecha de Registro
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th class="px-3 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Acciones
                         </th>
                     </tr>
@@ -54,29 +54,29 @@
                 <tbody class="bg-white divide-y divide-gray-200">
                     @forelse($aportes as $aporte)
                         <tr>
-                            <td class="px-6 py-4 whitespace-nowrap">
+                            <td class="px-3 py-1 whitespace-nowrap">
                                 <div class="text-sm font-medium text-gray-900">
                                     {{ $aporte->codigo }}
                                 </div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
+                            <td class="px-3 py-1 whitespace-nowrap">
                                 <div class="text-sm font-medium text-gray-900">
                                     {{ $aporte->registroSocio->datosPersonales->apellido_paterno }}
                                     {{ $aporte->registroSocio->datosPersonales->apellido_materno }}
                                     {{ $aporte->registroSocio->datosPersonales->nombres }}
                                 </div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
+                            <td class="px-3 py-1 whitespace-nowrap">
                                 <div class="text-sm font-medium text-gray-900">
                                     {{ $aporte->total_aportes }}
                                 </div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
+                            <td class="px-3 py-1 whitespace-nowrap">
                                 <div class="text-sm font-medium text-gray-900">
                                     {{ $aporte->fecha_registro }}
                                 </div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <td class="px-3 py-1 whitespace-nowrap text-sm font-medium">
                                 <a href="{{ route('aporte-pdf', $aporte->id) }}" target="_blank"
                                     class="text-green-600 hover:text-green-800 mr-3 transition duration-200">
                                     PDF
@@ -85,13 +85,15 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" class="px-6 py-4 text-center text-gray-500">
+                            <td colspan="3" class="px-3 py-1 text-center text-gray-500">
                                 No hay registros disponibles
                             </td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
+
         </div>
+        {{ $aportes->links() }}
     </div>
 </x-app-layout>

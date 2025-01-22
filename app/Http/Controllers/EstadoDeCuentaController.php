@@ -31,7 +31,7 @@ class EstadoDeCuentaController extends Controller
                 }
             })
             ->with('registroSocio.datosPersonales')
-            ->get();
+            ->paginate(10);
         return view('estado-cuenta.index', compact('prestamos'));
     }
     public function generarNumeroExpediente()

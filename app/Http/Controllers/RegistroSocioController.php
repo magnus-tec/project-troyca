@@ -17,7 +17,7 @@ class RegistroSocioController extends Controller
      */
     public function index()
     {
-        $registros = RegistroSocio::with('datosPersonales')->get();
+        $registros = RegistroSocio::with('datosPersonales')->paginate(10);
         return view('socios.registrar-socios', compact('registros'));
     }
 
