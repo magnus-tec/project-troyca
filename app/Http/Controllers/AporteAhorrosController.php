@@ -55,7 +55,7 @@ class AporteAhorrosController extends Controller
             $aporteId = $aporteDetalleInfo->aporte_id;
             $aporteInfo = AporteAhorro::find($aporteId);
             $socioCodigo = RegistroSocio::find($aporteInfo->registro_socio_id);
-            $socioInfo = DatosPersonale::find($aporteInfo->registro_socio_id);
+            $socioInfo = DatosPersonale::where('registro_socio_id', $aporteInfo->registro_socio_id)->first();
             $pdf = PDF::loadView('pdfs.voucher_aporte', compact('aporteDetalleInfo', 'aporteInfo', 'socioCodigo', 'socioInfo'))->setPaper([0, 0, 226.77, 200], 'portrait');
             return $pdf->stream('voucher_aporte.pdf');
         } catch (\Exception $e) {

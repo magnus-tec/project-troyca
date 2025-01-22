@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DatosPersonale;
 use App\Models\RegistroSocio;
+use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -217,6 +218,13 @@ class RegistroSocioController extends Controller
                 ['registro_socio_id' => $socio->id],
                 $request->direccionDomiciliaria
             );
+            if (isset($request->direccionDomiciliaria['correo'])) {
+                $email = $request->direccionDomiciliaria['correo'];
+                $user = $socio->user;
+                if ($user) {
+                    $user->update(['email' => $email]);
+                }
+            }
         }
 
         if ($request->has('datosLaborales')) {

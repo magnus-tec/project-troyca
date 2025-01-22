@@ -9,7 +9,7 @@ class RegistroSocio extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['numero_socio', 'estado'];
+    protected $fillable = ['numero_socio', 'estado', 'user_id'];
 
     public function datosPersonales()
     {

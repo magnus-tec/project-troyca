@@ -105,6 +105,38 @@
             beneficiario.remove();
         }
         document.addEventListener('DOMContentLoaded', function() {
+            // api dni
+            const inputDni = document.getElementById('dni_personal');
+            const token =
+                'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InN5c3RlbWNyYWZ0LnBlQGdtYWlsLmNvbSJ9.yuNS5hRaC0hCwymX_PjXRoSZJWLNNBeOdlLRSUGlHGA';
+
+            inputDni.addEventListener('input', () => {
+                const dni = inputDni.value;
+                if (dni.length === 8) {
+                    fetch(`https://dniruc.apisperu.com/api/v1/dni/${dni}?token=${token}`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Error en la solicitud');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log(data);
+                            document.getElementById('apellido_paterno_personal').value = data
+                                .apellidoPaterno;
+                            document.getElementById('apellido_materno_personal').value = data
+                                .apellidoMaterno;
+                            document.getElementById('nombres_personal').value = data.nombres;
+
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('No se pudo encontrar el DNI');
+                        });
+                }
+            });
+            //--- fin dni
+            // Funciones para mostrar y ocultar pestañas
             const estadoCivil = document.getElementById('estado_civil_personal');
             const nextButtons = document.querySelectorAll('.next-btn');
             const backButtons = document.querySelectorAll('.back-btn');
