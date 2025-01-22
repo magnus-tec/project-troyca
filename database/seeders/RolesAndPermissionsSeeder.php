@@ -185,7 +185,6 @@ class RolesAndPermissionsSeeder extends Seeder
         ]);
         $userHelpUser10->assignRole($userHelpAdmin);
         //.........11
-        //.........10
         $userHelpUser11 = User::firstOrCreate([
             'email' => 'lSarahi Cojal Peralta'
         ], [
@@ -194,5 +193,23 @@ class RolesAndPermissionsSeeder extends Seeder
             'password' => '74405136',
         ]);
         $userHelpUser11->assignRole($userHelpAdmin);
+        //.........12
+        $userHelpUser12 = User::firstOrCreate([
+            'email' => 'Kely Narro'
+        ], [
+            'name' => 'Kely Narro',
+            'email' => 'kelynarro17@gmail.com',
+            'password' => '47834153',
+        ]);
+        $userHelpUser12->assignRole($userHelpAdmin);
+        //.........13
+        $userHelpUser13 = User::firstOrCreate([
+            'email' => 'Dira Jhesafet Chichipe Vera'
+        ], [
+            'name' => 'Dira Jhesafet Chichipe Vera',
+            'email' => 'veradira1@gmail.com',
+            'password' => '73125703',
+        ]);
+        $userHelpUser13->assignRole($userHelpAdmin);
     }
 }
