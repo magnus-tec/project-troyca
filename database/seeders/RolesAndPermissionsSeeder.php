@@ -217,7 +217,7 @@ class RolesAndPermissionsSeeder extends Seeder
         $userHelpUser13 = User::firstOrCreate([
             'email' => 'mdeysi742@gmail.com'
         ], [
-            'name' => 'mdeysi742',
+            'name' => 'Milagros Deysi',
             'email' => 'mdeysi742@gmail.com',
             'password' => '73709191',
         ]);
