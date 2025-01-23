@@ -8,6 +8,13 @@
     <div class="max-w-7xl  mx-auto px-4 py-12">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-semibold text-gray-800">Registro de Socios</h2>
+            <form method="GET" action="{{ route('socios.index') }}" class="flex items-center">
+                <input type="text" name="buscar" placeholder="Buscar socio..." value="{{ request('buscar') }}"
+                    class="border border-gray-300 rounded-lg py-2 px-4 mr-2">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">
+                    Buscar
+                </button>
+            </form>
             <a href="{{ route('socios.create') }}"
                 class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg flex items-center transition-all duration-300">
                 {{-- <i data-lucide="plus-circle" class="w-5 h-5 mr-2"></i> --}}
@@ -98,7 +105,6 @@
                 </tbody>
             </table>
         </div>
-        {{ $registros->links() }}
     </div>
     <!-- Mostrar los enlaces de paginación -->
 
