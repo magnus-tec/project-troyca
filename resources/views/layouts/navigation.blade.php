@@ -36,6 +36,12 @@
                             Aporte y Ahorros
                         </a>
                     @endcan
+                    @can('roles-permissions')
+                        <a href="{{ route('roles.index') }}"
+                            class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Perfiles
+                        </a>
+                    @endcan
                     @can('productos')
                         <a
                             class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
@@ -48,6 +54,7 @@
                             Contacto
                         </a>
                     @endcan
+
                 </div>
             </div>
 

@@ -65,6 +65,9 @@ Route::group(['middleware' => ['role:admin|user|userHelp|userAporte|userHelpAdmi
     Route::resource('beneficiarios', App\Http\Controllers\BeneficiariosController::class);
     //EXPEDIENTE
     Route::get('/expediente', [EstadoDeCuentaController::class, 'generarNumeroExpediente'])->name('generarNumeroExpediente');
+
+    // ROLES
+    // Route::resource('roles', App\Http\Controllers\BeneficiariosController::class);
 });
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

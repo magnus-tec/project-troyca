@@ -3,9 +3,12 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Notifications\CustomResetPassword;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Log;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
@@ -51,5 +54,21 @@ class User extends Authenticatable
     public function aporteAhorro()
     {
         return $this->hasMany(AporteAhorro::class, 'user_register', 'id');
+    }
+    public function sendPasswordResetNotification($token)
+    {
+        try {
+            Log::info('Ejecutando sendPasswordResetNotification.', [
+                'token' => $token,
+                'email' => $this->email,
+            ]);
+
+            $this->notify(new CustomResetPassword($token));
+        } catch (\Exception $e) {
+            Log::error('Error en sendPasswordResetNotification', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+        }
     }
 }

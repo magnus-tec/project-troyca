@@ -37,6 +37,8 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::firstOrCreate(['name' => 'productos']);
         Permission::firstOrCreate(['name' => 'contacto']);
 
+        Permission::firstOrCreate(['name' => 'roles-permissions']);
+
         // Prestamos
         Permission::firstOrCreate(['name' => 'pagar-prestamo']);
         Permission::firstOrCreate(['name' => 'eliminar-prestamo']);
@@ -209,6 +211,15 @@ class RolesAndPermissionsSeeder extends Seeder
             'name' => 'Dira Jhesafet Chichipe Vera',
             'email' => 'veradira1@gmail.com',
             'password' => '73125703',
+        ]);
+        $userHelpUser13->assignRole($userHelpAdmin);
+        //.........14
+        $userHelpUser13 = User::firstOrCreate([
+            'email' => 'mdeysi742@gmail.com'
+        ], [
+            'name' => 'mdeysi742',
+            'email' => 'mdeysi742@gmail.com',
+            'password' => '73709191',
         ]);
         $userHelpUser13->assignRole($userHelpAdmin);
     }
