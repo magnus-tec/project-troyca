@@ -448,9 +448,9 @@
             <div class="signature-line-left">SOCIO</div>
             <div class="signature-line-right"></div>
         </div>
-        <div class="signatures-center" style="margin-top: 70px;">
+        {{-- <div class="signatures-center" style="margin-top: 70px;">
             <div class="signature-line-center">JEFE DE OPERACIONES</div>
-        </div>
+        </div> --}}
     </div>
 </body>
 
