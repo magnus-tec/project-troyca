@@ -21,7 +21,14 @@ class AuthController extends Controller
                 'message' => 'Credenciales incorrectas',
             ], 401);
         }
+        // $user = Auth::user();
 
+        // // Verificar si el estado del usuario es 1
+        // if ($user->status != 1) {
+        //     return response()->json([
+        //         'message' => 'El usuario está desactivado. Contacta con el administrador.',
+        //     ], 403);  // Código de estado 403 para acceso prohibido
+        // }
         // Obtener el usuario autenticado
         $user = Auth::user();
         $roles = $user->roles()->pluck('name');        // Generar el token

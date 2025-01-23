@@ -11,10 +11,10 @@ class RoleController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:view role', ['only' => ['index']]);
-        $this->middleware('permission:create role', ['only' => ['create', 'store', 'addPermissionToRole', 'givePermissionToRole']]);
-        $this->middleware('permission:update role', ['only' => ['update', 'edit']]);
-        $this->middleware('permission:delete role', ['only' => ['destroy']]);
+        $this->middleware('permission:view-role', ['only' => ['index']]);
+        $this->middleware('permission:create-role', ['only' => ['create', 'store', 'addPermissionToRole', 'givePermissionToRole']]);
+        $this->middleware('permission:update-role', ['only' => ['update', 'edit']]);
+        $this->middleware('permission:delete-role', ['only' => ['destroy']]);
     }
 
     public function index()
@@ -42,7 +42,7 @@ class RoleController extends Controller
             'name' => $request->name
         ]);
 
-        return redirect('roles')->with('status', 'Role Created Successfully');
+        return redirect('roles')->with('status', 'Perfil creado con éxito');
     }
 
     public function edit(Role $role)
@@ -66,14 +66,14 @@ class RoleController extends Controller
             'name' => $request->name
         ]);
 
-        return redirect('roles')->with('status', 'Role Updated Successfully');
+        return redirect('roles')->with('status', 'Perfil actualizado con éxito');
     }
 
     public function destroy($roleId)
     {
         $role = Role::find($roleId);
         $role->delete();
-        return redirect('roles')->with('status', 'Role Deleted Successfully');
+        return redirect('roles')->with('status', 'Perfil eliminado con éxito');
     }
 
     public function addPermissionToRole($roleId)
@@ -101,6 +101,6 @@ class RoleController extends Controller
         $role = Role::findOrFail($roleId);
         $role->syncPermissions($request->permission);
 
-        return redirect()->back()->with('status', 'Permissions added to role');
+        return redirect()->back()->with('status', 'Perfil actualizado con éxito');
     }
 }

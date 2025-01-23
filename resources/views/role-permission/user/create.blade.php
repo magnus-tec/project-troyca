@@ -1,50 +1,72 @@
 <x-app-layout>
-
-    <div class="container mt-5">
-        <div class="row">
-            <div class="col-md-12">
-
+    <div class="container mx-auto mt-8 px-6">
+        <div class="row justify-center">
+            <div class="col-md-8">
+                <!-- Mensajes de error -->
                 @if ($errors->any())
-                    <ul class="alert alert-warning">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
+                    <div class="bg-yellow-100 text-yellow-700 p-4 rounded-md mb-6 shadow-md">
+                        <ul class="list-disc pl-5">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
                 @endif
 
-                <div class="card">
-                    <div class="card-header">
-                        <h4>Create User
-                            <a href="{{ url('users') }}" class="btn btn-danger float-end">Back</a>
-                        </h4>
+                <!-- Card de creación -->
+                <div class="bg-white shadow-md rounded-lg overflow-hidden">
+                    <div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-6">
+                        <h4 class="text-2xl font-semibold">Create User</h4>
+                        <a href="{{ url('users') }}"
+                            class="bg-red-600 hover:bg-red-500 text-white py-2 px-4 rounded-md transition-all float-right">
+                            Atras
+                        </a>
                     </div>
-                    <div class="card-body">
+                    <div class="p-6">
                         <form action="{{ url('users') }}" method="POST">
                             @csrf
 
-                            <div class="mb-3">
-                                <label for="">Name</label>
-                                <input type="text" name="name" class="form-control" />
+                            <!-- Campo Nombre -->
+                            <div class="mb-4">
+                                <label for="name" class="block text-gray-700 font-medium">Nombres y
+                                    Apellidos</label>
+                                <input type="text" name="name" id="name"
+                                    class="w-full mt-2 p-3 border rounded-md focus:ring focus:ring-blue-300 focus:outline-none" />
                             </div>
-                            <div class="mb-3">
-                                <label for="">Email</label>
-                                <input type="text" name="email" class="form-control" />
+
+                            <!-- Campo Email -->
+                            <div class="mb-4">
+                                <label for="email" class="block text-gray-700 font-medium">Email</label>
+                                <input type="text" name="email" id="email"
+                                    class="w-full mt-2 p-3 border rounded-md focus:ring focus:ring-blue-300 focus:outline-none" />
                             </div>
-                            <div class="mb-3">
-                                <label for="">Password</label>
-                                <input type="text" name="password" class="form-control" />
+
+                            <!-- Campo Contraseña -->
+                            <div class="mb-4">
+                                <label for="password" class="block text-gray-700 font-medium">Contraseña</label>
+                                <input type="text" name="password" id="password"
+                                    class="w-full mt-2 p-3 border rounded-md focus:ring focus:ring-blue-300 focus:outline-none" />
                             </div>
-                            <div class="mb-3">
-                                <label for="">Roles</label>
-                                <select name="roles[]" class="form-control" multiple>
-                                    <option value="">Select Role</option>
+
+                            <!-- Campo Roles -->
+                            <div class="mb-4">
+                                <label for="roles" class="block text-gray-700 font-medium">Perfiles</label>
+                                <select name="roles[]" id="roles"
+                                    class="w-full mt-2 p-3 border rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
+                                    multiple>
+                                    <option value="">Seleccione...</option>
                                     @foreach ($roles as $role)
                                         <option value="{{ $role }}">{{ $role }}</option>
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="mb-3">
-                                <button type="submit" class="btn btn-primary">Save</button>
+
+                            <!-- Botón Guardar -->
+                            <div class="mt-6">
+                                <button type="submit"
+                                    class="w-full bg-green-600 text-white py-3 px-4 rounded-md hover:bg-green-500 transition-all">
+                                    Guardar
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -52,5 +74,4 @@
             </div>
         </div>
     </div>
-
 </x-app-layout>

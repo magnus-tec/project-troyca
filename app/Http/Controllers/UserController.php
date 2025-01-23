@@ -11,15 +11,17 @@ class UserController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:view user', ['only' => ['index']]);
-        $this->middleware('permission:create user', ['only' => ['create', 'store']]);
-        $this->middleware('permission:update user', ['only' => ['update', 'edit']]);
-        $this->middleware('permission:delete user', ['only' => ['destroy']]);
+        $this->middleware('permission:view-user', ['only' => ['index']]);
+        $this->middleware('permission:create-user', ['only' => ['create', 'store']]);
+        $this->middleware('permission:update-user', ['only' => ['update', 'edit']]);
+        $this->middleware('permission:delete-user', ['only' => ['destroy']]);
     }
 
     public function index()
     {
-        $users = User::get();
+        $users = User::whereDoesntHave('registroSocio')
+            ->with('roles')
+            ->get();
         return view('role-permission.user.index', ['users' => $users]);
     }
 
@@ -46,7 +48,7 @@ class UserController extends Controller
 
         $user->syncRoles($request->roles);
 
-        return redirect('/users')->with('status', 'User created successfully with roles');
+        return redirect('/users')->with('status', 'Ejecutivo creado con éxito');
     }
 
     public function edit(User $user)
@@ -82,14 +84,19 @@ class UserController extends Controller
         $user->update($data);
         $user->syncRoles($request->roles);
 
-        return redirect('/users')->with('status', 'User Updated Successfully with roles');
+        return redirect('/users')->with('status', 'Ejecutivo actualizado con éxito');
     }
 
     public function destroy($userId)
     {
         $user = User::findOrFail($userId);
-        $user->delete();
+        $user->status = $user->status == 1 ? 0 : 1;
+        $user->save();
 
-        return redirect('/users')->with('status', 'User Delete Successfully');
+        $message = $user->status == 1
+            ? 'El usuario ha sido activado con éxito.'
+            : 'El usuario ha sido desactivado con éxito.';
+
+        return redirect('/users')->with('status', $message);
     }
 }
