@@ -17,6 +17,31 @@
              margin-top: 5px;
          }
 
+         .signatures {
+             display: flex;
+             justify-content: space-between;
+             margin-top: 50px;
+         }
+
+         /* Para la firma de la izquierda */
+         .signature-line-left {
+             float: left;
+             width: 45%;
+             text-align: center;
+             border-top: 1px solid black;
+             padding-top: 5px;
+             margin-top: 30px;
+         }
+
+         .signature-line-right {
+             float: right;
+             width: 45%;
+             text-align: center;
+             border-top: 1px solid black;
+             padding-top: 5px;
+             margin-top: 30px;
+         }
+
          .table {
              width: 100%;
              border-collapse: collapse;
@@ -64,6 +89,8 @@
 
      <div class="content">
          <h3>Detalles del Préstamo</h3>
+         <h3>Observaciones</h3>
+
          <table class="table">
              <thead>
                  <tr>
@@ -82,7 +109,6 @@
                  </tr>
              </tbody>
          </table>
-
          <h3>Detalles de las Cuotas</h3>
          @if ($prestamoCuotas->count() > 0)
              <table class="table">
@@ -134,6 +160,12 @@
          @else
              <p>No hay cuotas canceladas</p>
          @endif
+     </div>
+     <div class="signatures">
+         <div class="signature-line-left">{{ $prestamo->asesor->name }}</div>
+         <div class="signature-line-right">{{ $prestamo->registroSocio->datosPersonales->nombres }}
+             {{ $prestamo->registroSocio->datosPersonales->apellido_paterno }}
+             {{ $prestamo->registroSocio->datosPersonales->apellido_materno }}</div>
      </div>
 
  </body>
