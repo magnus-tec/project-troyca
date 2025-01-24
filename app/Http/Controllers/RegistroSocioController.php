@@ -20,11 +20,9 @@ class RegistroSocioController extends Controller
     // {
     //     $query = RegistroSocio::with('datosPersonales');
 
-    //     // return response()->json(["auth" => auth()->user(), "isAdmin" => auth()->user()->hasRole('admin')]);
     //     if (auth()->user()->hasRole('admin')) {
-    //         return response()->json(["auth" => auth()->user(), "isAdmin" => auth()->user()->hasRole('admin')]);
-
-    //         if ($request->has('buscar') && $request->buscar) {
+    //         // Si el usuario es admin, realizamos la consulta completa si hay filtro
+    //         if ($request->has('buscar') && !empty($request->buscar)) {
     //             $searchTerm = $request->buscar;
     //             $searchParts = explode(' ', $searchTerm);
     //             if (count($searchParts) > 1) {
@@ -45,7 +43,11 @@ class RegistroSocioController extends Controller
     //             } else {
     //                 $query->where(function ($q) use ($searchParts) {
     //                     $q->whereHas('datosPersonales', function ($query) use ($searchParts) {
-    //                         $query->where('nombres', 'LIKE', '%' . $searchParts[0] . '%')
+    //                         $query->where(
+    //                             'nombres',
+    //                             'LIKE',
+    //                             '%' . $searchParts[0] . '%'
+    //                         )
     //                             ->orWhere('apellido_paterno', 'LIKE', '%' . $searchParts[0] . '%')
     //                             ->orWhere('apellido_materno', 'LIKE', '%' . $searchParts[0] . '%')
     //                             ->orWhere('dni', 'LIKE', '%' . $searchParts[0] . '%');
@@ -55,8 +57,8 @@ class RegistroSocioController extends Controller
     //             $query->orWhere('numero_socio', 'LIKE', '%' . $searchTerm . '%');
     //         }
     //     } else {
+    //         // Si no es admin, solo mostramos registros si se mandó un filtro
     //         if ($request->has('buscar') && !empty($request->buscar)) {
-    //             // return response()->json(["auth" => auth()->user(), "isAdminffffff" => auth()->user()->hasRole('admin')]);
     //             $searchTerm = $request->buscar;
     //             $searchParts = explode(' ', $searchTerm);
     //             if (count($searchParts) > 1) {
@@ -85,10 +87,14 @@ class RegistroSocioController extends Controller
     //                 });
     //             }
     //             $query->orWhere('numero_socio', 'LIKE', '%' . $searchTerm . '%');
+    //         } else {
+    //             // Si no es admin y no se manda filtro, no mostramos nada
+    //             $registros = [];  // Devuelve un arreglo vacío
+    //             return view('socios.registrar-socios', compact('registros'));
     //         }
     //     }
+    //     // Si hay búsqueda o si es admin, ejecutamos la consulta
     //     $registros = $query->get();
-
     //     return view('socios.registrar-socios', compact('registros'));
     // }
     public function index(Request $request)
@@ -96,82 +102,32 @@ class RegistroSocioController extends Controller
         $query = RegistroSocio::with('datosPersonales');
 
         if (auth()->user()->hasRole('admin')) {
-            // Si el usuario es admin, realizamos la consulta completa si hay filtro
+            // Si el usuario es admin, realizamos la consulta si hay filtro
             if ($request->has('buscar') && !empty($request->buscar)) {
                 $searchTerm = $request->buscar;
-                $searchParts = explode(' ', $searchTerm);
-                if (count($searchParts) > 1) {
-                    $query->where(function ($q) use ($searchParts) {
-                        if (count($searchParts) >= 3) {
-                            $q->whereHas('datosPersonales', function ($query) use ($searchParts) {
-                                $query->where('apellido_paterno', 'LIKE', '%' . $searchParts[0] . '%')
-                                    ->orWhere('apellido_materno', 'LIKE', '%' . $searchParts[1] . '%')
-                                    ->orWhere('nombres', 'LIKE', '%' . $searchParts[2] . '%');
-                            });
-                        } else {
-                            $q->whereHas('datosPersonales', function ($query) use ($searchParts) {
-                                $query->where('apellido_paterno', 'LIKE', '%' . $searchParts[0] . '%')
-                                    ->orWhere('apellido_materno', 'LIKE', '%' . $searchParts[1] . '%');
-                            });
-                        }
-                    });
-                } else {
-                    $query->where(function ($q) use ($searchParts) {
-                        $q->whereHas('datosPersonales', function ($query) use ($searchParts) {
-                            $query->where(
-                                'nombres',
-                                'LIKE',
-                                '%' . $searchParts[0] . '%'
-                            )
-                                ->orWhere('apellido_paterno', 'LIKE', '%' . $searchParts[0] . '%')
-                                ->orWhere('apellido_materno', 'LIKE', '%' . $searchParts[0] . '%')
-                                ->orWhere('dni', 'LIKE', '%' . $searchParts[0] . '%');
-                        });
-                    });
-                }
-                $query->orWhere('numero_socio', 'LIKE', '%' . $searchTerm . '%');
+                $query->whereHas('datosPersonales', function ($q) use ($searchTerm) {
+                    $q->where('dni', 'LIKE', '%' . $searchTerm . '%');
+                });
             }
         } else {
             // Si no es admin, solo mostramos registros si se mandó un filtro
             if ($request->has('buscar') && !empty($request->buscar)) {
                 $searchTerm = $request->buscar;
-                $searchParts = explode(' ', $searchTerm);
-                if (count($searchParts) > 1) {
-                    $query->where(function ($q) use ($searchParts) {
-                        if (count($searchParts) >= 3) {
-                            $q->whereHas('datosPersonales', function ($query) use ($searchParts) {
-                                $query->where('apellido_paterno', 'LIKE', '%' . $searchParts[0] . '%')
-                                    ->orWhere('apellido_materno', 'LIKE', '%' . $searchParts[1] . '%')
-                                    ->orWhere('nombres', 'LIKE', '%' . $searchParts[2] . '%');
-                            });
-                        } else {
-                            $q->whereHas('datosPersonales', function ($query) use ($searchParts) {
-                                $query->where('apellido_paterno', 'LIKE', '%' . $searchParts[0] . '%')
-                                    ->orWhere('apellido_materno', 'LIKE', '%' . $searchParts[1] . '%');
-                            });
-                        }
-                    });
-                } else {
-                    $query->where(function ($q) use ($searchParts) {
-                        $q->whereHas('datosPersonales', function ($query) use ($searchParts) {
-                            $query->where('nombres', 'LIKE', '%' . $searchParts[0] . '%')
-                                ->orWhere('apellido_paterno', 'LIKE', '%' . $searchParts[0] . '%')
-                                ->orWhere('apellido_materno', 'LIKE', '%' . $searchParts[0] . '%')
-                                ->orWhere('dni', 'LIKE', '%' . $searchParts[0] . '%');
-                        });
-                    });
-                }
-                $query->orWhere('numero_socio', 'LIKE', '%' . $searchTerm . '%');
+                $query->whereHas('datosPersonales', function ($q) use ($searchTerm) {
+                    $q->where('dni', 'LIKE', '%' . $searchTerm . '%');
+                });
             } else {
-                // Si no es admin y no se manda filtro, no mostramos nada
-                $registros = [];  // Devuelve un arreglo vacío
+                // Si no hay filtro, no mostramos nada
+                $registros = [];
                 return view('socios.registrar-socios', compact('registros'));
             }
         }
+
         // Si hay búsqueda o si es admin, ejecutamos la consulta
-        $registros = $query->get();
+        $registros = $query->paginate(10);
         return view('socios.registrar-socios', compact('registros'));
     }
+
     public function findAll()
     {
         if (!auth()->user()->hasRole('admin')) {

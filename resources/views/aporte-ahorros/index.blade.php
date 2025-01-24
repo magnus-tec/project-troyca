@@ -8,6 +8,13 @@
     <div class="container mx-auto px-4 py-12">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-semibold text-gray-800">Registro de Aportes</h2>
+            <form method="GET" action="{{ route('aportes.index') }}" class="flex items-center">
+                <input type="text" name="buscar" placeholder="Buscar aporte..." value="{{ request('buscar') }}"
+                    class="border border-gray-300 rounded-lg py-2 px-4 mr-2">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">
+                    Buscar
+                </button>
+            </form>
             @can('registro-aporte')
                 <a href="{{ route('aportes.create') }}"
                     class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg flex items-center transition-all duration-300">
@@ -40,15 +47,19 @@
                         <th class="px-3 py-1 text-left text-xs  font-medium text-gray-500 uppercase tracking-wider">
                             Nombres y Apellidos
                         </th>
-                        <th class="px-3 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Total de Aportes
-                        </th>
+                        @can('ver-total-aporte')
+                            <th class="px-3 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Total de Aportes
+                            </th>
+                        @endcan
                         <th class="px-3 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Fecha de Registro
                         </th>
-                        <th class="px-3 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Acciones
-                        </th>
+                        @can('acciones-aporte')
+                            <th class="px-3 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Acciones
+                            </th>
+                        @endcan
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
@@ -66,22 +77,26 @@
                                     {{ $aporte->registroSocio->datosPersonales->nombres }}
                                 </div>
                             </td>
-                            <td class="px-3 py-1 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">
-                                    {{ $aporte->total_aportes }}
-                                </div>
-                            </td>
+                            @can('ver-total-aporte')
+                                <td class="px-3 py-1 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">
+                                        {{ $aporte->total_aportes }}
+                                    </div>
+                                </td>
+                            @endcan
                             <td class="px-3 py-1 whitespace-nowrap">
                                 <div class="text-sm font-medium text-gray-900">
                                     {{ $aporte->fecha_registro }}
                                 </div>
                             </td>
-                            <td class="px-3 py-1 whitespace-nowrap text-sm font-medium">
-                                <a href="{{ route('aporte-pdf', $aporte->id) }}" target="_blank"
-                                    class="text-green-600 hover:text-green-800 mr-3 transition duration-200">
-                                    PDF
-                                </a>
-                            </td>
+                            @can('ver-pdf-aporte')
+                                <td class="px-3 py-1 whitespace-nowrap text-sm font-medium">
+                                    <a href="{{ route('aporte-pdf', $aporte->id) }}" target="_blank"
+                                        class="text-green-600 hover:text-green-800 mr-3 transition duration-200">
+                                        PDF
+                                    </a>
+                                </td>
+                            @endcan
                         </tr>
                     @empty
                         <tr>
@@ -94,6 +109,8 @@
             </table>
 
         </div>
-        {{ $aportes->links() }}
+        @if ($aportes instanceof \Illuminate\Pagination\LengthAwarePaginator && $aportes->count() > 0)
+            {{ $aportes->links() }}
+        @endif
     </div>
 </x-app-layout>

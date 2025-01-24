@@ -17,7 +17,6 @@
             </form>
             <a href="{{ route('socios.create') }}"
                 class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg flex items-center transition-all duration-300">
-                {{-- <i data-lucide="plus-circle" class="w-5 h-5 mr-2"></i> --}}
                 Agregar
             </a>
         </div>
@@ -105,8 +104,11 @@
                 </tbody>
             </table>
         </div>
+        <!-- Mostrar los enlaces de paginación -->
+        @if ($registros instanceof \Illuminate\Pagination\LengthAwarePaginator && $registros->count() > 0)
+            {{ $registros->links() }}
+        @endif
     </div>
-    <!-- Mostrar los enlaces de paginación -->
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>

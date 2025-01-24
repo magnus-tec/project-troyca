@@ -17,20 +17,32 @@ class AporteAhorrosController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $aporteSocioId = RegistroSocio::where('user_id', auth()->user()->id)->first()->id ?? null;
-        $aportes = AporteAhorro::where('estado', 0)
-            ->when(!auth()->user()->hasRole('admin'), function ($query) use ($aporteSocioId) {
-                if ($aporteSocioId) {
-                    return $query->where('registro_socio_id', $aporteSocioId);
-                }
-            })
-            ->with('registroSocio.datosPersonales')
-            ->paginate(10);
-        if (request()->wantsJson()) {
-            return response()->json($aportes);
+        $query = AporteAhorro::with('registroSocio.datosPersonales')->where('estado', 0);
+
+        if (auth()->user()->hasRole('admin')) {
+            // Si el usuario es admin, realizamos la consulta completa si hay filtro
+            if ($request->has('buscar') && !empty($request->buscar)) {
+                $searchTerm = $request->buscar;
+                $query->whereHas('registroSocio.datosPersonales', function ($q) use ($searchTerm) {
+                    $q->where('dni', 'LIKE', '%' . $searchTerm . '%');
+                });
+            }
+        } else {
+            // Si no es admin, solo mostramos registros si se mandó un filtro
+            if ($request->has('buscar') && !empty($request->buscar)) {
+                $searchTerm = $request->buscar;
+                $query->whereHas('registroSocio.datosPersonales', function ($q) use ($searchTerm) {
+                    $q->where('dni', 'LIKE', '%' . $searchTerm . '%');
+                });
+            } else {
+                // Si no hay filtro, no mostramos nada
+                $aportes = [];
+                return view('aporte-ahorros.index', compact('aportes'));
+            }
         }
+        $aportes = $query->paginate(10);
         return view('aporte-ahorros.index', compact('aportes'));
     }
     public function findAll()
