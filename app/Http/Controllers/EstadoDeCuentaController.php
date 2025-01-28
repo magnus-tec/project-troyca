@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DatosPersonale;
 use App\Models\DetalleAporte;
 use App\Models\DetallePrestamo;
 use App\Models\Prestamo;
@@ -33,6 +34,27 @@ class EstadoDeCuentaController extends Controller
             ->with('registroSocio.datosPersonales')
             ->paginate(10);
         return view('estado-cuenta.index', compact('prestamos'));
+    }
+    public function consultaCliente(Request $request)
+    {
+        // Verificar que el parámetro dni esté presente
+        $dni = $request->input('dni');
+
+        if (!$dni) {
+            return response()->json(['error' => 'DNI no proporcionado'], 400);
+        }
+
+        // Buscar el cliente por su DNI
+        $cliente = DatosPersonale::where('dni', $dni)->first();
+
+        if ($cliente) {
+            return response()->json([
+                'id_socio' => $cliente->registro_socio_id,
+                'nombre_completo' => $cliente->nombres . ' ' . $cliente->apellido_paterno . ' ' . $cliente->apellido_materno
+            ]);
+        }
+
+        return response()->json(['error' => 'Cliente no encontrado'], 404);
     }
     public function generarNumeroExpediente()
     {
@@ -171,12 +193,14 @@ class EstadoDeCuentaController extends Controller
                     'fecha_solicitud' => 'required|date',
                     'dni' => 'required|string|max:8',
                     'fecha_desembolso' => 'required|date',
+                    'cliente' => 'required',
                 ],
                 [
                     'fecha_solicitud.required' => 'La fecha de solicitud es obligatoria.',
                     'dni.required' => 'El DNI es obligatorio.',
                     'dni.max' => 'El DNI no debe tener más de 8 caracteres.',
                     'fecha_desembolso.required' => 'La fecha de desembolso es obligatoria.',
+                    'cliente.required' => 'El cliente es obligatorio.',
                 ]
             );
         } catch (ValidationValidationException $e) {
@@ -201,7 +225,7 @@ class EstadoDeCuentaController extends Controller
         try {
             $prestamo = Prestamo::create([
                 'fecha_solicitud' => $request->fecha_solicitud,
-                'registro_socio_id' => $request->clientes,
+                'registro_socio_id' => $request->cliente,
                 'producto' => $request->producto,
                 'garantia' => $request->garantia,
                 'detalle_garantia' => $request->detalle_garantia,

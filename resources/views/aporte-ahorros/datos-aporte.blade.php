@@ -2,16 +2,26 @@
     @csrf
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
         <!-- datos de solicitud -->
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+        {{-- <div> --}}
+        {{-- <label class="block text-sm font-medium text-gray-700 mb-2">
                 Clientes
-            </label>
-            <select name="clientes" id="select_clientes"
+            </label> --}}
+        {{-- <select name="clientes" id="select_clientes"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
                 @foreach ($socios as $socio)
                     <option value="{{ $socio->id }}">{{ $socio->nombre_completo }}</option>
                 @endforeach
-            </select>
+            </select> --}}
+        {{-- </div> --}}
+
+        <input type="text" name="cliente" id="cliente" value="{{ $id_socio }}" hidden>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+                Socio
+            </label>
+            <input type="text" name="datos_cliente" id="datos_cliente" value="{{ $nombre_completo }}"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
+                readonly>
         </div>
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -53,7 +63,7 @@
     }
     $('#formAporte').submit(function(event) {
         event.preventDefault();
-        var clienteId = $('#select_clientes').val();
+        var clienteId = document.querySelector('input[name="cliente"]').value;
         var montoAporte = $(this).find('[name="monto"]').val();
 
         if (!montoAporte) {
@@ -112,7 +122,7 @@
         });
     });
     $(document).ready(function() {
-        var clienteId = $('#select_clientes').val();
+        var clienteId = $('#cliente').val();
         if (clienteId) {
             obtenerTotalAporte(clienteId);
         }

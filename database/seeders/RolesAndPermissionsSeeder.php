@@ -48,6 +48,8 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::firstOrCreate(['name' => 'actualizar-socio']);
         Permission::firstOrCreate(['name' => 'eliminar-socio']);
         Permission::firstOrCreate(['name' => 'agregar-socio']);
+        Permission::firstOrCreate(['name' => 'buscar-socio']);
+
         //Aportes
         Permission::firstOrCreate(['name' => 'registro-aporte']);
         Permission::firstOrCreate(['name' => 'actualizar-aporte']);
@@ -55,6 +57,7 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::firstOrCreate(['name' => 'ver-total-aporte']);
         Permission::firstOrCreate(['name' => 'ver-pdf-aporte']);
         Permission::firstOrCreate(['name' => 'acciones-aporte']);
+        Permission::firstOrCreate(['name' => 'buscar-aporte']);
         // Create Roles
         $adminRole = Role::firstOrCreate(['name' => 'admin']);
         $userRole = Role::firstOrCreate(['name' => 'user']);
@@ -74,6 +77,9 @@ class RolesAndPermissionsSeeder extends Seeder
         $userHelpAdmin->givePermissionTo(['registro-aporte']);
         $userHelpAdmin->givePermissionTo(['agregar-prestamo']);
         $userHelpAdmin->givePermissionTo(['registro-socios']);
+        $userHelpAdmin->givePermissionTo(['buscar-aporte']);
+        $userHelpAdmin->givePermissionTo(['buscar-socio']);
+        $userHelpAdmin->givePermissionTo(['agregar-socio']);
 
 
 

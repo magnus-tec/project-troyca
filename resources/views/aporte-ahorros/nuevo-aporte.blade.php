@@ -21,7 +21,10 @@
                 </nav>
             </div>
             <div class="p-6">
-                @include('aporte-ahorros.datos-aporte')
+                @include('aporte-ahorros.datos-aporte', [
+                    'nombre_completo' => $nombre_completo,
+                    'id_socio' => $id_socio,
+                ])
             </div>
         </div>
     </div>

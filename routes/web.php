@@ -50,12 +50,14 @@ Route::group(['middleware' => ['role:admin|user|userHelp|userAporte|userHelpAdmi
     Route::get('/prestamo/{id}/pdf', [EstadoDeCuentaController::class, 'generarPDF'])->name('prestamo-pdf');
     Route::get('/prestamo/{id}/pagar', [EstadoDeCuentaController::class, 'generarPago'])->name('prestamo-pagar');
     Route::get('/prestamo/pagar-cuota/{id}', [EstadoDeCuentaController::class, 'pagarCuota'])->name('prestamo-pagarCuota');
+    Route::post('/prestamo/consulta-cliente', [EstadoDeCuentaController::class, 'consultaCliente']);
 
     // APORTE Y AHORROS
     Route::resource('aportes', AporteAhorrosController::class);
     Route::get('/aporte/{id}/pdf', [AporteAhorrosController::class, 'generarPDF'])->name('aporte-pdf');
     Route::get('/aporte/totalAportes/{id}', [AporteAhorrosController::class, 'totalAportes'])->name('obtener-total-aporte');
     Route::get('/aporte/generar-voucher-pdf/{aporteDetalle}', [AporteAhorrosController::class, 'generarVoucher']);
+    Route::get('aportes/create/{dni}', [AporteAhorrosController::class, 'create'])->name('aportes.create');
 
     // SOCIOS 
     Route::resource('socios', RegistroSocioController::class);

@@ -9,7 +9,7 @@
             <input type="date" name="fecha_solicitud"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
         </div>
-        <div>
+        {{-- <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">
                 Clientes
             </label>
@@ -19,6 +19,15 @@
                     <option value="{{ $socio->id }}">{{ $socio->nombre_completo }}</option>
                 @endforeach
             </select>
+        </div> --}}
+        <input type="text" name="cliente" id="cliente" hidden>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+                Socio
+            </label>
+            <input type="text" name="datos_cliente" id="datos_cliente"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
+                readonly>
         </div>
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -57,7 +66,7 @@
             <label class="block text-sm font-medium text-gray-700 mb-2">
                 Dni
             </label>
-            <input type="number" name="dni"
+            <input type="number" name="dni" id="dni"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
         </div>
         <div>
@@ -164,6 +173,40 @@
 </form>
 <div id="tabla-pagos"></div>
 <script>
+    document.getElementById('dni').addEventListener('input', function() {
+        const dniValue = this.value;
+
+        if (dniValue.length === 8) {
+            fetch('/prestamo/consulta-cliente', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    },
+                    body: JSON.stringify({
+                        dni: dniValue
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.nombre_completo) {
+                        document.getElementById('datos_cliente').value = data.nombre_completo;
+                        document.getElementById('cliente').value = data.id_socio;
+                    } else {
+                        document.getElementById('datos_cliente').value = data.error;
+                        document.getElementById('cliente').value = '';
+
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        } else {
+            document.getElementById('cliente').value = '';
+
+            document.getElementById('datos_cliente').value = '';
+        }
+    });
     document.getElementById('formPrestamo').addEventListener('submit', function(event) {
         event.preventDefault();
 
@@ -225,6 +268,7 @@
                             });
                             codigoExpediente();
                             // limpiarPrestamo();
+
                         } else if (err.errorPago) {
                             Swal.fire({
                                 title: 'Error',
@@ -264,18 +308,19 @@
     });
 
     function limpiarPrestamo() {
+        document.querySelector('input[name="cliente"]').value = '';
+        document.querySelector('input[name="datos_cliente"]').value = '';
+        document.querySelector('input[name="dni"]').value = '';
         document.querySelector('input[name="fecha_solicitud"]').value = '';
         document.querySelector('input[name="fecha_desembolso"]').value = '';
         document.querySelector('input[name="garantia"]').value = '';
         document.querySelector('input[name="detalle_garantia"]').value = '';
-        document.querySelector('input[name="dni"]').value = '';
         document.getElementById('tabla-pagos').innerHTML = '';
         document.querySelector('input[name="monto_prestamo"]').value = '';
         document.querySelector('input[name="tem"]').value = '';
         document.querySelector('input[name="cantidad_cuotas"]').value = '';
         document.querySelector('input[name="fecha_p_cuota"]').value = '';
         document.querySelector('input[name="cuota"]').value = '';
-        document.querySelector('input[name="ted"]').value = '';
     }
 
     function redondearHaciaArriba(numero, decimales) {
@@ -284,6 +329,7 @@
     }
 
     function calculandoCuota() {
+
         let fechaPrimeraCuota = document.querySelector('input[name="fecha_p_cuota"]').value;
         let tasaInteres, numPagos, cuota, tasaDiaria, amortizacion, saldoCapital;
         let listadoPagos = [];
@@ -291,6 +337,39 @@
         const montoPrestamo = parseFloat(document.querySelector('input[name="monto_prestamo"]').value);
         const tasa = parseFloat(document.querySelector('input[name="tem"]').value) / 100;
         const cantidadCuotas = parseInt(document.querySelector('input[name="cantidad_cuotas"]').value);
+
+        if (!fechaPrimeraCuota) {
+            Swal.fire({
+                title: 'Error',
+                text: 'La fecha de primera cuota no puede estar vacia.',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            })
+        }
+        if (!cantidadCuotas) {
+            Swal.fire({
+                title: 'Error',
+                text: 'La cantidad de cuotas no puede estar vacia.',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            })
+        }
+        if (!tasa) {
+            Swal.fire({
+                title: 'Error',
+                text: 'El interes no puede estar vacio.',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            })
+        }
+        if (!montoPrestamo) {
+            Swal.fire({
+                title: 'Error',
+                text: 'El monto del prestamo no puede estar vacio.',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            })
+        }
         saldoCapital = montoPrestamo;
         let calculoElevado = Math.pow(1 + tasa, cantidadCuotas);
 

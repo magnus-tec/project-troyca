@@ -79,18 +79,16 @@ class AporteAhorrosController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create($dni)
     {
-        $socios = RegistroSocio::where('registro_socios.estado', 0)
-            ->join('datos_personales', 'registro_socios.id', '=', 'datos_personales.registro_socio_id')
-            ->select(
-                'registro_socios.id',
-                DB::raw("CONCAT(datos_personales.nombres, ' ', datos_personales.apellido_paterno, ' ', datos_personales.apellido_materno) AS nombre_completo")
-            )
-            ->get();
-        return view('aporte-ahorros.nuevo-aporte', compact('socios'));
+        $cliente = DatosPersonale::where('dni', $dni)->first();
+        if ($cliente) {
+            $nombre_completo = $cliente->nombres . ' ' . $cliente->apellido_paterno . ' ' . $cliente->apellido_materno;
+            $id_socio = $cliente->registro_socio_id;
+            return view('aporte-ahorros.nuevo-aporte', compact('nombre_completo', 'id_socio'));
+        }
+        return view('aporte-ahorros.nuevo-aporte', ['error' => 'Cliente no encontrado']);
     }
-
     /**
      * Store a newly created resource in storage.
      */

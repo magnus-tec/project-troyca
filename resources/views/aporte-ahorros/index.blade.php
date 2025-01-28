@@ -8,19 +8,14 @@
     <div class="container mx-auto px-4 py-12">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-semibold text-gray-800">Registro de Aportes</h2>
-            <form method="GET" action="{{ route('aportes.index') }}" class="flex items-center">
-                <input type="text" name="buscar" placeholder="Buscar aporte..." value="{{ request('buscar') }}"
-                    class="border border-gray-300 rounded-lg py-2 px-4 mr-2">
-                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">
-                    Buscar
-                </button>
-            </form>
-            @can('registro-aporte')
-                <a href="{{ route('aportes.create') }}"
-                    class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg flex items-center transition-all duration-300">
-                    {{-- <i data-lucide="plus-circle" class="w-5 h-5 mr-2"></i> --}}
-                    Agregar
-                </a>
+            @can('buscar-aporte')
+                <form method="GET" action="{{ route('aportes.index') }}" class="flex items-center">
+                    <input type="text" name="buscar" placeholder="Buscar aporte..." value="{{ request('buscar') }}"
+                        class="border border-gray-300 rounded-lg py-2 px-4 mr-2">
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">
+                        Buscar
+                    </button>
+                </form>
             @endcan
         </div>
 
@@ -89,6 +84,7 @@
                                     {{ $aporte->fecha_registro }}
                                 </div>
                             </td>
+
                             @can('ver-pdf-aporte')
                                 <td class="px-3 py-1 whitespace-nowrap text-sm font-medium">
                                     <a href="{{ route('aporte-pdf', $aporte->id) }}" target="_blank"
@@ -97,6 +93,17 @@
                                     </a>
                                 </td>
                             @endcan
+                            @can('registro-aporte')
+                                <td>
+                                    <a href="{{ route('aportes.create', $aporte->registroSocio->datosPersonales->dni) }}"
+                                        class="bg-green-500 hover:bg-green-600 font-size-sm text-white rounded-lg flex items-center transition-all duration-300 px-2 py-1"
+                                        style="width: 80px;">
+                                        <i class="bi bi-plus-circle-fill"></i> Aporte
+                                    </a>
+                                </td>
+                            @endcan
+                            </td>
+
                         </tr>
                     @empty
                         <tr>
