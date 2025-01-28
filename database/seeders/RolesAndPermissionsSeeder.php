@@ -80,6 +80,8 @@ class RolesAndPermissionsSeeder extends Seeder
         $userHelpAdmin->givePermissionTo(['buscar-aporte']);
         $userHelpAdmin->givePermissionTo(['buscar-socio']);
         $userHelpAdmin->givePermissionTo(['agregar-socio']);
+        $userHelpAdmin->givePermissionTo(['ver-pdf-aporte']);
+        $userHelpAdmin->givePermissionTo(['ver-total-aporte']);
 
 
 
