@@ -59,7 +59,7 @@
                      text: 'Por favor, ingresa un DNI válido.',
                  })
              }
-             fetch(`/api/buscar-socio/${dni}`)
+             fetch(`/buscar-socio/${dni}`)
                  .then(response => response.json())
                  .then(data => {
                      if (data.success) {
