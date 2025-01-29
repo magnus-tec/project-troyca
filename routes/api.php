@@ -37,6 +37,7 @@ Route::middleware(['auth:sanctum'])->get('aportes/generarPDF/{id}', [AporteAhorr
 Route::middleware(['auth:sanctum'])->post('aportes/create', [AporteAhorrosController::class, 'store']);
 Route::middleware(['auth:sanctum'])->post('aportes/generar-voucher-pdf/{aporteDetalle}', [AporteAhorrosController::class, 'generarVoucher']);
 Route::middleware(['auth:sanctum'])->get('aportes/totalAportes/{id}', [AporteAhorrosController::class, 'totalAportes']);
+Route::middleware(['auth:sanctum'])->get('/buscar-socio/{dni}', [AporteAhorrosController::class, 'buscarSocio']);
 
 
 

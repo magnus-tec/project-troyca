@@ -24,6 +24,7 @@
                 @include('aporte-ahorros.datos-aporte', [
                     'nombre_completo' => $nombre_completo,
                     'id_socio' => $id_socio,
+                    'total_ahorros' => $total_ahorros,
                 ])
             </div>
         </div>

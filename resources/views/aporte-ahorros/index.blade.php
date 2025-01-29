@@ -17,6 +17,12 @@
                     </button>
                 </form>
             @endcan
+            @can('registro-aporte')
+                <a href="{{ route('aportes.create') }}"
+                    class="bg-blue-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg flex items-center transition-all duration-300">
+                    Agregar
+                </a>
+            @endcan
         </div>
 
         @if (session('success'))
@@ -95,7 +101,7 @@
                             @endcan
                             @can('registro-aporte')
                                 <td>
-                                    <a href="{{ route('aportes.create', $aporte->registroSocio->datosPersonales->dni) }}"
+                                    <a href="{{ route('aportes.adicionar', $aporte->registroSocio->datosPersonales->dni) }}"
                                         class="bg-green-500 hover:bg-green-600 font-size-sm text-white rounded-lg flex items-center transition-all duration-300 px-2 py-1"
                                         style="width: 80px;">
                                         <i class="bi bi-plus-circle-fill"></i> Aporte

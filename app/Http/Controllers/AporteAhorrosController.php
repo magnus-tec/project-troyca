@@ -79,15 +79,64 @@ class AporteAhorrosController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create($dni)
+    public function create()
+    {
+        return view('aporte-ahorros.nuevo-aporte', [
+            'nombre_completo' => null,
+            'id_socio' => null,
+            'error' => null
+        ]);
+    }
+    public function adicionar($dni)
     {
         $cliente = DatosPersonale::where('dni', $dni)->first();
         if ($cliente) {
-            $nombre_completo = $cliente->nombres . ' ' . $cliente->apellido_paterno . ' ' . $cliente->apellido_materno;
-            $id_socio = $cliente->registro_socio_id;
-            return view('aporte-ahorros.nuevo-aporte', compact('nombre_completo', 'id_socio'));
+            //buscamos si el cliente tiene ya un aporte ahorro
+            $aporte = AporteAhorro::where('registro_socio_id', $cliente->registro_socio_id)->first();
+            if ($aporte) {
+                return view('aporte-ahorros.nuevo-aporte', [
+                    'id_socio' => $cliente->registro_socio_id,
+                    'nombre_completo' => $cliente->nombres . ' ' . $cliente->apellido_paterno . ' ' . $cliente->apellido_materno,
+                    'total_ahorros' => $aporte->total_aportes
+                ]);
+            }
         }
         return view('aporte-ahorros.nuevo-aporte', ['error' => 'Cliente no encontrado']);
+    }
+    public function buscarSocio($dni)
+    {
+        $cliente = DatosPersonale::where('dni', $dni)->first();
+
+        if ($cliente) {
+            //verificar si el cliente tiene ya un aporte ahorro
+            $aporte = AporteAhorro::where('registro_socio_id', $cliente->registro_socio_id)->first();
+            if ($aporte) {
+                return response()->json([
+                    'success' => true,
+                    'socio' => [
+                        'id_socio' => $cliente->registro_socio_id,
+                        'nombre_completo' => $cliente->nombres . ' ' . $cliente->apellido_paterno . ' ' . $cliente->apellido_materno,
+                        'total_ahorros' => $aporte->total_aportes
+                    ]
+                ]);
+            } else {
+                return response()->json(
+                    [
+                        'success' => true,
+                        'socio' => [
+                            'id_socio' => $cliente->registro_socio_id,
+                            'nombre_completo' => $cliente->nombres . ' ' . $cliente->apellido_paterno . ' ' . $cliente->apellido_materno,
+                            'total_ahorros' => 0
+                        ]
+                    ]
+                );
+            }
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Socio no encontrado'
+        ], 404);
     }
     /**
      * Store a newly created resource in storage.
