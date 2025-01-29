@@ -84,7 +84,8 @@ class AporteAhorrosController extends Controller
         return view('aporte-ahorros.nuevo-aporte', [
             'nombre_completo' => null,
             'id_socio' => null,
-            'error' => null
+            'error' => null,
+            'total_ahorros' => null
         ]);
     }
     public function adicionar($dni)
