@@ -130,11 +130,11 @@ class RegistroSocioController extends Controller
 
     public function findAll()
     {
-        if (!auth()->user()->hasRole('admin')) {
-            return response()->json([
-                'error' => 'No tienes permiso para acceder a esta información.'
-            ], 403);
-        }
+        // if (!auth()->user()->hasRole('admin')) {
+        //     return response()->json([
+        //         'error' => 'No tienes permiso para acceder a esta información.'
+        //     ], 403);
+        // }
 
         $registros = RegistroSocio::with('datosPersonales')->get();
         return response()->json($registros);
