@@ -22,7 +22,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::middleware(['auth:sanctum'])->get('socios/findAll', [RegistroSocioController::class, 'findAll']);
+Route::middleware(['auth:sanctum'])->get('socios/findAll', [RegistroSocioController::class, 'findAll']); // --- no se va usar
 //APIS ESTADO CUENTA
 Route::middleware(['auth:sanctum'])->get('estado_cuenta/findAll', [EstadoDeCuentaController::class, 'findAll']);
 Route::middleware(['auth:sanctum'])->get('estado_cuenta/{id}', [EstadoDeCuentaController::class, 'findOne']);
@@ -36,6 +36,7 @@ Route::middleware(['auth:sanctum'])->get('aportes/findAll', [AporteAhorrosContro
 Route::middleware(['auth:sanctum'])->get('aportes/generarPDF/{id}', [AporteAhorrosController::class, 'generarPDF']);
 Route::middleware(['auth:sanctum'])->post('aportes/create', [AporteAhorrosController::class, 'store']);
 Route::middleware(['auth:sanctum'])->post('aportes/generar-voucher-pdf/{aporteDetalle}', [AporteAhorrosController::class, 'generarVoucher']);
+Route::middleware(['auth:sanctum'])->post('aportes/generar-voucher-mobile/{aporteDetalle}', [AporteAhorrosController::class, 'generarVoucherMobile']);
 Route::middleware(['auth:sanctum'])->get('aportes/totalAportes/{id}', [AporteAhorrosController::class, 'totalAportes']);
 Route::middleware(['auth:sanctum'])->get('/buscar-socio/{dni}', [AporteAhorrosController::class, 'buscarSocio']);
 
