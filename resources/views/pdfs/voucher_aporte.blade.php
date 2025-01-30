@@ -19,8 +19,8 @@
          html {
              margin: 0 auto;
              padding: 0;
-             width: 95%;
-             height: 95%;
+             width: 98%;
+             height: 98%;
          }
 
          .container {
@@ -50,7 +50,12 @@
          }
 
          .section table {
-             font-size: 11px;
+             font-size: 12.5px;
+         }
+
+         p {
+             margin: 0px;
+             padding: 0px;
          }
 
          .section-title {
@@ -72,9 +77,9 @@
          .total-amount {
              background-color: #eeeeee;
              color: #000000;
-             padding: 1px;
+             padding: 5px;
              text-align: center;
-             font-size: 11px;
+             font-size: 13px;
          }
 
          .message {
@@ -117,8 +122,8 @@
          <div class="section">
              <table style="width: 100%; border: 0;">
                  <tr>
-                     <td style="width: 40%; text-align: left;">Nro Doc:</td>
-                     <td style="width: 60%; text-align: left;">{{ $aporteDetalleInfo->codigo }}</td>
+                     <td style="width: 35%; text-align: left;">Nro Doc:</td>
+                     <td style="width: 75%; text-align: left;">{{ $aporteDetalleInfo->codigo }}</td>
                  </tr>
                  <tr>
                      <td style="text-align: left;">Fecha:</td>
@@ -138,8 +143,8 @@
          <div class="section" style="margin-bottom: 0px;border-bottom: none;">
              <table style="width: 100%; border: 0;">
                  <tr>
-                     <td style="width: 40%; text-align: left;">Cuenta:</td>
-                     <td style="width: 60%; text-align: left;">{{ $socioCodigo->numero_socio }}</td>
+                     <td style="width: 35%; text-align: left;">Cuenta:</td>
+                     <td style="width: 75%; text-align: left;">{{ $socioCodigo->numero_socio }}</td>
                  </tr>
                  <tr>
                      <td style="text-align: left;">Socio:</td>
@@ -156,8 +161,8 @@
          <div class="section" style="border-top: 0.1px solid #e0e0e0;margin-bottom: 0px;border-bottom: none;">
              <table style="width: 100%;">
                  <tr>
-                     <td style="width: 50%; text-align: left;">Monto:</td>
-                     <td style="width: 50%; text-align: right;">{{ $aporteDetalleInfo->monto }}</td>
+                     <td style="width: 35%;">Monto:</td>
+                     <td style="width: 75%;">{{ $aporteDetalleInfo->monto }}</td>
                  </tr>
              </table>
          </div>

@@ -45,6 +45,24 @@ class AporteAhorrosController extends Controller
         $aportes = $query->paginate(10);
         return view('aporte-ahorros.index', compact('aportes'));
     }
+    public function reportes(Request $request)
+    {
+        if (!$request->has(['fecha_desde', 'fecha_hasta']) || empty($request->fecha_desde) || empty($request->fecha_hasta)) {
+            return response()->json(['error' => 'Faltan parámetros'], 400);
+        }
+
+        $aportes = DetalleAporte::with(['user', 'aporteAhorro.registroSocio'])->whereDate('fecha_registro', '>=', $request->fecha_desde)
+            ->whereDate('fecha_registro', '<=', $request->fecha_hasta)
+            ->get();
+        //con mensaje de succes true
+        return response()->json($aportes);
+    }
+    public function historial()
+    {
+        $aportes = [];
+        return view('aporte-ahorros.reportes', compact('aportes'));
+    }
+
     public function findAll()
     {
         $aporteSocioId = RegistroSocio::where('user_id', auth()->user()->id)->first()->id ?? null;

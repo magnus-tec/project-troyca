@@ -42,7 +42,13 @@
                             Perfiles
                         </a>
                     @endcan
-                    @can('productos')
+                    @can('reporte-aporte')
+                        <a href="{{ route('aportes.historial') }}"
+                            class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Reporte de Aportes
+                        </a>
+                    @endcan
+                    {{-- @can('productos')
                         <a
                             class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                             Productos
@@ -53,7 +59,7 @@
                             class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                             Contacto
                         </a>
-                    @endcan
+                    @endcan --}}
 
                 </div>
             </div>
