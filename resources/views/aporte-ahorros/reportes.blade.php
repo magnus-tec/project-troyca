@@ -15,7 +15,14 @@
                     <label for="">Hasta: </label>
                     <input type="date" name="fecha_hasta" id="fecha_hasta"
                         class="border border-gray-300 rounded-lg py-2 px-4 mr-2">
-
+                    @can('buscar-por-ejecutivo-aportes')
+                        <select name="trabajador" id="trabajador" class="border border-gray-300 rounded-lg py-2 px-4 mr-2">
+                            <option value="todos">Todos</option>
+                            @foreach ($trabajadores as $trabajador)
+                                <option value="{{ $trabajador->id }}">{{ $trabajador->name }}</option>
+                            @endforeach
+                        </select>
+                    @endcan
                     <button type="submit"
                         class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">
                         Buscar
@@ -36,6 +43,9 @@
                         </th>
                         <th class="px-3 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Fecha de Registro
+                        </th>
+                        <th class="px-3 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Ejecutivo
                         </th>
                     </tr>
                 </thead>
@@ -65,14 +75,17 @@
         function finAllAportes() {
             let desde = document.getElementById('fecha_desde').value;
             let hasta = document.getElementById('fecha_hasta').value;
-            fetch(`/aporte/reportes?fecha_desde=${desde}&fecha_hasta=${hasta}`)
+            let trabajadorElement = document.getElementById('trabajador');
+            let trabajador = trabajadorElement ? trabajadorElement.value : '';
+            fetch(`/aporte/reportes?fecha_desde=${desde}&fecha_hasta=${hasta}&trabajador=${trabajador}`)
                 .then(response => response.json())
                 .then(data => {
                     console.log(data);
                     document.getElementById('tbodyAportes').innerHTML = '';
-                    data.forEach(aporte => {
-                        let row = document.createElement('tr');
-                        row.innerHTML = `
+                    if (data.length > 0) {
+                        data.forEach(aporte => {
+                            let row = document.createElement('tr');
+                            row.innerHTML = `
                                 <td class="px-3 py-1 whitespace-nowrap">
                                     <div class="text-sm font-medium text-gray-900">
                                         ${aporte.codigo}
@@ -80,7 +93,7 @@
                                 </td>
                                  <td class="px-3 py-1 whitespace-nowrap">
                                     <div class="text-sm font-medium text-gray-900">
-                                        ${aporte.registro_socio}
+                                        ${aporte.aporte_ahorro.registro_socio.datos_personales.apellido_paterno} ${aporte.aporte_ahorro.registro_socio.datos_personales.apellido_materno} ${aporte.aporte_ahorro.registro_socio.datos_personales.nombres}
                                     </div>
                                 </td>
                                 <td class="px-3 py-1 whitespace-nowrap">
@@ -99,9 +112,17 @@
                                     </div>
                                 </td>
                             `;
+                            document.getElementById('tbodyAportes').appendChild(row);
+                        });
+                    } else {
+                        let row = document.createElement('tr');
+                        row.innerHTML = `
+                                <td colspan="5" class="px-3 py-2 text-center text-gray-500">
+                                    No se encontraron registros
+                                </td>
+                            `;
                         document.getElementById('tbodyAportes').appendChild(row);
-                    });
-
+                    }
                 })
         }
         document.getElementById('formBuscarPorFecha').addEventListener('submit', function(event) {

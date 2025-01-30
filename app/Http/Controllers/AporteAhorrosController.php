@@ -45,22 +45,56 @@ class AporteAhorrosController extends Controller
         $aportes = $query->paginate(10);
         return view('aporte-ahorros.index', compact('aportes'));
     }
+    // public function reportes(Request $request)
+    // {
+    //     if (!$request->has(['fecha_desde', 'fecha_hasta']) || empty($request->fecha_desde) || empty($request->fecha_hasta)) {
+    //         return response()->json(['error' => 'Faltan parámetros'], 400);
+    //     }
+    //     $aportes = DetalleAporte::with(['user', 'aporteAhorro.registroSocio.datosPersonales'])->whereDate('fecha_registro', '>=', $request->fecha_desde)
+    //         ->whereDate('fecha_registro', '<=', $request->fecha_hasta)
+    //         ->get();
+    //     if ($request->has('trabajador') && !empty($request->trabajador) && $request->trabajador != 'todos') {
+    //         $aportes = $aportes->where('user_register', $request->trabajador)->values();;
+    //     }
+    //     return response()->json($aportes);
+    // }
     public function reportes(Request $request)
     {
         if (!$request->has(['fecha_desde', 'fecha_hasta']) || empty($request->fecha_desde) || empty($request->fecha_hasta)) {
             return response()->json(['error' => 'Faltan parámetros'], 400);
         }
 
-        $aportes = DetalleAporte::with(['user', 'aporteAhorro.registroSocio'])->whereDate('fecha_registro', '>=', $request->fecha_desde)
-            ->whereDate('fecha_registro', '<=', $request->fecha_hasta)
-            ->get();
-        //con mensaje de succes true
-        return response()->json($aportes);
+        // Obtener el usuario autenticado
+        $user = auth()->user();
+
+        // Construir la consulta base
+        $aportes = DetalleAporte::with(['user', 'aporteAhorro.registroSocio.datosPersonales'])
+            ->whereDate('fecha_registro', '>=', $request->fecha_desde)
+            ->whereDate('fecha_registro', '<=', $request->fecha_hasta);
+
+        // Si el usuario tiene el rol de administrador
+        if ($user->hasRole('admin')) {
+            // Si el parámetro `trabajador` es "todos" o vacío, no filtramos por `user_register`
+            if ($request->trabajador === 'todos' || empty($request->trabajador)) {
+                return response()->json($aportes->get());
+            } else {
+                // Si el parámetro `trabajador` tiene un valor, filtramos por `user_register`
+                $aportes->where('user_register', $request->trabajador);
+            }
+        } else {
+            // Si no es admin, solo mostramos los aportes del trabajador logueado
+            $aportes->where('user_register', $user->id);
+        }
+
+        return response()->json($aportes->get());
     }
+
+
     public function historial()
     {
         $aportes = [];
-        return view('aporte-ahorros.reportes', compact('aportes'));
+        $trabajadores = User::doesntHave('registroSocio')->get();
+        return view('aporte-ahorros.reportes', compact('aportes', 'trabajadores'));
     }
 
     public function findAll()
