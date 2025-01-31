@@ -156,15 +156,9 @@
                      <td style="text-align: left;">Pago:</td>
                      <td style="text-align: left;">Efectivo APP Movil</td>
                  </tr>
-             </table>
-         </div>
-
-         <div class="section" style="border-top: 0.1px solid #e0e0e0;margin-bottom: 0px;border-bottom: none;">
-             <table style="width: 100%;">
                  <tr>
-                     <td style="width: 50%; text-align: left;">Monto:</td>
-                     <td style="width: 50%; text-align: right;"><span
-                             style="font-size: 15px;">{{ $aporteDetalleInfo->monto }}</span></td>
+                     <td>Monto:</td>
+                     <td><span style="font-size: 15px;">{{ $aporteDetalleInfo->monto }}</span></td>
                  </tr>
              </table>
          </div>

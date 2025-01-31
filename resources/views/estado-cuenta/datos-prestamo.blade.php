@@ -1,7 +1,6 @@
 <form action="{{ route('prestamos.store') }}" method="POST" class="space-y-6" id="formPrestamo">
     @csrf
     <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
-        <!-- datos de solicitud -->
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">
                 Fecha Solicitud
@@ -9,17 +8,6 @@
             <input type="date" name="fecha_solicitud"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
         </div>
-        {{-- <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-                Clientes
-            </label>
-            <select name="clientes"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
-                @foreach ($socios as $socio)
-                    <option value="{{ $socio->id }}">{{ $socio->nombre_completo }}</option>
-                @endforeach
-            </select>
-        </div> --}}
         <input type="text" name="cliente" id="cliente" hidden>
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -79,8 +67,6 @@
                     <option value="{{ $asesor->id }}">{{ $asesor->name }}</option>
                 @endforeach
             </select>
-            {{-- <input type="text" name="asesor"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"> --}}
         </div>
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -90,7 +76,6 @@
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
                 disabled>
         </div>
-
         <!-- CALCULAR CUOTA -->
         <br>
         <div>
@@ -144,13 +129,6 @@
             <input type="date" name="fecha_p_cuota" maxlength="8"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
         </div>
-        {{-- <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-                TAsa de interes diario
-            </label>
-            <input type="text" name="ted" maxlength="8" disabled
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
-        </div> --}}
         <input type="hidden" name="listado_pagos" id="listado_pagos">
 
         <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
@@ -323,11 +301,6 @@
         document.querySelector('input[name="cuota"]').value = '';
     }
 
-    function redondearHaciaArriba(numero, decimales) {
-        const factor = Math.pow(10, decimales);
-        return Math.ceil(numero * factor) / factor;
-    }
-
     function calculandoCuota() {
 
         let fechaPrimeraCuota = document.querySelector('input[name="fecha_p_cuota"]').value;
@@ -374,7 +347,7 @@
         let calculoElevado = Math.pow(1 + tasa, cantidadCuotas);
 
         cuota = (saldoCapital * tasa * calculoElevado) / (calculoElevado - 1);
-        document.querySelector('input[name="cuota"]').value = redondearHaciaArriba(cuota, 2);
+        document.querySelector('input[name="cuota"]').value = cuota.toFixed(2);
         console.log(cuota)
         let fecha = new Date(fechaPrimeraCuota);
         let montoPagado = 0;
@@ -401,7 +374,6 @@
             amortizacion = cuota - interes;
             saldoCapital -= amortizacion;
             listadoPagos.push({
-                // fecha: fechaFormateada,
                 fechaVencimiento: fechaFormateada,
                 monto: cuota.toFixed(2),
                 saldoCapital: saldoCapital.toFixed(2),
@@ -413,9 +385,7 @@
                 pagado: false
             });
         }
-        console.log("before")
         mostrarTablaPagos(listadoPagos);
-        console.log("after")
         document.getElementById('listado_pagos').value = JSON.stringify(listadoPagos);
     }
 

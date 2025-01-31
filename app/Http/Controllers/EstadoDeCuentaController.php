@@ -276,7 +276,7 @@ class EstadoDeCuentaController extends Controller
             $prestamo = Prestamo::with('registroSocio.datosPersonales')->find($id);
 
             $detalles = DetallePrestamo::where('prestamos_id', $id)->first();
-            $prestamoCuotas = PrestamoCuota::where('prestamos_id', $id)->where('estado', 1)->get();
+            $prestamoCuotas = PrestamoCuota::where('prestamos_id', $id)->get();
 
             $pdf = Pdf::loadView('pdfs.prestamo', compact('prestamo', 'detalles', 'prestamoCuotas'));
 
