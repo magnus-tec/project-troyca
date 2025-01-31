@@ -305,7 +305,7 @@
                          <th>Cuota</th>
                          <th>Mora</th>
                          <th>Subtotal</th>
-                         <th>Monto Pagado</th>
+                         {{-- <th>Monto Pagado</th> --}}
                          <th>Estado</th>
                      </tr>
                  </thead>
@@ -323,7 +323,7 @@
                              <td>{{ $cuota->cuota }}</td>
                              <td>{{ $cuota->mora }}</td>
                              <td>{{ $cuota->subtotal }}</td>
-                             <td>{{ $cuota->monto_pago }}</td>
+                             {{-- <td>{{ $cuota->monto_pago }}</td> --}}
                              <td>{{ $cuota->estado == 0 ? 'Pendiente' : 'Pagada' }}</td>
                          </tr>
                      @endforeach
