@@ -74,12 +74,7 @@
             style="background-color: #ADADF7;">
             <div class="w-24 h-24 bg-blue-700 rounded-full mx-auto -mt-16 flex items-center justify-center button-3d"
                 style="background-color: #ADADF7;">
-                <svg class="w-16 h-16 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                    fill="currentColor">
-                    <path
-                        d="M12 12c2.76 0 5-2.24 5-5S14.76 2 12 2 7 4.24 7 7s2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v2h20v-2c0-3.33-6.67-5-10-5z" />
-                </svg>
-                {{-- <span class="text-1xl font-bold text-white">Troyca</span> --}}
+                <img src="{{ asset('images/logo.png') }}" class="" alt="Logo">
             </div>
 
             <div class="rounded-lg relative  mb-10  ">

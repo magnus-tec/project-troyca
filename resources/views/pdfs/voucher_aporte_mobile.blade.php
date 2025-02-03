@@ -56,7 +56,7 @@
          }
 
          .section table {
-             font-size: 12.5px;
+             font-size: 12px;
          }
 
          .section-title {
@@ -170,6 +170,18 @@
          <div class="message" style="font-size: 9px;">
              <p>Aporte guardado con éxito</p>
          </div>
+         <div
+             style="text-align: center; font-size: 9px; font-family: Arial, sans-serif; line-height: 1.4; margin-top: 10px;">
+             <span>****************** GRACIAS POR SU PREFERENCIA ******************</span><br>
+             <strong>Cooperativa de Ahorro y Crédito La Troyca</strong><br>
+             <em>Excelencia en servicios financieros</em><br><br>
+             <strong>Contáctanos:</strong><br>
+             Lunes a Viernes: 8:30 a.m. - 6:00 p.m.<br>
+             Sábados: 8:30 a.m. - 1:00 p.m.<br>
+             Celular: 939405096<br>
+             E-mail: coopaclt@gmail.com
+         </div>
+
      </div>
  </body>
 

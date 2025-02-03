@@ -120,7 +120,7 @@ class AporteAhorrosController extends Controller
             $aporteInfo = AporteAhorro::find($aporteId);
             $socioCodigo = RegistroSocio::find($aporteInfo->registro_socio_id);
             $socioInfo = DatosPersonale::where('registro_socio_id', $aporteInfo->registro_socio_id)->first();
-            $pdf = PDF::loadView('pdfs.voucher_aporte', compact('aporteDetalleInfo', 'aporteInfo', 'socioCodigo', 'socioInfo'))->setPaper([0, 0, 226.77, 200], 'portrait');
+            $pdf = PDF::loadView('pdfs.voucher_aporte', compact('aporteDetalleInfo', 'aporteInfo', 'socioCodigo', 'socioInfo'))->setPaper([0, 0, 226.77, 300], 'portrait');
             return $pdf->stream('voucher_aporte.pdf');
         } catch (\Exception $e) {
             return response()->json([
@@ -136,7 +136,7 @@ class AporteAhorrosController extends Controller
             $aporteInfo = AporteAhorro::find($aporteId);
             $socioCodigo = RegistroSocio::find($aporteInfo->registro_socio_id);
             $socioInfo = DatosPersonale::where('registro_socio_id', $aporteInfo->registro_socio_id)->first();
-            $pdf = PDF::loadView('pdfs.voucher_aporte_mobile', compact('aporteDetalleInfo', 'aporteInfo', 'socioCodigo', 'socioInfo'))->setPaper([0, 0, 226.77, 200], 'portrait');
+            $pdf = PDF::loadView('pdfs.voucher_aporte_mobile', compact('aporteDetalleInfo', 'aporteInfo', 'socioCodigo', 'socioInfo'))->setPaper([0, 0, 226.77, 300], 'portrait');
             return $pdf->stream('voucher_aporte.pdf');
         } catch (\Exception $e) {
             return response()->json([

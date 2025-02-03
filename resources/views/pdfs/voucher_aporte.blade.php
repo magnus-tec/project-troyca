@@ -8,7 +8,8 @@
      <title>Voucher de Aporte</title>
      <style>
          body {
-             font-family: 'Roboto Mono', monospace;
+             /* font-family: 'Roboto Mono', monospace; */
+             font-family: 'Arial Bold', sans-serif;
              color: #333;
              font-weight: 700;
              /* Bold */
@@ -39,6 +40,11 @@
              font-weight: bold;
          }
 
+         p {
+             margin: 0px;
+             padding: 0px;
+         }
+
          span {
              margin: 0px;
              padding: 0px;
@@ -50,16 +56,11 @@
          }
 
          .section table {
-             font-size: 12.5px;
-         }
-
-         p {
-             margin: 0px;
-             padding: 0px;
+             font-size: 12px;
          }
 
          .section-title {
-             font-size: 18px;
+             font-size: 22px;
              font-weight: bold;
              color: #0a134e;
          }
@@ -77,9 +78,9 @@
          .total-amount {
              background-color: #eeeeee;
              color: #000000;
-             padding: 5px;
+             padding: 3px;
              text-align: center;
-             font-size: 13px;
+             font-size: 12px;
          }
 
          .message {
@@ -122,7 +123,7 @@
          <div class="section">
              <table style="width: 100%; border: 0;">
                  <tr>
-                     <td style="width: 35%; text-align: left;">Nro Doc:</td>
+                     <td style="width: 25%; text-align: left;">Nro Doc:</td>
                      <td style="width: 75%; text-align: left;">{{ $aporteDetalleInfo->codigo }}</td>
                  </tr>
                  <tr>
@@ -143,7 +144,7 @@
          <div class="section" style="margin-bottom: 0px;border-bottom: none;">
              <table style="width: 100%; border: 0;">
                  <tr>
-                     <td style="width: 35%; text-align: left;">Cuenta:</td>
+                     <td style="width: 25%; text-align: left;">Cuenta:</td>
                      <td style="width: 75%; text-align: left;">{{ $socioCodigo->numero_socio }}</td>
                  </tr>
                  <tr>
@@ -156,20 +157,11 @@
                      <td style="text-align: left;">Efectivo APP Movil</td>
                  </tr>
                  <tr>
-                     <td style="text-align: left;">Monto:</td>
-                     <td style="text-align: left;">{{ $aporteDetalleInfo->monto }}</td>
+                     <td>Monto:</td>
+                     <td><span style="font-size: 15px;">{{ $aporteDetalleInfo->monto }}</span></td>
                  </tr>
              </table>
          </div>
-
-         {{-- <div class="section" style="border-top: 0.1px solid #e0e0e0;margin-bottom: 0px;border-bottom: none;">
-             <table style="width: 100%;">
-                 <tr>
-                     <td style="width: 35%;">Monto:</td>
-                     <td style="width: 75%;">{{ $aporteDetalleInfo->monto }}</td>
-                 </tr>
-             </table>
-         </div> --}}
          <div class="total-amount">
              <p><strong>Total de Aporte:</strong> {{ $aporteInfo->total_aportes }}</p>
          </div>
@@ -178,6 +170,18 @@
          <div class="message" style="font-size: 9px;">
              <p>Aporte guardado con éxito</p>
          </div>
+         <div
+             style="text-align: center; font-size: 9px; font-family: Arial, sans-serif; line-height: 1.4; margin-top: 10px;">
+             <span>****************** GRACIAS POR SU PREFERENCIA ******************</span><br>
+             <strong>Cooperativa de Ahorro y Crédito La Troyca</strong><br>
+             <em>Excelencia en servicios financieros</em><br><br>
+             <strong>Contáctanos:</strong><br>
+             Lunes a Viernes: 8:30 a.m. - 6:00 p.m.<br>
+             Sábados: 8:30 a.m. - 1:00 p.m.<br>
+             Celular: 939405096<br>
+             E-mail: coopaclt@gmail.com
+         </div>
+
      </div>
  </body>
 
