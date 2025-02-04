@@ -314,7 +314,7 @@ class RegistroSocioController extends Controller
 
     private function generarNumeroSocio()
     {
-        $ultimoRegistro = RegistroSocio::latest()->first();
+        $ultimoRegistro = DB::table('registro_socios')->lockForUpdate()->orderByDesc('id')->first();
 
         if ($ultimoRegistro) {
             // Extraer la parte numérica ignorando cualquier prefijo ('SOC' o 'S')
