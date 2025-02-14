@@ -19,7 +19,9 @@ class DatosPersonale extends Model
         'estado_civil',
         'profesion_ocupacion',
         'nacionalidad',
-        'sexo'
+        'sexo',
+        'tipo_documento',
+        'menor_edad',
     ];
 
     protected $casts = [

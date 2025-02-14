@@ -87,21 +87,23 @@ class RegistroSocioController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->input('datosPersonales'));
+        // dd($request->input('datosPersonales.tipo_documento'));
         // dd($request->all());
         // Validar los datos de datosPersonales
         try {
             $validatedDataPersonal = $request->validate(
                 [
+                    'datosPersonales.tipo_documento' => 'required|string|in:DNI,Pasaporte',
                     'datosPersonales.apellido_paterno' => 'nullable|string|max:255',
                     'datosPersonales.apellido_materno' => 'nullable|string|max:255',
                     'datosPersonales.nombres' => 'required|string|max:255',
-                    'datosPersonales.dni' => 'required|string|digits:8|unique:datos_personales,dni',
+                    'datosPersonales.dni' => 'required|string|unique:datos_personales,dni',
                     'datosPersonales.fecha_nacimiento' => 'nullable|date',
                     'datosPersonales.estado_civil' => 'nullable|string|max:255',
                     'datosPersonales.profesion_ocupacion' => 'nullable|string|max:255',
                     'datosPersonales.nacionalidad' => 'nullable|string|max:255',
                     'datosPersonales.sexo' => 'nullable|string|in:masculino,femenino',
+                    'datosPersonales.menor_edad' => 'nullable|boolean',
                 ],
                 [
                     'datosPersonales.dni.unique' => 'El DNI ya ha sido registrado en Datos Personales.',

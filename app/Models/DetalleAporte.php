@@ -16,6 +16,7 @@ class DetalleAporte extends Model
         'estado',
         'codigo',
         'user_register',
+        'tipo_cuenta',
     ];
     public function aporteAhorro()
     {

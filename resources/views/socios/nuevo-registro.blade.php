@@ -104,15 +104,22 @@
             const beneficiario = button.closest('.beneficiario-form-agregando');
             beneficiario.remove();
         }
+
+        function limpiarCampos() {
+            document.getElementById('apellido_paterno_personal').value = "";
+            document.getElementById('apellido_materno_personal').value = "";
+            document.getElementById('nombres_personal').value = "";
+        }
         document.addEventListener('DOMContentLoaded', function() {
             // api dni
             const inputDni = document.getElementById('dni_personal');
+            const menorEdadCheckbox = document.getElementById("menor_edad");
             const token =
                 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InN5c3RlbWNyYWZ0LnBlQGdtYWlsLmNvbSJ9.yuNS5hRaC0hCwymX_PjXRoSZJWLNNBeOdlLRSUGlHGA';
 
-            inputDni.addEventListener('input', () => {
-                const dni = inputDni.value;
-                if (dni.length === 8) {
+            // Función para buscar DNI
+            function buscarDNI(dni) {
+                if (dni.length === 8 && !menorEdadCheckbox.checked) {
                     fetch(`https://dniruc.apisperu.com/api/v1/dni/${dni}?token=${token}`)
                         .then(response => {
                             if (!response.ok) {
@@ -122,17 +129,29 @@
                         })
                         .then(data => {
                             console.log(data);
-                            document.getElementById('apellido_paterno_personal').value = data
-                                .apellidoPaterno;
-                            document.getElementById('apellido_materno_personal').value = data
-                                .apellidoMaterno;
+                            document.getElementById('apellido_paterno_personal').value = data.apellidoPaterno;
+                            document.getElementById('apellido_materno_personal').value = data.apellidoMaterno;
                             document.getElementById('nombres_personal').value = data.nombres;
-
                         })
                         .catch(error => {
                             console.error('Error:', error);
                             alert('No se pudo encontrar el DNI');
                         });
+                }
+            }
+
+            // Evento cuando el usuario escribe en el campo DNI
+            inputDni.addEventListener('input', () => {
+                buscarDNI(inputDni.value);
+            });
+
+            // Evento cuando el checkbox cambia de estado
+            menorEdadCheckbox.addEventListener("change", function() {
+                if (this.checked) {
+                    limpiarCampos();
+                } else {
+                    // Si se desmarca y el DNI tiene 8 dígitos, buscar DNI
+                    buscarDNI(inputDni.value);
                 }
             });
             //--- fin dni
@@ -208,6 +227,7 @@
                     apellido_materno: document.getElementById('apellido_materno_personal').value,
                     nombres: document.getElementById('nombres_personal').value,
                     dni: document.getElementById('dni_personal').value,
+                    tipo_documento: document.getElementById('tipo_documento').value,
                     fecha_nacimiento: document.getElementById('fecha_nacimiento_personal').value,
                     estado_civil: document.getElementById('estado_civil_personal').value,
                     profesion_ocupacion: document.getElementById('profesion_ocupacion_personal')
@@ -215,6 +235,7 @@
                     nacionalidad: document.getElementById('nacionalidad_personal').value,
                     sexo: document.querySelector('input[name="sexo_personal"]:checked') ? document
                         .querySelector('input[name="sexo_personal"]:checked').value : null,
+                    menor_edad: document.getElementById('menor_edad').checked ? 1 : 0,
                 };
 
                 const direccionDomiciliaria = {

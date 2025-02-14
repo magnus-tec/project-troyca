@@ -7,7 +7,7 @@
      </form>
      <form action="" method="POST" class="space-y-6" id="formAporte">
          @csrf
-         <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+         <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
              <!-- datos de solicitud -->
              <input type="text" name="cliente" id="cliente" value="{{ isset($id_socio) ? $id_socio : '' }}" hidden>
              <div>
@@ -33,6 +33,16 @@
                  <input type="text" name="total_ahorros" value="{{ isset($total_ahorros) ? $total_ahorros : '' }}"
                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
                      disabled>
+             </div>
+             <div>
+                 <label for="tipo_cuenta">Tipo cuenta</label>
+                 <select name="tipo_cuenta" id="tipo_cuenta" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                     <option value="">Selecciona</option>
+                     <option value="1">Cuenta 1</option>
+                     <option value="2">Cuenta 2</option>
+                     <option value="3">Cuenta 3</option>
+
+                 </select>
              </div>
              <div class="mt-6 flex ">
                  <button type="button" onclick="history.back()"
@@ -78,7 +88,17 @@
              event.preventDefault();
              var clienteId = document.querySelector('input[name="cliente"]').value;
              var montoAporte = $(this).find('[name="monto"]').val();
+             var tipo_cuenta = document.getElementById('tipo_cuenta').value || null;
 
+             if (!tipo_cuenta) {
+                 Swal.fire({
+                     icon: 'error',
+                     title: 'Error',
+                     text: 'Por favor, escoja un tipo de cuenta.',
+                 })
+                 return;
+
+             }
              if (!montoAporte) {
                  Swal.fire({
                      icon: 'error',
@@ -101,7 +121,8 @@
                  data: {
                      _token: '{{ csrf_token() }}',
                      clientes: clienteId,
-                     monto: montoAporte
+                     monto: montoAporte,
+                     tipo_cuenta: tipo_cuenta
                  },
                  success: function(response) {
                      //  obtenerTotalAporte(clienteId);

@@ -1,57 +1,73 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Reporte de aportes
-        </h2>
+            Historial de Aportes </h2>
     </x-slot>
-    <div class=" container mx-auto p-6">
+    <div class=" container mx-auto p-6 text-xs">
         <div class="bg-white rounded-lg shadow-lg  mb-5">
             <div class="flex justify-between items-center mb-6 mt-6 p-3">
-                <h2 class="text-2xl font-semibold text-gray-800">Historial de Aportes</h2>
-                <form class="flex items-center" id="formBuscarPorFecha">
-                    <label for="">Desde: </label>
-                    <input type="date" name="fecha_desde" id="fecha_desde"
-                        class="border border-gray-300 rounded-lg py-2 px-4 mr-2">
-                    <label for="">Hasta: </label>
-                    <input type="date" name="fecha_hasta" id="fecha_hasta"
-                        class="border border-gray-300 rounded-lg py-2 px-4 mr-2">
-                    @can('buscar-por-ejecutivo-aportes')
-                        <select name="trabajador" id="trabajador" class="border border-gray-300 rounded-lg py-2 px-4 mr-2">
-                            <option value="todos">Todos</option>
-                            @foreach ($trabajadores as $trabajador)
-                                <option value="{{ $trabajador->id }}">{{ $trabajador->name }}</option>
-                            @endforeach
-                        </select>
-                    @endcan
-                    <button type="submit"
-                        class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">
-                        Buscar
-                    </button>
+                <form class="grid grid-cols-1 md:grid-cols-5 sm:grid-cols-2 gap-2 justify-center items-center "
+                    id="formBuscarPorFecha">
+                    <div>
+                        <button onclick="pdfHisorialAportes()" data-url="{{ route('aportes.pdf-historial') }}"
+                            class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4  rounded-lg mx-2">
+                            Generar PDF
+                        </button>
+                    </div>
+                    <div>
+                        <label for="">Desde: </label>
+                        <input type="date" name="fecha_desde" id="fecha_desde"
+                            class="border border-gray-300 rounded-lg py-2 px-4 mr-2">
+                    </div>
+                    <div>
+                        <label for="">Hasta: </label>
+                        <input type="date" name="fecha_hasta" id="fecha_hasta"
+                            class="border border-gray-300 rounded-lg py-2 px-4 mr-2">
+                    </div>
+                    <div>
+                        @can('buscar-por-ejecutivo-aportes')
+                            <select name="trabajador" id="trabajador"
+                                class="border border-gray-300 rounded-lg py-2 px-4 mr-2">
+                                <option value="todos">Todos</option>
+                                @foreach ($trabajadores as $trabajador)
+                                    <option value="{{ $trabajador->id }}">{{ $trabajador->name }}</option>
+                                @endforeach
+                            </select>
+                        @endcan
+                    </div>
+                    <div>
+                        <button type="submit"
+                            class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">
+                            Buscar
+                        </button>
+                    </div>
                 </form>
             </div>
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-3 py-1 text-left text-xs  font-medium text-gray-500 uppercase tracking-wider">
-                            Codigo
-                        </th>
-                        <th class="px-3 py-1 text-left text-xs  font-medium text-gray-500 uppercase tracking-wider">
-                            Nombres y Apellidos
-                        </th>
-                        <th class="px-3 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Monto de Aporte
-                        </th>
-                        <th class="px-3 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Fecha de Registro
-                        </th>
-                        <th class="px-3 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Ejecutivo
-                        </th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200" id="tbodyAportes">
-                </tbody>
-            </table>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-3 py-1 text-left text-xs  font-medium text-gray-500 uppercase tracking-wider">
+                                Codigo
+                            </th>
+                            <th class="px-3 py-1 text-left text-xs  font-medium text-gray-500 uppercase tracking-wider">
+                                Nombres y Apellidos
+                            </th>
+                            <th class="px-3 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Monto de Aporte
+                            </th>
+                            <th class="px-3 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Fecha de Registro
+                            </th>
+                            <th class="px-3 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Ejecutivo
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200 " id="tbodyAportes">
+                    </tbody>
+                </table>
+            </div>
 
         </div>
         @if ($aportes instanceof \Illuminate\Pagination\LengthAwarePaginator && $aportes->count() > 0)
@@ -129,6 +145,25 @@
             event.preventDefault();
             finAllAportes();
         });
+
+        function pdfHisorialAportes() {
+            let desde = document.getElementById('fecha_desde').value;
+            let hasta = document.getElementById('fecha_hasta').value;
+            let trabajadorElement = document.getElementById('trabajador');
+            let trabajador = trabajadorElement ? trabajadorElement.value : '';
+            window.open(`/aporte/pdf-historial-aportes?fecha_desde=${desde}&fecha_hasta=${hasta}&trabajador=${trabajador}`,
+                '_blank');
+        }
+
+        function pdfHisorialAportes() {
+            let url = document.querySelector('[data-url]').getAttribute(
+                'data-url');
+            let desde = document.getElementById('fecha_desde').value;
+            let hasta = document.getElementById('fecha_hasta').value;
+            let trabajadorElement = document.getElementById('trabajador');
+            let trabajador = trabajadorElement ? trabajadorElement.value : '';
+            window.open(`${url}?fecha_desde=${desde}&fecha_hasta=${hasta}&trabajador=${trabajador}`, '_blank');
+        }
         document.addEventListener('DOMContentLoaded', () => {
             fecha_desde = document.getElementById('fecha_desde');
             fecha_hasta = document.getElementById('fecha_hasta');

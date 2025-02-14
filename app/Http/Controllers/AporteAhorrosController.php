@@ -45,44 +45,97 @@ class AporteAhorrosController extends Controller
         $aportes = $query->paginate(10);
         return view('aporte-ahorros.index', compact('aportes'));
     }
-    // public function reportes(Request $request)
+    // public function pdfHistorial(Request $request)
     // {
-    //     if (!$request->has(['fecha_desde', 'fecha_hasta']) || empty($request->fecha_desde) || empty($request->fecha_hasta)) {
-    //         return response()->json(['error' => 'Faltan parámetros'], 400);
-    //     }
-    //     $aportes = DetalleAporte::with(['user', 'aporteAhorro.registroSocio.datosPersonales'])->whereDate('fecha_registro', '>=', $request->fecha_desde)
-    //         ->whereDate('fecha_registro', '<=', $request->fecha_hasta)
-    //         ->get();
-    //     if ($request->has('trabajador') && !empty($request->trabajador) && $request->trabajador != 'todos') {
-    //         $aportes = $aportes->where('user_register', $request->trabajador)->values();;
-    //     }
-    //     return response()->json($aportes);
+    //     ini_set('max_execution_time', 120); 
+    //     ini_set('memory_limit', '512M');
+    //     $aportes = [];
+    //     DetalleAporte::with(['user', 'aporteAhorro.registroSocio.datosPersonales'])
+    //         ->whereBetween('fecha_registro', [$request->fecha_desde, $request->fecha_hasta])
+    //         ->chunk(500, function ($chunk) use (&$aportes) {
+    //             foreach ($chunk as $aporte) {
+    //                 $aportes[] = $aporte;
+    //             }
+    //         });
+    //     $pdf = Pdf::loadView('pdfs.historial', compact('aportes'));
+    //     return $pdf->stream('reporte.pdf');
     // }
+
+    // public function pdfHistorial(Request $request)
+    // {
+    //     ini_set('max_execution_time', 120);
+    //     ini_set('memory_limit', '512M');
+    //     $aportes = [];
+    //     DetalleAporte::with(['user', 'aporteAhorro.registroSocio.datosPersonales'])
+    //         ->whereBetween('fecha_registro', [$request->fecha_desde, $request->fecha_hasta])
+    //         ->chunk(500, function ($chunk) use (&$aportes) {
+    //             foreach ($chunk as $aporte) {
+    //                 $userId = $aporte->user_register ?? 'sin_usuario';
+    //                 if (!isset($aportes[$userId])) {
+    //                     $aportes[$userId] = [
+    //                         'user' => $aporte->user ?? null,
+    //                         'detalles' => []
+    //                     ];
+    //                 }
+    //                 $aportes[$userId]['detalles'][] = $aporte;
+    //             }
+    //         });
+
+    //     $pdf = Pdf::loadView('pdfs.historial', compact('aportes'));
+    //     return $pdf->stream('reporte.pdf');
+    // }
+
+    public function pdfHistorial(Request $request)
+    {
+        ini_set('max_execution_time', 120);
+        ini_set('memory_limit', '512M');
+
+        $aportes = [];
+
+        $query = DetalleAporte::with(['user', 'aporteAhorro.registroSocio.datosPersonales'])
+            ->whereDate('fecha_registro', '>=', $request->fecha_desde)
+            ->whereDate('fecha_registro', '<=', $request->fecha_hasta);
+
+        if ($request->trabajador !== 'todos') {
+            $query->where('user_register', $request->trabajador);
+        }
+
+        $query->chunk(500, function ($chunk) use (&$aportes) {
+            foreach ($chunk as $aporte) {
+                $userId = $aporte->user_register ?? 'sin_usuario';
+                if (!isset($aportes[$userId])) {
+                    $aportes[$userId] = [
+                        'user' => $aporte->user ?? null,
+                        'detalles' => []
+                    ];
+                }
+                $aportes[$userId]['detalles'][] = $aporte;
+            }
+        });
+
+        $fecha_desde = $request->fecha_desde;
+        $fecha_hasta = $request->fecha_hasta;
+
+        $pdf = Pdf::loadView('pdfs.historial', compact('aportes', 'fecha_desde', 'fecha_hasta'));
+        return $pdf->stream('reporte.pdf');
+    }
+
     public function reportes(Request $request)
     {
         if (!$request->has(['fecha_desde', 'fecha_hasta']) || empty($request->fecha_desde) || empty($request->fecha_hasta)) {
             return response()->json(['error' => 'Faltan parámetros'], 400);
         }
-
-        // Obtener el usuario autenticado
         $user = auth()->user();
-
-        // Construir la consulta base
         $aportes = DetalleAporte::with(['user', 'aporteAhorro.registroSocio.datosPersonales'])
             ->whereDate('fecha_registro', '>=', $request->fecha_desde)
             ->whereDate('fecha_registro', '<=', $request->fecha_hasta);
-
-        // Si el usuario tiene el rol de administrador
         if ($user->hasRole('admin')) {
-            // Si el parámetro `trabajador` es "todos" o vacío, no filtramos por `user_register`
             if ($request->trabajador === 'todos' || empty($request->trabajador)) {
                 return response()->json($aportes->get());
             } else {
-                // Si el parámetro `trabajador` tiene un valor, filtramos por `user_register`
                 $aportes->where('user_register', $request->trabajador);
             }
         } else {
-            // Si no es admin, solo mostramos los aportes del trabajador logueado
             $aportes->where('user_register', $user->id);
         }
 
@@ -222,23 +275,27 @@ class AporteAhorrosController extends Controller
         $nextId = intval($lastCodigo) + 1;
         return str_pad($nextId, 7, '0', STR_PAD_LEFT);
     }
-
     public function store(Request $request)
     {
         try {
-            $aporte = AporteAhorro::where('registro_socio_id', $request->clientes)->first();
+            $aporte = AporteAhorro::where('registro_socio_id', $request->clientes)
+                ->where('tipo_cuenta', $request->tipo_cuenta)
+                ->first();
+
             if ($aporte) {
                 $nuevoTotal = $aporte->total_aportes + $request->monto;
                 $aporte->update(['total_aportes' => $nuevoTotal]);
             } else {
                 $aporte = new AporteAhorro();
                 $aporte->registro_socio_id = $request->clientes;
+                $aporte->tipo_cuenta = $request->tipo_cuenta;
                 $aporte->estado = 0;
                 $aporte->total_aportes = $request->monto;
                 $aporte->codigo = $this->generateCodigoAporte();
                 $aporte->save();
             }
-            $socio = RegistroSocio::find($request->clientes)->with('datosPersonales',)->first();
+
+            $socio = RegistroSocio::find($request->clientes)->with('datosPersonales')->first();
 
             $aporteDetalle = new DetalleAporte();
             $aporteDetalle->aporte_id = $aporte->id;
@@ -261,6 +318,7 @@ class AporteAhorrosController extends Controller
             ]);
         }
     }
+
 
     /**
      * Display the specified resource.

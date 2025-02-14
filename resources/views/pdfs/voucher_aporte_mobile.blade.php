@@ -162,12 +162,12 @@
                  </tr>
              </table>
          </div>
-         <div class="total-amount">
+         {{-- <div class="total-amount">
              <p><strong>Total de Aporte:</strong> {{ $aporteInfo->total_aportes }}</p>
-         </div>
+         </div> --}}
 
 
-         <div class="message" style="font-size: 9px;">
+         <div class="message total-amount" style="font-size: 9px;margin-top: 10px;margin-bottom: 10px;">
              <p>Aporte guardado con éxito</p>
          </div>
          <div

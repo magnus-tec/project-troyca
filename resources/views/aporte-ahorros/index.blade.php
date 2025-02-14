@@ -87,6 +87,11 @@
                             @endcan
                             <td class="px-3 py-1 whitespace-nowrap">
                                 <div class="text-sm font-medium text-gray-900">
+                                    Tipo cuenta {{ $aporte->tipo_cuenta }}
+                                </div>
+                            </td>
+                            <td class="px-3 py-1 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">
                                     {{ $aporte->fecha_registro }}
                                 </div>
                             </td>

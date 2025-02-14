@@ -28,11 +28,26 @@
                 value="{{ old('nombres', $socio->datosPersonales->nombres ?? '') }}"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
         </div>
-
+        <div>
+            <label for="tipo_documento" class="block text-sm font-medium text-gray-700 mb-2">
+                Tipo de Documento
+            </label>
+            <select name="tipo_documento" id="tipo_documento"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
+                <option value="">Seleccione...</option>
+                <option value="DNI" {{ old('tipo_documento') == 'DNI' ? 'selected' : '' }}>DNI</option>
+                <option value="Pasaporte" {{ old('tipo_documento') == 'Pasaporte' ? 'selected' : '' }}>Pasaporte
+                </option>
+            </select>
+        </div>
+        <div class="mt-2">
+            <input type="checkbox" id="menor_edad" class="mr-2">
+            <label for="menor_edad" class="text-sm font-medium text-gray-700">Es menor de edad</label>
+        </div>
         <!-- DNI -->
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">
-                DNI N°
+                DNI N° / N° de Pasaporte
             </label>
             <input type="number" name="dni" maxlength="8" id="dni_personal"
                 value="{{ old('dni', $socio->datosPersonales->dni ?? '') }}"

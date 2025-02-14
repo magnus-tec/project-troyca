@@ -61,7 +61,7 @@ Route::group(['middleware' => ['role:admin|user|userHelp|userAporte|userHelpAdmi
     Route::get('/buscar-socio/{dni}', [AporteAhorrosController::class, 'buscarSocio']);
     Route::get('/aporte/reportes', [AporteAhorrosController::class, 'reportes'])->name('aportes.reporte');
     Route::get('/aporte/historial', [AporteAhorrosController::class, 'historial'])->name('aportes.historial');
-
+    Route::get('/aporte/pdf-historial-aportes', [AporteAhorrosController::class, 'pdfHistorial'])->name('aportes.pdf-historial');
     // SOCIOS 
     Route::resource('socios', RegistroSocioController::class);
     Route::get('/registro/{registro}/pdf', [RegistroSocioController::class, 'generarPDF'])->name('registro.generar-pdf');

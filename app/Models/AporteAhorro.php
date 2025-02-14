@@ -14,6 +14,7 @@ class AporteAhorro extends Model
         'estado',
         'codigo',
         'user_register',
+        'tipo_cuenta'
     ];
     public function registroSocio()
     {
