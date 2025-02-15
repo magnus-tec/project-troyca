@@ -291,7 +291,6 @@ class AporteAhorrosController extends Controller
                 $aporte->tipo_cuenta = $request->tipo_cuenta;
                 $aporte->estado = 0;
                 $aporte->total_aportes = $request->monto;
-                $aporte->tipo_cuenta = 1;
                 $aporte->codigo = $this->generateCodigoAporte();
                 $aporte->save();
             }
@@ -302,7 +301,6 @@ class AporteAhorrosController extends Controller
             $aporteDetalle->aporte_id = $aporte->id;
             $aporteDetalle->monto = $request->monto;
             $aporteDetalle->estado = 0;
-            $aporteDetalle->tipo_cuenta = 1;
             $aporteDetalle->codigo = $this->generateCodigoAporteCuotas();
             $aporteDetalle->save();
 
