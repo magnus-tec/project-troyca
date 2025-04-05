@@ -10,7 +10,7 @@
                         <div>
                             <div class=" py-2">
                                 <span class="font-semibold text-sm">Monto: </span>
-                                <span>${{ $detallePrestamo->monto }}</span>
+                                <span>S/{{ $detallePrestamo->monto }}</span>
                             </div>
                             <div class=" py-2 text-sm">
                                 <span class="font-semibold">Modalidad: </span>
@@ -79,21 +79,21 @@
                                         <td class="px-3 py-1 text-sm text-gray-800">Cuota {{ $contador++ }}</td>
                                         <td class="px-3 py-1 text-sm text-gray-800">{{ $cuota->fecha_vencimiento }}</td>
                                         <td class="px-3 py-1 text-sm text-gray-800">
-                                            ${{ number_format($cuota->saldo_capital, 2) }}
+                                            S/{{ number_format($cuota->saldo_capital, 2) }}
                                         </td>
                                         <td class="px-3 py-1 text-sm text-gray-800">
-                                            ${{ number_format($cuota->amortizacion, 2) }}
+                                            S/{{ number_format($cuota->amortizacion, 2) }}
                                         </td>
                                         <td class="px-3 py-1 text-sm text-gray-800">
-                                            ${{ number_format($cuota->interes, 2) }}</td>
+                                            S/{{ number_format($cuota->interes, 2) }}</td>
                                         <td class="px-3 py-1 text-sm text-gray-800">
-                                            ${{ number_format($cuota->cuota, 2) }}</td>
+                                            S/{{ number_format($cuota->cuota, 2) }}</td>
                                         <td class="px-3 py-1 text-sm text-gray-800">
-                                            ${{ number_format($cuota->mora, 2) }}</td>
+                                            S/{{ number_format($cuota->mora, 2) }}</td>
                                         <td class="px-3 py-1 text-sm text-gray-800">
-                                            ${{ number_format($cuota->subtotal, 2) }}</td>
+                                            S/{{ number_format($cuota->subtotal, 2) }}</td>
                                         <td class="px-3 py-1 text-sm text-gray-800">
-                                            ${{ number_format($cuota->monto_pago, 2) }}
+                                            S/{{ number_format($cuota->monto_pago, 2) }}
                                         </td>
                                         <td class="px-3 py-1 text-sm text-gray-800">
                                             {{ $cuota->fecha_pago_realizado && $cuota->estado == 1 ? $cuota->fecha_pago_realizado : 'SIN PAGAR' }}
@@ -119,28 +119,28 @@
                         class="mt-6  from-indigo-50 via-purple-50 to-pink-50 shadow-xl rounded-xl p-5 flex justify-between items-center">
                         <div class="">
                             <span class="text-sm font-semibold text-gray-500">Cuota: </span>
-                            <span id="total-cuota" class="text-sm  text-gray-500">${{ $totalCuota }}</span>
+                            <span id="total-cuota" class="text-sm  text-gray-500">S/{{ $totalCuota }}</span>
                         </div>
                         <div class="">
                             <span class="text-sm font-semibold text-gray-500">Amortización: </span>
                             <span id="total-amortizacion"
-                                class="text-sm  text-gray-600">${{ $totalAmortizacion }}</span>
+                                class="text-sm  text-gray-600">S/{{ $totalAmortizacion }}</span>
                         </div>
                         <div class="">
                             <span class="text-sm font-semibold text-gray-500">Interés: </span>
-                            <span id="total-interes" class="text-sm  text-gray-500">${{ $totalInteres }}</span>
+                            <span id="total-interes" class="text-sm  text-gray-500">S/{{ $totalInteres }}</span>
                         </div>
                         <div class="">
                             <span class="text-sm font-semibold text-gray-500">Mora: </span>
-                            <span id="total-mora" class="text-sm  text-gray-500">${{ $totalMora }}</span>
+                            <span id="total-mora" class="text-sm  text-gray-500">S/{{ $totalMora }}</span>
                         </div>
                         <div class="">
                             <span class="text-sm font-semibold text-gray-500">Subtotal: </span>
-                            <span id="total-subtotal" class="text-sm  text-gray-500">${{ $subtotal }}</span>
+                            <span id="total-subtotal" class="text-sm  text-gray-500">S/{{ $subtotal }}</span>
                         </div>
                         <div class="">
                             <span class="text-sm font-semibold text-gray-500">Total Pagado: </span>
-                            <span id="total-pagado" class="text-sm  text-gray-500">${{ $totalPagado }}</span>
+                            <span id="total-pagado" class="text-sm  text-gray-500">S/{{ $totalPagado }}</span>
                         </div>
                     </div>
                 </div>
