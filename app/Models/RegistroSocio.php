@@ -46,4 +46,8 @@ class RegistroSocio extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function aportes()
+    {
+        return $this->hasMany(AporteAhorro::class);
+    }
 }

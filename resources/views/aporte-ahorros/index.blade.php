@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="container mx-auto px-4 py-12">
+    <div class="max-w-7xl mx-auto px-4 py-12">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-semibold text-gray-800">Registro de Aportes</h2>
             @can('buscar-aporte')
@@ -43,7 +43,11 @@
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-3 py-1 text-left text-xs  font-medium text-gray-500 uppercase tracking-wider">
-                            Codigo
+                            @if (auth()->user()->hasRole(['admin', 'userHelpAdmin']))
+                                Codigo
+                            @else
+                                Monto
+                            @endif
                         </th>
                         <th class="px-3 py-1 text-left text-xs  font-medium text-gray-500 uppercase tracking-wider">
                             Nombres y Apellidos
@@ -53,6 +57,9 @@
                                 Total de Aportes
                             </th>
                         @endcan
+                        <th class="px-3 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Tipo Cuenta
+                        </th>
                         <th class="px-3 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Fecha de Registro
                         </th>
@@ -64,47 +71,42 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    @forelse($aportes as $aporte)
-                        <tr>
-                            <td class="px-3 py-1 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">
-                                    {{ $aporte->codigo }}
-                                </div>
-                            </td>
-                            <td class="px-3 py-1 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">
-                                    {{ $aporte->registroSocio->datosPersonales->apellido_paterno }}
-                                    {{ $aporte->registroSocio->datosPersonales->apellido_materno }}
-                                    {{ $aporte->registroSocio->datosPersonales->nombres }}
-                                </div>
-                            </td>
-                            @can('ver-total-aporte')
+                    @if (auth()->user()->hasRole(['admin', 'userHelpAdmin']))
+                        @forelse($aportes as $aporte)
+                            <tr>
+                                <td class="px-3 py-1 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">
+                                        {{ $aporte->codigo }}
+                                    </div>
+                                </td>
+                                <td class="px-3 py-1 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">
+                                        {{ $aporte->registroSocio->datosPersonales->apellido_paterno }}
+                                        {{ $aporte->registroSocio->datosPersonales->apellido_materno }}
+                                        {{ $aporte->registroSocio->datosPersonales->nombres }}
+                                    </div>
+                                </td>
                                 <td class="px-3 py-1 whitespace-nowrap">
                                     <div class="text-sm font-medium text-gray-900">
                                         {{ $aporte->total_aportes }}
                                     </div>
                                 </td>
-                            @endcan
-                            <td class="px-3 py-1 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">
-                                    Tipo cuenta {{ $aporte->tipo_cuenta }}
-                                </div>
-                            </td>
-                            <td class="px-3 py-1 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">
-                                    {{ $aporte->fecha_registro }}
-                                </div>
-                            </td>
-
-                            @can('ver-pdf-aporte')
+                                <td class="px-3 py-1 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">
+                                        Tipo cuenta {{ $aporte->tipo_cuenta }}
+                                    </div>
+                                </td>
+                                <td class="px-3 py-1 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">
+                                        {{ $aporte->fecha_registro }}
+                                    </div>
+                                </td>
                                 <td class="px-3 py-1 whitespace-nowrap text-sm font-medium">
                                     <a href="{{ route('aporte-pdf', $aporte->id) }}" target="_blank"
                                         class="text-green-600 hover:text-green-800 mr-3 transition duration-200">
                                         PDF
                                     </a>
                                 </td>
-                            @endcan
-                            @can('registro-aporte')
                                 <td>
                                     <a href="{{ route('aportes.adicionar', $aporte->registroSocio->datosPersonales->dni) }}"
                                         class="bg-green-500 hover:bg-green-600 font-size-sm text-white rounded-lg flex items-center transition-all duration-300 px-2 py-1"
@@ -112,18 +114,40 @@
                                         <i class="bi bi-plus-circle-fill"></i> Aporte
                                     </a>
                                 </td>
-                            @endcan
-                            </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="px-3 py-1 text-center text-gray-500">
+                                    No hay registros disponibles
+                                </td>
+                            </tr>
+                        @endforelse
+                    @else
+                        @foreach ($aportes as $aporte)
+                            @foreach ($aporte->detalles as $detalle)
+                                <tr>
+                                    <td class="px-3 py-1 whitespace-nowrap text-sm text-gray-700">
+                                        S/ {{ number_format($detalle->monto, 2) }}
+                                    </td>
+                                    <td class="px-3 py-1 whitespace-nowrap text-sm text-gray-700">
+                                        {{ $aporte->registroSocio->datosPersonales->apellido_paterno }}
+                                        {{ $aporte->registroSocio->datosPersonales->apellido_materno }}
+                                        {{ $aporte->registroSocio->datosPersonales->nombres }}
 
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="3" class="px-3 py-1 text-center text-gray-500">
-                                No hay registros disponibles
-                            </td>
-                        </tr>
-                    @endforelse
+                                    </td>
+
+                                    <td class="px-3 py-1 whitespace-nowrap text-sm text-gray-700">
+                                        {{ $aporte->tipo_cuenta }}
+                                    </td>
+                                    <td class="px-3 py-1 whitespace-nowrap text-sm text-gray-700">
+                                        {{ $detalle->fecha_registro }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @endforeach
+                    @endif
                 </tbody>
+
             </table>
 
         </div>

@@ -30,4 +30,8 @@ class AporteAhorro extends Model
             $model->user_register = auth()->id();
         });
     }
+    public function detalles()
+    {
+        return $this->hasMany(DetalleAporte::class, 'aporte_id');
+    }
 }
